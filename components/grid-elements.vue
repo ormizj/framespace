@@ -23,8 +23,7 @@ onMounted(() => {
                         ],
                     }),
                     interact.modifiers.restrict({
-                        // @ts-ignore: element type is not exact
-                        restriction: element.parentNode,
+                        restriction: 'parent',
                         elementRect: {
                             top: 0,
                             left: 0,
@@ -38,29 +37,36 @@ onMounted(() => {
                 x += event.dx
                 y += event.dy
                 event.target.style.transform = 'translate(' + x + 'px, ' + y + 'px)'
-            }).resizable({ // TODO
-                edges: {
-                    bottom: true,
-                    left: true,
-                    right: true,
-                    top: true,
-                },
+            }).resizable({
+                edges: { left: true, right: true, bottom: true, top: true },
                 listeners: {
-                    move: function (event) {
-                        let { x, y } = event.target.dataset
+                    move(event) {
+                        var target = event.target
+                        var x = (parseFloat(target.getAttribute('data-x')) || 0)
+                        var y = (parseFloat(target.getAttribute('data-y')) || 0)
 
-                        x = (parseFloat(x) || 0) + event.deltaRect.left
-                        y = (parseFloat(y) || 0) + event.deltaRect.top
+                        // update the element's style
+                        target.style.width = event.rect.width + 'px'
+                        target.style.height = event.rect.height + 'px'
 
-                        Object.assign(event.target.style, {
-                            width: `${event.rect.width}px`,
-                            height: `${event.rect.height}px`,
-                            transform: `translate(${x}px, ${y}px)`
-                        })
+                        // translate when resizing from top or left edges
+                        x += event.deltaRect.left
+                        y += event.deltaRect.top
 
-                        Object.assign(event.target.dataset, { x, y })
+                        target.setAttribute('data-x', x)
+                        target.setAttribute('data-y', y)
                     }
-                }
+                },
+                modifiers: [
+                    interact.modifiers.restrictEdges({
+                        outer: 'parent'
+                    }),
+                    interact.modifiers.restrictSize({
+                        min: { width: 100, height: 100 }
+                    })
+                ],
+
+                inertia: true
             })
     }
 
@@ -91,11 +97,11 @@ onMounted(() => {
     user-select: none;
 
     .grid-snap {
-        background-color: #29e;
         width: 300px;
     }
 
     .iframe {
+        border: unset;
         width: 100%;
         height: 100%;
     }
