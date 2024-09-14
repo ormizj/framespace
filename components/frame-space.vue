@@ -17,7 +17,9 @@ watch(isOpen, (newValue) => {
       <div class="top-tab">
         <button @click="isOpen = !isOpen">---</button>
       </div>
-      <div class="content"></div>
+      <div class="content">
+        <GridElements />
+      </div>
     </div>
   </div>
 </template>
