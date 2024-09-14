@@ -39,19 +39,12 @@ onMounted(() => {
             },
             modifiers: [
                 interact.modifiers.snap({
-                    targets: [
-                        interact.snappers.grid({ x: xGrid.value, y: yGrid.value })
-                    ],
-                    relativePoints: [{ x: 0, y: 0 }]
+                    targets: [interact.snappers.grid({ x: xGrid.value, y: yGrid.value })],
+                    relativePoints: [{ x: 0, y: 0 },]
                 }),
                 interact.modifiers.restrict({
                     restriction: 'parent',
-                    elementRect: {
-                        top: 0,
-                        left: 0,
-                        bottom: 1,
-                        right: 1
-                    },
+                    elementRect: { top: 0, left: 0, bottom: 1, right: 1 },
                 })
             ],
         }).resizable({
@@ -59,17 +52,9 @@ onMounted(() => {
             listeners: {
                 move(event) {
                     const target = event.target
-                    let x = (parseFloat(target.getAttribute('data-x')) || 0)
-                    let y = (parseFloat(target.getAttribute('data-y')) || 0)
 
                     target.style.width = `${event.rect.width}px`
                     target.style.height = `${event.rect.height}px`
-
-                    x += event.deltaRect.left
-                    y += event.deltaRect.top
-
-                    target.setAttribute('data-x', x)
-                    target.setAttribute('data-y', y)
                 }
             },
             modifiers: [
@@ -78,7 +63,11 @@ onMounted(() => {
                 }),
                 interact.modifiers.restrictSize({
                     min: { width: xMin.value, height: yMin.value }
-                })
+                }),
+                interact.modifiers.snap({
+                    targets: [interact.snappers.grid({ x: xGrid.value, y: yGrid.value })],
+                    relativePoints: [{ x: 0, y: 0 },]
+                }),
             ],
         })
     }
