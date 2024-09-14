@@ -3,6 +3,12 @@ const isOpen = ref(false);
 const isOpened = ref(false);
 const editMode = ref(false);
 
+const frameSpaceContainer = ref<HTMLDivElement | null>(null);
+const handleHideClick = () => {
+  const remSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+  frameSpaceContainer.value!.scrollTop = remSize * 2;
+}
+
 watch(isOpen, (newValue) => {
   setTimeout(() => {
     isOpened.value = newValue
@@ -12,13 +18,15 @@ watch(isOpen, (newValue) => {
 
 
 <template>
-  <div class="frame-space-container" :class="`${isOpen ? 'open' : 'close'} ${isOpened ? 'opened' : 'closed'}`">
+  <div class="frame-space-container" ref="frameSpaceContainer"
+    :class="`${isOpen ? 'open' : 'close'} ${isOpened ? 'opened' : 'closed'}`">
     <div class="frame-space">
       <div class="top-tab">
-        <button @click="isOpen = !isOpen">Open</button>
-        <button @click="editMode = !editMode">Edit</button>
+        <button @click="handleHideClick" :disabled="!isOpened">Hide</button>
+        <button @click="isOpen = !isOpen">{{ isOpen ? 'Close' : 'Open' }}</button>
+        <button @click="editMode = !editMode" :disabled="!isOpened">Edit</button>
       </div>
-      <div class="content">
+      <div class="content" ref="content">
         <!-- actual content will only be relevant to the client-side -->
         <ClientOnly>
           <GridElements v-model:edit="editMode" />

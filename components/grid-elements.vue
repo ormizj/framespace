@@ -11,8 +11,8 @@ const editModel = defineModel('edit', { default: false });
 const { width, height } = useWindowSize();
 const yGrid = ref(height.value / 10);
 const xGrid = ref(width.value / 10);
-const yMin = ref(100);
-const xMin = ref(100);
+const yMin = ref(yGrid.value);
+const xMin = ref(xGrid.value);
 
 const gridElements = ref<HTMLDivElement | null>(null);
 
@@ -52,7 +52,6 @@ onMounted(() => {
             listeners: {
                 move(event) {
                     const target = event.target
-
                     target.style.width = `${event.rect.width}px`
                     target.style.height = `${event.rect.height}px`
                 }
@@ -98,11 +97,6 @@ onMounted(() => {
     width: 100%;
     min-height: 100dvh;
     user-select: none;
-
-    .grid-snap {
-        /* TODO temp */
-        width: 300px;
-    }
 
     .iframe {
         border: unset;
