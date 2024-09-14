@@ -1,6 +1,11 @@
 <script setup lang="ts">
 
 import interact from 'interactjs'
+import { useWindowSize } from '@vueuse/core'
+
+const { width, height } = useWindowSize();
+const yGrid = ref(height.value / 10);
+const xGrid = ref(width.value / 10);
 
 onMounted(() => {
     const resize = (className: string) => {
@@ -12,12 +17,11 @@ onMounted(() => {
                 modifiers: [
                     interact.modifiers.snap({
                         targets: [
-                            interact.snappers.grid({ x: 10, y: 10 })
+                            interact.snappers.grid({ x: xGrid.value, y: yGrid.value })
                         ],
-                        range: Infinity,
-                        relativePoints: [{ x: 0, y: 0 }]
                     }),
                     interact.modifiers.restrict({
+                        // @ts-ignore: element type is not exact
                         restriction: element.parentNode,
                         elementRect: {
                             top: 0,
@@ -25,16 +29,14 @@ onMounted(() => {
                             bottom: 1,
                             right: 1
                         },
-                        endOnly: true
                     })
                 ],
             })
             .on('dragmove', function (event) {
                 x += event.dx
                 y += event.dy
-
                 event.target.style.transform = 'translate(' + x + 'px, ' + y + 'px)'
-            }).resizable({
+            }).resizable({ // TODO
                 edges: {
                     bottom: true,
                     left: true,
@@ -78,14 +80,14 @@ onMounted(() => {
 .grid-elements {
     width: 100%;
     height: 100vh;
-    display: grid;
+    /* display: grid;
     grid-template-columns: repeat(auto-fill, 1dvw);
-    grid-template-rows: repeat(auto-fill, 1dvh);
+    grid-template-rows: repeat(auto-fill, 1dvh); */
 }
 
 .grid-snap {
     background-color: #29e;
-    touch-action: none;
-    grid-area: 11/11/50/50;
+    /* touch-action: none; */
+    /* grid-area: 11/11/50/50; */
 }
 </style>

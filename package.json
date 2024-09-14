@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@vueuse/core": "^11.0.3",
     "interactjs": "^1.10.27",
     "nuxt": "^3.13.0",
     "vue": "latest",
