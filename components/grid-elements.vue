@@ -52,8 +52,11 @@ onMounted(() => {
             listeners: {
                 move(event) {
                     const target = event.target
-                    target.style.width = `${event.rect.width}px`
-                    target.style.height = `${event.rect.height}px`
+                    const width = parseFloat(target.style.width) || event.rect.width;
+                    const height = parseFloat(target.style.height) || event.rect.height;
+
+                    target.style.width = `${width + event.dx}px`
+                    target.style.height = `${height + event.dy}px`
                 }
             },
             modifiers: [
@@ -72,9 +75,11 @@ onMounted(() => {
     }
 
     gridElements.value!.style.height = `${gridElements.value!.offsetHeight}px`;
-    gridElements.value!.childNodes.forEach((el) => {
-        initializeGridElements(el as HTMLElement);
-    });
+    for (const element of gridElements.value!.children as unknown as HTMLElement[]) {
+        element.style.height = `${yGrid.value}px`
+        element.style.width = `${xGrid.value}px`
+        initializeGridElements(element);
+    }
 })
 </script>
 
