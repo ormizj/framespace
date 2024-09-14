@@ -4,8 +4,9 @@
 
 <template>
   <div class="app">
-    <NuxtPage />
-    <FrameSpace />
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
   </div>
 </template>
 
@@ -18,11 +19,16 @@
 
 <style>
 body {
-  --background-color: rgb(25, 25, 25);
+  --background-color-values: 25, 25, 25;
+  --background-color: rgb(var(--background-color-values));
+  --animation-duration: 0.25s;
 
   background-color: var(--background-color);
   color: whitesmoke;
   margin: 0;
-  overflow: hidden;
+
+  * {
+    box-sizing: border-box;
+  }
 }
 </style>

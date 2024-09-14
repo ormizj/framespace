@@ -1,46 +1,63 @@
 <script setup lang="ts">
 const isOpen = ref(false);
+const isOpened = ref(false);
+
+watch(isOpen, (newValue) => {
+  setTimeout(() => {
+    isOpened.value = newValue
+  }, 250)
+})
 </script>
 
 
 <template>
-  <div class="frame-space" :class="`${isOpen ? 'open' : 'close'}`">
-    <div class="top-tab">
-      <button class="top-tab-button" @click="isOpen = true">Open Frames</button>
+  <div class="frame-space-container" :class="`${isOpen ? 'open' : 'close'} ${isOpened ? 'opened' : 'closed'}`
+    ">
+    <div class="frame-space">
+      <div class="top-tab">
+        <button @click="isOpen = !isOpen">---</button>
+      </div>
+      <div class="content"></div>
     </div>
-    <div class="content"></div>
   </div>
 </template>
 
 <style scoped>
-.frame-space {
+.frame-space-container {
   --tab-height: 2rem;
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: var(--background-color);
+
+  height: 100dvh;
+  width: 100dvw;
+  position: fixed;
+  transition: top var(--animation-duration) ease;
+  overflow-y: scroll;
 
   &.open {
-    top: calc(var(--tab-height) * -1);
+    top: 0;
   }
 
   &.close {
     top: calc(100dvh - var(--tab-height));
   }
 
-  .content {
-    width: 100dvw;
-    height: 100dvh;
+  &.closed::-webkit-scrollbar {
+    visibility: hidden;
   }
 
-  .top-tab {
-    height: var(--tab-height);
-    pointer-events: none;
+  .frame-space {
+    width: 100%;
 
-    .top-tab-button {
-      pointer-events: auto;
-      height: 100%;
+    .top-tab {
+      display: flex;
+      justify-content: center;
+      height: var(--tab-height);
+      background-color: rgba(var(--background-color-values), 0.5);
+      width: 100%;
+    }
+
+    .content {
+      min-height: calc(100dvh - var(--tab-height));
+      background-color: var(--background-color);
     }
   }
 }
