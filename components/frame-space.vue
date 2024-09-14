@@ -12,8 +12,7 @@ watch(isOpen, (newValue) => {
 
 
 <template>
-  <div class="frame-space-container" :class="`${isOpen ? 'open' : 'close'} ${isOpened ? 'opened' : 'closed'}`
-    ">
+  <div class="frame-space-container" :class="`${isOpen ? 'open' : 'close'} ${isOpened ? 'opened' : 'closed'}`">
     <div class="frame-space">
       <div class="top-tab">
         <button @click="isOpen = !isOpen">Open</button>
