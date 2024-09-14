@@ -2,10 +2,12 @@
 
 import interact from 'interactjs'
 import { useWindowSize } from '@vueuse/core'
+const editModel = defineModel('edit', { default: false });
 
 const { width, height } = useWindowSize();
 const yGrid = ref(height.value / 10);
 const xGrid = ref(width.value / 10);
+const link = "https://www.calculatorsoup.com/calculators/math/percentage.php"
 
 onMounted(() => {
     const resize = (className: string) => {
@@ -69,10 +71,16 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="grid-elements">
-        <div class="grid-snap block1">Block1</div>
-        <div class="grid-snap block2">Block2</div>
-        <div class="grid-snap block3">Block3</div>
+    <div class="grid-elements" :class="{ edit: editModel }">
+        <div class="grid-snap block1">
+            <iframe :src="link" class="iframe" />
+        </div>
+        <div class="grid-snap block2">
+            <iframe :src="link" class="iframe" />
+        </div>
+        <div class="grid-snap block3">
+            <iframe :src="link" class="iframe" />
+        </div>
     </div>
 </template>
 
@@ -80,14 +88,36 @@ onMounted(() => {
 .grid-elements {
     width: 100%;
     height: 100vh;
-    /* display: grid;
-    grid-template-columns: repeat(auto-fill, 1dvw);
-    grid-template-rows: repeat(auto-fill, 1dvh); */
+    user-select: none;
+
+    .grid-snap {
+        background-color: #29e;
+        width: 300px;
+    }
+
+    .iframe {
+        width: 100%;
+        height: 100%;
+    }
 }
 
-.grid-snap {
-    background-color: #29e;
-    /* touch-action: none; */
-    /* grid-area: 11/11/50/50; */
+.grid-elements.edit {
+    .iframe {
+        pointer-events: none;
+    }
+
+    .grid-snap {
+        pointer-events: auto;
+    }
+}
+
+.grid-elements:not('.edit') {
+    .iframe {
+        pointer-events: auto;
+    }
+
+    .grid-snap {
+        pointer-events: none;
+    }
 }
 </style>

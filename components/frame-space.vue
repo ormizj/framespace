@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const isOpen = ref(false);
 const isOpened = ref(false);
+const editMode = ref(false);
 
 watch(isOpen, (newValue) => {
   setTimeout(() => {
@@ -15,12 +16,13 @@ watch(isOpen, (newValue) => {
     ">
     <div class="frame-space">
       <div class="top-tab">
-        <button @click="isOpen = !isOpen">---</button>
+        <button @click="isOpen = !isOpen">Open</button>
+        <button @click="editMode = !editMode">Edit</button>
       </div>
       <div class="content">
         <!-- actual content will only be relevant to the client-side -->
         <ClientOnly>
-          <GridElements />
+          <GridElements v-model:edit="editMode" />
         </ClientOnly>
       </div>
     </div>
