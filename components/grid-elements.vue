@@ -23,9 +23,18 @@ onMounted(() => {
         interact(element).draggable({
             listeners: {
                 move(event) {
-                    x += event.dx
-                    y += event.dy
-                    event.target.style.transform = `translate(${x}px,${y}px)`
+                    x += event.dx;
+                    y += event.dy;
+
+                    // expand container when needed
+                    const containerRect = gridElements.value!.getBoundingClientRect();
+                    const relativeTop = event.rect.top - containerRect.top;
+                    const actualTop = event.rect.height + relativeTop;
+                    if (actualTop > containerRect.height - yGrid.value) {
+                        gridElements.value!.style.height = `${containerRect.height + window.innerHeight}px`;
+                    }
+
+                    event.target.style.transform = `translate(${x}px,${y}px)`;
                 },
             },
             modifiers: [
@@ -74,6 +83,7 @@ onMounted(() => {
         })
     }
 
+    gridElements.value!.style.height = `${gridElements.value!.offsetHeight}px`;
     gridElements.value!.childNodes.forEach((el) => {
         initializeGridElements(el as HTMLElement);
     });
@@ -97,7 +107,7 @@ onMounted(() => {
 <style scoped>
 .grid-elements {
     width: 100%;
-    height: 100%;
+    min-height: 100dvh;
     user-select: none;
 
     .grid-snap {
