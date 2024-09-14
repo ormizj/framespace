@@ -2,25 +2,37 @@
 
 import interact from 'interactjs'
 import { useWindowSize } from '@vueuse/core'
+
+// TODO temp
+const link = "https://www.calculatorsoup.com/calculators/math/percentage.php"
+
 const editModel = defineModel('edit', { default: false });
 
 const { width, height } = useWindowSize();
 const yGrid = ref(height.value / 10);
 const xGrid = ref(width.value / 10);
-const link = "https://www.calculatorsoup.com/calculators/math/percentage.php"
+const yMin = ref(100);
+const xMin = ref(100);
 
 onMounted(() => {
-    const resize = (className: string) => {
-        var element: HTMLElement = document.querySelector(`.${className}`)!
-        var x = 0; var y = 0
-
+    const resize = (element: HTMLElement) => {
+        let y = 0;
+        let x = 0;
         interact(element)
             .draggable({
+                listeners: {
+                    move(event) {
+                        x += event.dx
+                        y += event.dy
+                        event.target.style.transform = `translate(${x}px,${y}px)`
+                    },
+                },
                 modifiers: [
                     interact.modifiers.snap({
                         targets: [
                             interact.snappers.grid({ x: xGrid.value, y: yGrid.value })
                         ],
+                        relativePoints: [{ x: 0, y: 0 }]
                     }),
                     interact.modifiers.restrict({
                         restriction: 'parent',
@@ -32,24 +44,17 @@ onMounted(() => {
                         },
                     })
                 ],
-            })
-            .on('dragmove', function (event) {
-                x += event.dx
-                y += event.dy
-                event.target.style.transform = 'translate(' + x + 'px, ' + y + 'px)'
             }).resizable({
                 edges: { left: true, right: true, bottom: true, top: true },
                 listeners: {
                     move(event) {
-                        var target = event.target
-                        var x = (parseFloat(target.getAttribute('data-x')) || 0)
-                        var y = (parseFloat(target.getAttribute('data-y')) || 0)
+                        const target = event.target
+                        let x = (parseFloat(target.getAttribute('data-x')) || 0)
+                        let y = (parseFloat(target.getAttribute('data-y')) || 0)
 
-                        // update the element's style
-                        target.style.width = event.rect.width + 'px'
-                        target.style.height = event.rect.height + 'px'
+                        target.style.width = `${event.rect.width}px`
+                        target.style.height = `${event.rect.height}px`
 
-                        // translate when resizing from top or left edges
                         x += event.deltaRect.left
                         y += event.deltaRect.top
 
@@ -62,17 +67,16 @@ onMounted(() => {
                         outer: 'parent'
                     }),
                     interact.modifiers.restrictSize({
-                        min: { width: 100, height: 100 }
+                        min: { width: xMin.value, height: yMin.value }
                     })
                 ],
-
-                inertia: true
             })
     }
 
-    resize('block1');
-    resize('block2')
-    resize('block3')
+    // TODO temp
+    resize(document.querySelector('.block1')!);
+    resize(document.querySelector('.block2')!);
+    resize(document.querySelector('.block3')!);
 })
 </script>
 
@@ -93,10 +97,11 @@ onMounted(() => {
 <style scoped>
 .grid-elements {
     width: 100%;
-    height: 100vh;
+    height: 100%;
     user-select: none;
 
     .grid-snap {
+        /* TODO temp */
         width: 300px;
     }
 
