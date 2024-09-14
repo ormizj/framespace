@@ -1,13 +1,41 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+
+import interact from 'interactjs'
+
+onMounted(() => {
+    var element = document.querySelector('.grid-snap')
+    var x = 0; var y = 0
+
+    interact(element)
+        .draggable({
+            modifiers: [
+                interact.modifiers.snap({
+                    targets: [
+                        interact.snappers.grid({ x: 30, y: 30 })
+                    ],
+                    range: Infinity,
+                    relativePoints: [{ x: 0, y: 0 }]
+                }),
+                interact.modifiers.restrict({
+                    restriction: element.parentNode,
+                    elementRect: { top: 0, left: 0, bottom: 1, right: 1 },
+                    endOnly: true
+                })
+            ],
+        })
+        .on('dragmove', function (event) {
+            x += event.dx
+            y += event.dy
+
+            event.target.style.transform = 'translate(' + x + 'px, ' + y + 'px)'
+        })
+})
+</script>
 
 <template>
     <div class="grid-elements">
-        <div class="block1">block1</div>
-        <div class="block2">block2</div>
-        <div class="block3">block3</div>
-        <div class="block4">block4</div>
-        <div class="block5">block5</div>
-        <div class="block6">block6</div>
+        <div class="grid-snap">Block1</div>
+
     </div>
 </template>
 
@@ -20,28 +48,9 @@
     grid-template-rows: repeat(auto-fill, 1dvh);
 }
 
-.block1 {
-    background-color: red;
+.grid-snap {
+    background-color: #29e;
+    touch-action: none;
     grid-area: 11/11/15/15;
-}
-
-.block2 {
-    background-color: green;
-}
-
-.block3 {
-    background-color: blue;
-}
-
-.block4 {
-    background-color: red;
-}
-
-.block5 {
-    background-color: green;
-}
-
-.block6 {
-    background-color: blue;
 }
 </style>

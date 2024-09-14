@@ -18,7 +18,10 @@ watch(isOpen, (newValue) => {
         <button @click="isOpen = !isOpen">---</button>
       </div>
       <div class="content">
-        <GridElements />
+        <!-- actual content will only be relevant to the client-side -->
+        <ClientOnly>
+          <GridElements />
+        </ClientOnly>
       </div>
     </div>
   </div>
@@ -27,12 +30,12 @@ watch(isOpen, (newValue) => {
 <style scoped>
 .frame-space-container {
   --tab-height: 2rem;
-
   height: 100dvh;
   width: 100dvw;
   position: fixed;
   transition: top var(--animation-duration) ease;
   overflow-y: scroll;
+  overflow-x: hidden;
 
   &.open {
     top: 0;
