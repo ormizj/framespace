@@ -36,7 +36,8 @@ const resizeObserver = new ResizeObserver((obs) => {
 });
 
 const handleMouseUp = (e: MouseEvent) => {
-    if (!resized.value) return
+    if (!resized.value) return;
+
     const source = resized.value as HTMLDivElement
     const target = e.target as HTMLDivElement
 
@@ -44,8 +45,11 @@ const handleMouseUp = (e: MouseEvent) => {
     const height = Math.abs(source.offsetTop - target.offsetTop) + targetRect.height;
     const width = Math.abs(source.offsetLeft - target.offsetLeft) + targetRect.width;
 
-    source.style.width = `${width}px`;
-    source.style.height = `${height}px`;
+    const HeightDvh = (height / window.innerHeight) * 100;
+    const widthDvw = (width / window.innerWidth) * 100;
+
+    source.style.height = `${HeightDvh}dvh`;
+    source.style.width = `${widthDvw}dvw`;
 
     setTimeout(() => {
         resized.value = null;
@@ -59,7 +63,8 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="grid-elements" ref="gridElements" :class="{ edit: editModel }" @mouseenter="resized = null">
+    <div class="grid-elements" ref="gridElements" :class="{ edit: editModel }" @mouseenter="resized = null"
+        @mousedown="resized = null">
         <div v-for="i in yGrid" class="y-grid" :style="`height: ${gridHeight}dvh;`">
             <div v-for="j in xGrid" class="x-grid" @drop="handleDrop" @dragover.prevent @mouseup="handleMouseUp">
 
