@@ -56,6 +56,7 @@ const handleDrop = (e: DragEvent) => {
     .grid-snap {
         width: 100%;
         height: 100%;
+        position: absolute;
     }
 
     .iframe {
@@ -74,6 +75,8 @@ const handleDrop = (e: DragEvent) => {
 
     .grid-snap {
         pointer-events: auto;
+        resize: both;
+        overflow: auto;
     }
 }
 
