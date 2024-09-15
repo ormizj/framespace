@@ -9,14 +9,20 @@ const gridHeight = ref(10);
 
 
 let dragged = null as HTMLElement | null;
-const handleDrag = (e: DragEvent) => {
+const handleDragStart = (e: DragEvent) => {
     dragged = e.target as HTMLElement;
+    setTimeout(() => {
+        dragged!.style.pointerEvents = 'none';
+    });
+}
+const handleDragEnd = () => {
+    dragged!.style.pointerEvents = '';
 }
 
 const handleDrop = (e: DragEvent) => {
     const target = e.target! as HTMLElement;
     for (const el of target.children) if (el.parentNode === dragged) return;
-    target.appendChild(dragged!)
+    target.appendChild(dragged!);
 }
 </script>
 
@@ -26,7 +32,7 @@ const handleDrop = (e: DragEvent) => {
             <div v-for="j in xGrid" class="x-grid" @drop="handleDrop" @dragover.prevent>
 
                 <template v-if="i === 1 && j === 1">
-                    <div class="grid-snap" :draggable="editModel" @dragstart="handleDrag">
+                    <div class="grid-snap" :draggable="editModel" @dragstart="handleDragStart" @dragend="handleDragEnd">
                         <iframe :src="link" class="iframe" />
                     </div>
                 </template>
