@@ -7,22 +7,24 @@ const yGrid = ref(10);
 const xGrid = ref(10);
 
 
-onMounted(() => {
-    for (const element of gridElements.value!.children as unknown as HTMLElement[]) {
-        element.addEventListener('dragend', (e) => {
-            console.log(e);
-        });
-    }
-});
+let dragged = null as HTMLElement | null;
+const handleDrag = (e: DragEvent) => {
+    dragged = e.target as HTMLElement;
+}
+const handleDrop = (e: DragEvent) => {
+    dragged!.parentNode?.removeChild(dragged!);
+    const target = e.target! as HTMLElement;
+    target.appendChild(dragged!)
+}
 </script>
 
 <template>
     <div class="grid-elements" ref="gridElements" :class="{ edit: editModel }">
         <div v-for="i in yGrid" class="y-grid">
-            <div v-for="j in xGrid" class="x-grid">
+            <div v-for="j in xGrid" class="x-grid" @drop="handleDrop" @dragover.prevent>
 
                 <template v-if="i === 1 && j === 3">
-                    <div class="grid-snap block3" :draggable="editModel">
+                    <div class="grid-snap" :draggable="editModel" @dragstart="handleDrag">
                         <iframe :src="link" class="iframe" />
                     </div>
                 </template>
