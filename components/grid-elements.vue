@@ -5,7 +5,7 @@ const editModel = defineModel('edit', { default: false });
 
 const gridElements = ref<HTMLDivElement | null>(null);
 
-const yGrid = ref(30);
+const yGrid = ref(10);
 const xGrid = ref(10);
 const gridHeight = ref(10);
 
@@ -20,34 +20,13 @@ const handleDragStart = (e: DragEvent) => {
 }
 const handleDragEnd = () => {
     dragged.value!.style.pointerEvents = '';
+    dragged.value = null;
 }
 const handleDrop = (e: DragEvent) => {
     const target = e.target! as HTMLElement;
     for (const el of target.children) if (el.parentNode === dragged.value) return;
     target.appendChild(dragged.value!);
-    dragged.value = null;
 }
-
-// const snapToGrid = (element: HTMLElement) => {
-//     if (!gridElements.value) return;
-
-//     const gridRect = gridElements.value.getBoundingClientRect();
-//     const cellWidth = gridRect.width / xGrid.value;
-//     const cellHeight = gridRect.height / yGrid.value;
-
-//     const rect = element.getBoundingClientRect();
-//     const parentRect = element.parentElement!.getBoundingClientRect();
-
-//     const left = Math.round((rect.left - parentRect.left) / cellWidth) * cellWidth;
-//     const top = Math.round((rect.top - parentRect.top) / cellHeight) * cellHeight;
-//     const width = Math.round(rect.width / cellWidth) * cellWidth;
-//     const height = Math.round(rect.height / cellHeight) * cellHeight;
-
-//     element.style.left = `${left}px`;
-//     element.style.top = `${top}px`;
-//     element.style.width = `${width}px`;
-//     element.style.height = `${height}px`;
-// }
 
 // resize event
 const gridSnaps = ref<null | HTMLDivElement[]>(null)
@@ -57,11 +36,20 @@ const resizeObserver = new ResizeObserver((obs) => {
 });
 
 const handleMouseUp = (e: MouseEvent) => {
-    if (!resized.value) return;
-    const el = e.target! as HTMLDivElement;
-    const rect = el.getBoundingClientRect();
-    console.log(rect.height);
-    console.log(rect.width);
+    if (!resized.value) return
+    const source = resized.value as HTMLDivElement
+    const target = e.target as HTMLDivElement
+
+    const targetRect = target.getBoundingClientRect();
+    const height = Math.abs(source.offsetTop - target.offsetTop) + targetRect.height;
+    const width = Math.abs(source.offsetLeft - target.offsetLeft) + targetRect.width;
+
+    source.style.width = `${width}px`;
+    source.style.height = `${height}px`;
+
+    setTimeout(() => {
+        resized.value = null;
+    }, 250);
 }
 onMounted(() => {
     gridSnaps.value!.forEach((gridSnap) => {
@@ -71,8 +59,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="grid-elements" ref="gridElements" :class="{ edit: editModel }" @mouseup="resized = null"
-        @mouseenter="resized = null">
+    <div class="grid-elements" ref="gridElements" :class="{ edit: editModel }" @mouseenter="resized = null">
         <div v-for="i in yGrid" class="y-grid" :style="`height: ${gridHeight}dvh;`">
             <div v-for="j in xGrid" class="x-grid" @drop="handleDrop" @dragover.prevent @mouseup="handleMouseUp">
 
