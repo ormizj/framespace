@@ -47,32 +47,27 @@ const handleDrop = (e: DragEvent) => {
 //     element.style.height = `${height}px`;
 // }
 
-// onMounted(() => {
-//     const resizeObserver = new ResizeObserver(entries => {
-//         for (let entry of entries) {
-//             if (editModel.value) {
-//                 snapToGrid(entry.target as HTMLElement);
-//             }
-//         }
-//     });
-
-//     const gridSnaps = document.querySelectorAll('.grid-snap');
-//     gridSnaps.forEach(snap => resizeObserver.observe(snap));
-// });
-
-const handleMouseUp = (e) => {
-    console.log(e);
-
-}
+const gridSnaps = ref<null | HTMLDivElement[]>(null)
+const isResizing = ref(false);
+const resizeObserver = new ResizeObserver(() => {
+    if (isResizing.value !== true) isResizing.value = true;
+});
+onMounted(() => {
+    gridSnaps.value!.forEach((gridSnap) => {
+        resizeObserver.observe(gridSnap);
+    })
+});
 </script>
 
 <template>
-    <div class="grid-elements" ref="gridElements" :class="{ edit: editModel }">
+    <div class="grid-elements" ref="gridElements" :class="{ edit: editModel }" @mouseup="isResizing = false"
+        @mouseenter="isResizing = false">
         <div v-for="i in yGrid" class="y-grid" :style="`height: ${gridHeight}dvh;`">
             <div v-for="j in xGrid" class="x-grid" @drop="handleDrop" @dragover.prevent>
 
                 <template v-if="i === 1 && j === 1">
-                    <div class="grid-snap" :draggable="editModel" @dragstart="handleDragStart" @dragend="handleDragEnd">
+                    <div class="grid-snap" ref="gridSnaps" :class="{ resizing: isResizing }" :draggable="editModel"
+                        @dragstart="handleDragStart" @dragend="handleDragEnd">
                         <iframe :src="link" class="iframe" />
                     </div>
                 </template>
@@ -127,6 +122,10 @@ const handleMouseUp = (e) => {
         pointer-events: auto;
         resize: both;
         overflow: auto;
+
+        &.resizing {
+            pointer-events: none;
+        }
 
         &::-webkit-scrollbar {
             visibility: hidden;
