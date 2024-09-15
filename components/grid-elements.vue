@@ -26,13 +26,44 @@ const handleDrop = (e: DragEvent) => {
     target.appendChild(dragged!);
 }
 
+// const snapToGrid = (element: HTMLElement) => {
+//     if (!gridElements.value) return;
+
+//     const gridRect = gridElements.value.getBoundingClientRect();
+//     const cellWidth = gridRect.width / xGrid.value;
+//     const cellHeight = gridRect.height / yGrid.value;
+
+//     const rect = element.getBoundingClientRect();
+//     const parentRect = element.parentElement!.getBoundingClientRect();
+
+//     const left = Math.round((rect.left - parentRect.left) / cellWidth) * cellWidth;
+//     const top = Math.round((rect.top - parentRect.top) / cellHeight) * cellHeight;
+//     const width = Math.round(rect.width / cellWidth) * cellWidth;
+//     const height = Math.round(rect.height / cellHeight) * cellHeight;
+
+//     element.style.left = `${left}px`;
+//     element.style.top = `${top}px`;
+//     element.style.width = `${width}px`;
+//     element.style.height = `${height}px`;
+// }
+
 // onMounted(() => {
-//     gridElementsWidth.value = gridElements.value!.clientWidth;
-//     const resizeObserver = new ResizeObserver(() => {
-//         gridElementsWidth.value = gridElements.value!.clientWidth;
-//     })
-//     resizeObserver.observe(gridElements.value!);
-// })
+//     const resizeObserver = new ResizeObserver(entries => {
+//         for (let entry of entries) {
+//             if (editModel.value) {
+//                 snapToGrid(entry.target as HTMLElement);
+//             }
+//         }
+//     });
+
+//     const gridSnaps = document.querySelectorAll('.grid-snap');
+//     gridSnaps.forEach(snap => resizeObserver.observe(snap));
+// });
+
+const handleMouseUp = (e) => {
+    console.log(e);
+
+}
 </script>
 
 <template>
@@ -61,6 +92,10 @@ const handleDrop = (e: DragEvent) => {
     height: 100%;
     width: 100%;
     outline: 1px solid var(--secondary-color);
+
+    &:hover {
+        background-color: color-mix(in srgb, var(--secondary-color), transparent 50%);
+    }
 }
 
 .grid-elements {
