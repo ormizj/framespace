@@ -51,7 +51,7 @@ const handleDrop = (e: DragEvent) => {
 .x-grid {
     height: 100%;
     width: 100%;
-    outline: 1px solid whitesmoke;
+    outline: 1px solid var(--secondary-color);
 }
 
 .grid-elements {
@@ -88,7 +88,7 @@ const handleDrop = (e: DragEvent) => {
         }
 
         &::-webkit-scrollbar-corner {
-            outline: 1px dashed whitesmoke;
+            outline: 1px dashed var(--secondary-color);
         }
     }
 }

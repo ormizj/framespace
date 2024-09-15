@@ -22,9 +22,10 @@ body {
   --background-color-values: 25, 25, 25;
   --background-color: rgb(var(--background-color-values));
   --animation-duration: 0.25s;
+  --secondary-color: whitesmoke;
 
   background-color: var(--background-color);
-  color: whitesmoke;
+  color: var(--secondary-color);
   margin: 0;
 
   * {
