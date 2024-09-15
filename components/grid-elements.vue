@@ -5,25 +5,27 @@ const editModel = defineModel('edit', { default: false });
 const gridElements = ref<HTMLDivElement | null>(null);
 const yGrid = ref(10);
 const xGrid = ref(10);
+const gridHeight = ref(10);
 
 
 let dragged = null as HTMLElement | null;
 const handleDrag = (e: DragEvent) => {
     dragged = e.target as HTMLElement;
 }
+
 const handleDrop = (e: DragEvent) => {
-    dragged!.parentNode?.removeChild(dragged!);
     const target = e.target! as HTMLElement;
+    for (const el of target.children) if (el.parentNode === dragged) return;
     target.appendChild(dragged!)
 }
 </script>
 
 <template>
     <div class="grid-elements" ref="gridElements" :class="{ edit: editModel }">
-        <div v-for="i in yGrid" class="y-grid">
+        <div v-for="i in yGrid" class="y-grid" :style="`height: ${gridHeight}dvh;`">
             <div v-for="j in xGrid" class="x-grid" @drop="handleDrop" @dragover.prevent>
 
-                <template v-if="i === 1 && j === 3">
+                <template v-if="i === 1 && j === 1">
                     <div class="grid-snap" :draggable="editModel" @dragstart="handleDrag">
                         <iframe :src="link" class="iframe" />
                     </div>
@@ -37,7 +39,6 @@ const handleDrop = (e: DragEvent) => {
 <style scoped>
 .y-grid {
     display: flex;
-    height: 10vh;
     width: 100%;
 }
 
