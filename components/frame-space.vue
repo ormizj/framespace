@@ -2,6 +2,7 @@
 const isOpen = ref(false);
 const isOpened = ref(false);
 const editMode = ref(false);
+const hideScroll = ref(false);
 
 const frameSpaceContainer = ref<HTMLDivElement | null>(null);
 const handleHideClick = () => {
@@ -18,13 +19,17 @@ watch(isOpen, (newValue) => {
 
 
 <template>
-  <div class="frame-space-container" ref="frameSpaceContainer"
-    :class="`${isOpen ? 'open' : 'close'} ${isOpened ? 'opened' : 'closed'}`">
+  <div class="frame-space-container" ref="frameSpaceContainer" :class="[
+    isOpen ? 'open' : 'close',
+    isOpened ? 'opened' : 'closed',
+    { ['scroll-hidden']: hideScroll }
+  ]">
     <div class="frame-space">
       <div class="top-tab">
         <button @click="handleHideClick" :disabled="!isOpened">Hide</button>
         <button @click="isOpen = !isOpen">{{ isOpen ? 'Close' : 'Open' }}</button>
         <button @click="editMode = !editMode" :disabled="!isOpened">Edit</button>
+        <button @click="hideScroll = !hideScroll">{{ hideScroll ? 'Show Scroll' : 'Hide Scroll' }}</button>
       </div>
       <div class="content" ref="content">
         <!-- actual content will only be relevant to the client-side -->
@@ -56,6 +61,10 @@ watch(isOpen, (newValue) => {
 
   &.closed::-webkit-scrollbar {
     visibility: hidden;
+  }
+
+  &.scroll-hidden::-webkit-scrollbar {
+    display: none;
   }
 
   .frame-space {

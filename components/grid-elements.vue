@@ -1,104 +1,113 @@
 <script setup lang="ts">
-
-import interact from 'interactjs'
-import { useWindowSize } from '@vueuse/core'
-
 // TODO temp
 const link = "https://www.calculatorsoup.com/calculators/math/percentage.php"
-
 const editModel = defineModel('edit', { default: false });
-
-const { width, height } = useWindowSize();
-const yGrid = ref(height.value / 10);
-const xGrid = ref(width.value / 10);
-const yMin = ref(yGrid.value);
-const xMin = ref(xGrid.value);
 
 const gridElements = ref<HTMLDivElement | null>(null);
 
+const yGrid = ref(10);
+const xGrid = ref(10);
+const gridHeight = ref(10);
+
+// drag event
+let dragged = ref<null | HTMLDivElement>(null);
+
+const handleDragStart = (e: DragEvent) => {
+    dragged.value = e.target as HTMLDivElement;
+    setTimeout(() => {
+        dragged.value!.style.pointerEvents = 'none';
+    });
+}
+const handleDragEnd = () => {
+    dragged.value!.style.pointerEvents = '';
+    dragged.value = null;
+}
+const handleDrop = (e: DragEvent) => {
+    const target = e.target! as HTMLElement;
+    for (const el of target.children) if (el.parentNode === dragged.value) return;
+    target.appendChild(dragged.value!);
+}
+
+// resize event
+const gridSnaps = ref<null | HTMLDivElement[]>(null)
+const resized = ref<null | HTMLDivElement>(null);
+const resizeObserver = new ResizeObserver((obs) => {
+    if (!resized.value) resized.value = obs[0].target as HTMLDivElement;
+});
+
+const handleMouseUp = (e: MouseEvent) => {
+    if (!resized.value) return
+    const source = resized.value as HTMLDivElement
+    const target = e.target as HTMLDivElement
+
+    const targetRect = target.getBoundingClientRect();
+    const height = Math.abs(source.offsetTop - target.offsetTop) + targetRect.height;
+    const width = Math.abs(source.offsetLeft - target.offsetLeft) + targetRect.width;
+
+    source.style.width = `${width}px`;
+    source.style.height = `${height}px`;
+
+    setTimeout(() => {
+        resized.value = null;
+    }, 250);
+}
 onMounted(() => {
-    const initializeGridElements = (element: HTMLElement) => {
-        let y = 0;
-        let x = 0;
-        interact(element).draggable({
-            listeners: {
-                move(event) {
-                    x += event.dx;
-                    y += event.dy;
-
-                    // expand container when needed
-                    const containerRect = gridElements.value!.getBoundingClientRect();
-                    const relativeTop = event.rect.top - containerRect.top;
-                    const actualTop = event.rect.height + relativeTop;
-                    if (actualTop > containerRect.height - yGrid.value) {
-                        gridElements.value!.style.height = `${containerRect.height + window.innerHeight}px`;
-                    }
-
-                    event.target.style.transform = `translate(${x}px,${y}px)`;
-                },
-            },
-            modifiers: [
-                interact.modifiers.snap({
-                    targets: [interact.snappers.grid({ x: xGrid.value, y: yGrid.value })],
-                    relativePoints: [{ x: 0, y: 0 },]
-                }),
-                interact.modifiers.restrict({
-                    restriction: 'parent',
-                    elementRect: { top: 0, left: 0, bottom: 1, right: 1 },
-                })
-            ],
-        }).resizable({
-            edges: { left: true, right: true, bottom: true, top: true },
-            listeners: {
-                move(event) {
-                    const target = event.target
-                    target.style.width = `${event.rect.width}px`
-                    target.style.height = `${event.rect.height}px`
-                }
-            },
-            modifiers: [
-                interact.modifiers.restrictEdges({
-                    outer: 'parent'
-                }),
-                interact.modifiers.restrictSize({
-                    min: { width: xMin.value, height: yMin.value }
-                }),
-                interact.modifiers.snap({
-                    targets: [interact.snappers.grid({ x: xGrid.value, y: yGrid.value })],
-                    relativePoints: [{ x: 0, y: 0 },]
-                }),
-            ],
-        })
-    }
-
-    gridElements.value!.style.height = `${gridElements.value!.offsetHeight}px`;
-    for (const element of gridElements.value!.children as unknown as HTMLElement[]) {
-        element.style.height = `${yGrid.value}px`;
-        element.style.width = `${xGrid.value}px`;
-        initializeGridElements(element);
-    }
-})
+    gridSnaps.value!.forEach((gridSnap) => {
+        resizeObserver.observe(gridSnap);
+    })
+});
 </script>
 
 <template>
-    <div class="grid-elements" ref="gridElements" :class="{ edit: editModel }">
-        <div class="grid-snap block1">
-            <iframe :src="link" class="iframe" />
-        </div>
-        <div class="grid-snap block2">
-            <iframe :src="link" class="iframe" />
-        </div>
-        <div class="grid-snap block3">
-            <iframe :src="link" class="iframe" />
+    <div class="grid-elements" ref="gridElements" :class="{ edit: editModel }" @mouseenter="resized = null">
+        <div v-for="i in yGrid" class="y-grid" :style="`height: ${gridHeight}dvh;`">
+            <div v-for="j in xGrid" class="x-grid" @drop="handleDrop" @dragover.prevent @mouseup="handleMouseUp">
+
+                <template v-if="i === 1 && j === 1">
+                    <div class="grid-snap" ref="gridSnaps" :class="{ resizing: !!resized }" :draggable="editModel"
+                        @dragstart="handleDragStart" @dragend="handleDragEnd">
+                        <iframe :src="link" class="iframe" />
+                    </div>
+                </template>
+
+                <template v-if="i === 20 && j === 1">
+                    <div class="grid-snap" ref="gridSnaps" :class="{ resizing: !!resized }" :draggable="editModel"
+                        @dragstart="handleDragStart" @dragend="handleDragEnd">
+                        <iframe :src="link" class="iframe" />
+                    </div>
+                </template>
+
+            </div>
         </div>
     </div>
 </template>
 
 <style scoped>
+.y-grid {
+    display: flex;
+    width: 100%;
+}
+
+.x-grid {
+    height: 100%;
+    width: 100%;
+    outline: 1px solid var(--secondary-color);
+
+    &:hover {
+        background-color: color-mix(in srgb, var(--secondary-color), transparent 50%);
+    }
+}
+
 .grid-elements {
     width: 100%;
     min-height: 100dvh;
-    user-select: none;
+
+    .grid-snap {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        max-width: 100%;
+    }
 
     .iframe {
         border: unset;
@@ -107,6 +116,8 @@ onMounted(() => {
     }
 }
 
+
+
 .grid-elements.edit {
     .iframe {
         pointer-events: none;
@@ -114,6 +125,20 @@ onMounted(() => {
 
     .grid-snap {
         pointer-events: auto;
+        resize: both;
+        overflow: auto;
+
+        &.resizing {
+            pointer-events: none;
+        }
+
+        &::-webkit-scrollbar {
+            visibility: hidden;
+        }
+
+        &::-webkit-scrollbar-corner {
+            outline: 1px dashed var(--secondary-color);
+        }
     }
 }
 
