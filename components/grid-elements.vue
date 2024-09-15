@@ -45,7 +45,6 @@ const handleDrop = (e: DragEvent) => {
 .x-grid {
     height: 100%;
     width: 100%;
-
     outline: 1px solid whitesmoke;
 }
 
@@ -77,6 +76,14 @@ const handleDrop = (e: DragEvent) => {
         pointer-events: auto;
         resize: both;
         overflow: auto;
+
+        &::-webkit-scrollbar {
+            visibility: hidden;
+        }
+
+        &::-webkit-scrollbar-corner {
+            outline: 1px dashed whitesmoke;
+        }
     }
 }
 
