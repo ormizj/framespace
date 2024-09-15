@@ -5,25 +5,27 @@ const editModel = defineModel('edit', { default: false });
 
 const gridElements = ref<HTMLDivElement | null>(null);
 
-const yGrid = ref(10);
+const yGrid = ref(30);
 const xGrid = ref(10);
 const gridHeight = ref(10);
 
-let dragged = null as HTMLElement | null;
+// drag event
+let dragged = ref<null | HTMLDivElement>(null);
+
 const handleDragStart = (e: DragEvent) => {
-    dragged = e.target as HTMLElement;
+    dragged.value = e.target as HTMLDivElement;
     setTimeout(() => {
-        dragged!.style.pointerEvents = 'none';
+        dragged.value!.style.pointerEvents = 'none';
     });
 }
 const handleDragEnd = () => {
-    dragged!.style.pointerEvents = '';
+    dragged.value!.style.pointerEvents = '';
 }
-
 const handleDrop = (e: DragEvent) => {
     const target = e.target! as HTMLElement;
-    for (const el of target.children) if (el.parentNode === dragged) return;
-    target.appendChild(dragged!);
+    for (const el of target.children) if (el.parentNode === dragged.value) return;
+    target.appendChild(dragged.value!);
+    dragged.value = null;
 }
 
 // const snapToGrid = (element: HTMLElement) => {
@@ -47,11 +49,20 @@ const handleDrop = (e: DragEvent) => {
 //     element.style.height = `${height}px`;
 // }
 
+// resize event
 const gridSnaps = ref<null | HTMLDivElement[]>(null)
-const isResizing = ref(false);
-const resizeObserver = new ResizeObserver(() => {
-    if (isResizing.value !== true) isResizing.value = true;
+const resized = ref<null | HTMLDivElement>(null);
+const resizeObserver = new ResizeObserver((obs) => {
+    if (!resized.value) resized.value = obs[0].target as HTMLDivElement;
 });
+
+const handleMouseUp = (e: MouseEvent) => {
+    if (!resized.value) return;
+    const el = e.target! as HTMLDivElement;
+    const rect = el.getBoundingClientRect();
+    console.log(rect.height);
+    console.log(rect.width);
+}
 onMounted(() => {
     gridSnaps.value!.forEach((gridSnap) => {
         resizeObserver.observe(gridSnap);
@@ -60,13 +71,20 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="grid-elements" ref="gridElements" :class="{ edit: editModel }" @mouseup="isResizing = false"
-        @mouseenter="isResizing = false">
+    <div class="grid-elements" ref="gridElements" :class="{ edit: editModel }" @mouseup="resized = null"
+        @mouseenter="resized = null">
         <div v-for="i in yGrid" class="y-grid" :style="`height: ${gridHeight}dvh;`">
-            <div v-for="j in xGrid" class="x-grid" @drop="handleDrop" @dragover.prevent>
+            <div v-for="j in xGrid" class="x-grid" @drop="handleDrop" @dragover.prevent @mouseup="handleMouseUp">
 
                 <template v-if="i === 1 && j === 1">
-                    <div class="grid-snap" ref="gridSnaps" :class="{ resizing: isResizing }" :draggable="editModel"
+                    <div class="grid-snap" ref="gridSnaps" :class="{ resizing: !!resized }" :draggable="editModel"
+                        @dragstart="handleDragStart" @dragend="handleDragEnd">
+                        <iframe :src="link" class="iframe" />
+                    </div>
+                </template>
+
+                <template v-if="i === 20 && j === 1">
+                    <div class="grid-snap" ref="gridSnaps" :class="{ resizing: !!resized }" :draggable="editModel"
                         @dragstart="handleDragStart" @dragend="handleDragEnd">
                         <iframe :src="link" class="iframe" />
                     </div>
