@@ -2,11 +2,12 @@
 // TODO temp
 const link = "https://www.calculatorsoup.com/calculators/math/percentage.php"
 const editModel = defineModel('edit', { default: false });
+
 const gridElements = ref<HTMLDivElement | null>(null);
+
 const yGrid = ref(10);
 const xGrid = ref(10);
 const gridHeight = ref(10);
-
 
 let dragged = null as HTMLElement | null;
 const handleDragStart = (e: DragEvent) => {
@@ -24,6 +25,14 @@ const handleDrop = (e: DragEvent) => {
     for (const el of target.children) if (el.parentNode === dragged) return;
     target.appendChild(dragged!);
 }
+
+// onMounted(() => {
+//     gridElementsWidth.value = gridElements.value!.clientWidth;
+//     const resizeObserver = new ResizeObserver(() => {
+//         gridElementsWidth.value = gridElements.value!.clientWidth;
+//     })
+//     resizeObserver.observe(gridElements.value!);
+// })
 </script>
 
 <template>
@@ -59,9 +68,10 @@ const handleDrop = (e: DragEvent) => {
     min-height: 100dvh;
 
     .grid-snap {
-        width: 100%;
-        height: 100%;
         position: absolute;
+        height: 100%;
+        width: 100%;
+        max-width: 100%;
     }
 
     .iframe {
