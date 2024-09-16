@@ -4,12 +4,11 @@ const link = "https://www.calculatorsoup.com/calculators/math/percentage.php"
 const editModel = defineModel('edit', { default: false });
 
 const gridElements = ref<HTMLDivElement | null>(null);
-
 const yGrid = ref(10);
 const xGrid = ref(10);
 const gridHeight = ref(10);
 
-// drag event
+// gridSnaps drag
 let dragged = ref<null | HTMLDivElement>(null);
 
 const handleDragStart = (e: DragEvent) => {
@@ -28,10 +27,10 @@ const handleDrop = (e: DragEvent) => {
     target.appendChild(dragged.value!);
 }
 
-// resize event
+// gridSnaps resize
 const gridSnaps = ref<null | HTMLDivElement[]>(null)
 const resized = ref<null | HTMLDivElement>(null);
-const resizeObserver = new ResizeObserver((obs) => {
+const gridSnapResizeObs = new ResizeObserver((obs) => {
     if (!resized.value) resized.value = obs[0].target as HTMLDivElement;
 });
 
@@ -55,9 +54,31 @@ const handleMouseUp = (e: MouseEvent) => {
         resized.value = null;
     }, 250);
 }
-onMounted(() => {
+
+// gridElements resize
+let prevOffset = 0;
+const gridElementsResizeObs = new ResizeObserver((entries) => {
+    const source = entries[0].target as HTMLDivElement;
+    const newOffset = window.innerWidth - source.clientWidth;
+    const offsetBy = prevOffset;
+    prevOffset = newOffset;
+
     gridSnaps.value!.forEach((gridSnap) => {
-        resizeObserver.observe(gridSnap);
+        const target = gridSnap;
+
+        const widthDiff = (target.clientWidth / (source.clientWidth + offsetBy)) * 100;
+        const currentWidth = parseFloat(target.style.width);
+        const widthToSub = widthDiff - currentWidth;
+        const widthDvw = currentWidth - widthToSub;
+
+        target.style.width = `${widthDvw}dvw`
+    });
+});
+
+onMounted(() => {
+    gridElementsResizeObs.observe(gridElements.value!);
+    gridSnaps.value!.forEach((gridSnap) => {
+        gridSnapResizeObs.observe(gridSnap);
     })
 });
 </script>
@@ -121,8 +142,7 @@ onMounted(() => {
     }
 }
 
-
-
+/* gridElements edit */
 .grid-elements.edit {
     .iframe {
         pointer-events: none;
@@ -147,6 +167,7 @@ onMounted(() => {
     }
 }
 
+/* gridElements not edit */
 .grid-elements:not('.edit') {
     .iframe {
         pointer-events: auto;
