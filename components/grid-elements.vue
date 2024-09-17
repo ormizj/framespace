@@ -15,8 +15,8 @@ const gridCellElements = ref<null | HTMLGridElement[]>(null);
 const gridCells = ref<GridCell[]>([{
     cellX: 1,
     cellY: 1,
-    cellWidth: 10,
-    cellHeight: 10,
+    cellWidth: 6,
+    cellHeight: 3,
     link,
 }, {
     cellX: 1,
@@ -62,12 +62,18 @@ const handleDragDrop = (e: DragEvent) => {
     dragged = undefined;
 }
 
-
+// HTMLGridElement Observer
+const gridCellResizeObs = new ResizeObserver((entries) => {
+    const target = entries[0].target as HTMLGridElement;
+    cellWidthPx.value = target.clientWidth;
+    cellHeightPx.value = target.clientHeight;
+});
 onMounted(() => {
     const gridCell = gridElements.value!.children[0].children[0] as HTMLGridElement;
-    cellWidthPx.value = gridCell.clientWidth;
-    cellHeightPx.value = gridCell.clientHeight;
+    gridCellResizeObs.observe(gridCell);
 })
+
+
 
 const handleMouseUp = () => { }
 const resized = ref(null);
@@ -84,7 +90,7 @@ const resized = ref(null);
                 <!-- GRID CELL -->
                 <template v-for="gridCell of gridCells">
                     <template v-if="gridCell.cellX === x && gridCell.cellY === y">
-                        <div class="grid-snap" ref="gridCellElements" :class="{ resizing: !!resized }"
+                        <div class="grid-cell" ref="gridCellElements" :class="{ resizing: !!resized }"
                             :draggable="editModel" @dragstart="handleDragStart" @dragend="handleDragEnd" :x="x" :y="y"
                             :style="{
                                 width: `${calcCellDvw(gridCell)}dvw`,
@@ -122,7 +128,7 @@ const resized = ref(null);
     width: 100%;
     min-height: 100dvh;
 
-    .grid-snap {
+    .grid-cell {
         position: absolute;
         height: 100%;
         width: 100%;
@@ -142,7 +148,7 @@ const resized = ref(null);
         pointer-events: none;
     }
 
-    .grid-snap {
+    .grid-cell {
         pointer-events: auto;
         resize: both;
         overflow: auto;
@@ -167,7 +173,7 @@ const resized = ref(null);
         pointer-events: auto;
     }
 
-    .grid-snap {
+    .grid-cell {
         pointer-events: none;
     }
 }

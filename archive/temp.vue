@@ -91,14 +91,14 @@ onMounted(() => {
                 :y=y>
 
                 <template v-if="x === 1 && y === 1">
-                    <div class="grid-snap" ref="gridSnaps" :class="{ resizing: !!resized }" :draggable="editModel"
+                    <div class="grid-cell" ref="gridSnaps" :class="{ resizing: !!resized }" :draggable="editModel"
                         @dragstart="handleDragStart" @dragend="handleDragEnd" :x="x" :y="y">
                         <iframe :src="link" class="iframe" />
                     </div>
                 </template>
 
                 <template v-if="x === 20 && y === 1">
-                    <div class="grid-snap" ref="gridSnaps" :class="{ resizing: !!resized }" :draggable="editModel"
+                    <div class="grid-cell" ref="gridSnaps" :class="{ resizing: !!resized }" :draggable="editModel"
                         @dragstart="handleDragStart" @dragend="handleDragEnd" :x="x" :y="y">
                         <iframe :src="link" class="iframe" />
                     </div>
@@ -129,7 +129,7 @@ onMounted(() => {
     width: 100%;
     min-height: 100dvh;
 
-    .grid-snap {
+    .grid-cell {
         position: absolute;
         height: 100%;
         width: 100%;
