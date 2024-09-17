@@ -28,14 +28,6 @@ const gridCells = ref<GridCell[]>([{
 
 
 // helper functions
-const calcCellDvw = (gridCell: GridCell) => {
-    const gridWidth = gridCell.cellWidth * cellWidthPx.value;
-    return gridWidth;
-}
-const calcCellDvh = (gridCell: GridCell) => {
-    const gridHeight = gridCell.cellHeight * cellHeightPx.value;
-    return gridHeight;
-}
 const getElementX = (element: HTMLGridElement | HTMLCellElement) => +element.getAttribute('x')!;
 const getElementY = (element: HTMLGridElement | HTMLCellElement) => +element.getAttribute('y')!;
 const getSelectedCell = (element: HTMLGridElement) => gridCells.value.find(
@@ -94,8 +86,8 @@ const resized = ref(null);
                         <div class="grid-cell" ref="gridCellElements" :class="{ resizing: !!resized }"
                             :draggable="editModel" @dragstart="handleDragStart" @dragend="handleDragEnd" :x="x" :y="y"
                             :style="{
-                                width: `${calcCellDvw(gridCell)}px`,
-                                height: `${calcCellDvh(gridCell)}px`
+                                width: `${gridCell.cellWidth * cellWidthPx}px`,
+                                height: `${gridCell.cellHeight * cellHeightPx}px`
                             }">
                             <iframe :src="gridCell.link" class="iframe" />
                         </div>
