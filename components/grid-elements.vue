@@ -97,12 +97,12 @@ onMounted(() => {
 <template>
     <div class="grid-elements" ref="gridElements" :class="{ edit: editModel }" @mouseenter="resized = null">
         <!-- GRID Y -->
-        <div v-for="y in yGrid" class="y-grid" :style="{ height: `${cellHeight}dvh` }">
+        <div v-for="y in yGrid" class="y-grid" :style="{ height: `${cellHeight}dvh` }" :key="y">
             <!-- GRID X -->
             <div v-for="x in xGrid" class="x-grid" @drop="handleDragDrop" @dragover.prevent @mouseup="handleMouseUp"
-                :x="x" :y=y>
+                :x="x" :y=y :key="x">
                 <!-- GRID CELL -->
-                <template v-for="gridCell of gridCells">
+                <template v-for="gridCell of gridCells" :key="`${gridCell.cellX}|${gridCell.cellY}`">
                     <template v-if="gridCell.cellX === x && gridCell.cellY === y">
                         <div class="grid-cell" ref="gridCellElements" :class="{ resizing: resized }"
                             :draggable="editModel" @dragstart="handleDragStart" @dragend="handleDragEnd" :x="x" :y="y"
