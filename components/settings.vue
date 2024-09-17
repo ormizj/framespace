@@ -1,8 +1,11 @@
 <template>
     <div class="settings">
-        <div class="header">Settings
+        <div class="header">
+            Settings
         </div>
-        <div class="content">content</div>
+        <div class="content">
+            content
+        </div>
         <span />
     </div>
 </template>

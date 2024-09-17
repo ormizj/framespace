@@ -34,7 +34,7 @@ const getSelectedCell = (element: HTMLGridElement | HTMLCellElement) => gridCell
     gridCell => gridCell.cellX === getElementX(element) && gridCell.cellY === getElementY(element)
 );
 
-// GridCell drag
+// GridCell Drag
 let dragged: GridCell | undefined;
 const handleDragStart = (e: DragEvent) => {
     const target = e.target as HTMLGridElement;
@@ -54,30 +54,19 @@ const handleDragDrop = (e: DragEvent) => {
     dragged = undefined;
 }
 
-// HTMLGridElement Observer
-const gridCellResizeObs = new ResizeObserver((entries) => {
-    const target = entries[0].target as HTMLGridElement;
-    const rect = target.getBoundingClientRect();
-    cellWidthPx.value = rect.width;
-    cellHeightPx.value = rect.height;
-});
-onMounted(() => {
-    const gridCell = gridElements.value!.children[0].children[0] as HTMLGridElement;
-    gridCellResizeObs.observe(gridCell);
-})
 
-watch(() => gridCellElements.value, () => {
-    gridCellElements.value!.forEach((gridCellElement) => gridSnapResizeObs.observe(gridCellElement))
-}, { deep: true });
-
-
+// GridCell Resize
 const resized = ref<HTMLCellElement | null>(null);
-const gridSnapResizeObs = new ResizeObserver((obs) => {
+const gridCellResizeObs = new ResizeObserver((obs) => {
     if (!resized.value) resized.value = obs[0].target as HTMLCellElement;
 });
 const handleMouseUp = (e: MouseEvent) => {
+    nextTick(() => {
+        resized.value = null;
+    });
+
     if (!resized.value) return;
-    const source = resized.value!;
+    const source = resized.value;
     const target = e.target as HTMLGridElement
 
     const gridCell = getSelectedCell(source);
@@ -88,11 +77,25 @@ const handleMouseUp = (e: MouseEvent) => {
         resized.value = null;
     }, 250);
 }
+watch(() => gridCellElements.value, () => {
+    gridCellElements.value!.forEach((gridCellElement) => gridCellResizeObs.observe(gridCellElement))
+}, { deep: true });
+
+// HTMLGridElement Observer
+const gridXResizeObs = new ResizeObserver((entries) => {
+    const target = entries[0].target as HTMLGridElement;
+    const rect = target.getBoundingClientRect();
+    cellWidthPx.value = rect.width;
+    cellHeightPx.value = rect.height;
+});
+onMounted(() => {
+    const gridX = gridElements.value!.children[0].children[0] as HTMLGridElement;
+    gridXResizeObs.observe(gridX);
+})
 </script>
 
 <template>
-    <div class="grid-elements" ref="gridElements" :class="{ edit: editModel }" @mouseenter="resized = null"
-        @mousedown="resized = null">
+    <div class="grid-elements" ref="gridElements" :class="{ edit: editModel }" @mouseenter="resized = null">
         <!-- GRID Y -->
         <div v-for="y in yGrid" class="y-grid" :style="{ height: `${cellHeight}dvh` }">
             <!-- GRID X -->
@@ -101,7 +104,7 @@ const handleMouseUp = (e: MouseEvent) => {
                 <!-- GRID CELL -->
                 <template v-for="gridCell of gridCells">
                     <template v-if="gridCell.cellX === x && gridCell.cellY === y">
-                        <div class="grid-cell" ref="gridCellElements" :class="{ resizing: !!resized }"
+                        <div class="grid-cell" ref="gridCellElements" :class="{ resizing: resized }"
                             :draggable="editModel" @dragstart="handleDragStart" @dragend="handleDragEnd" :x="x" :y="y"
                             :style="{
                                 width: `${gridCell.cellWidth * cellWidthPx}px`,
