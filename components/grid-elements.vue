@@ -4,107 +4,121 @@ const link = "https://www.calculatorsoup.com/calculators/math/percentage.php"
 const editModel = defineModel('edit', { default: false });
 
 const gridElements = ref<HTMLDivElement | null>(null);
-const yGrid = ref(10);
+
 const xGrid = ref(10);
-const gridHeight = ref(10);
+const yGrid = ref(10);
+const cellHeight = ref(10);
+const cellHeightPx = ref<number>(0);
+const cellWidthPx = ref<number>(0);
 
-// gridSnaps drag
-let dragged = ref<null | HTMLDivElement>(null);
+const gridCellElements = ref<null | HTMLGridElement[]>(null);
+const gridCells = ref<GridCell[]>([{
+    cellX: 1,
+    cellY: 1,
+    cellWidth: 5,
+    cellHeight: 3,
+    link,
+}, {
+    cellX: 1,
+    cellY: 7,
+    cellWidth: 1,
+    cellHeight: 1,
+    link,
+}]);
 
+
+// helper functions
+const getElementX = (element: HTMLGridElement | HTMLCellElement) => +element.getAttribute('x')!;
+const getElementY = (element: HTMLGridElement | HTMLCellElement) => +element.getAttribute('y')!;
+const getSelectedCell = (element: HTMLGridElement | HTMLCellElement) => gridCells.value.find(
+    gridCell => gridCell.cellX === getElementX(element) && gridCell.cellY === getElementY(element)
+);
+
+// GridCell Drag
+let dragged: GridCell | undefined;
 const handleDragStart = (e: DragEvent) => {
-    dragged.value = e.target as HTMLDivElement;
+    const target = e.target as HTMLGridElement;
+    dragged = getSelectedCell(target);
     setTimeout(() => {
-        dragged.value!.style.pointerEvents = 'none';
+        target.style.pointerEvents = 'none';
     });
 }
-const handleDragEnd = () => {
-    dragged.value!.style.pointerEvents = '';
-    dragged.value = null;
+const handleDragEnd = (e: DragEvent) => {
+    const target = e.target as HTMLCellElement
+    target.style.pointerEvents = '';
 }
-const handleDrop = (e: DragEvent) => {
-    const target = e.target! as HTMLElement;
-    for (const el of target.children) if (el.parentNode === dragged.value) return;
-    target.appendChild(dragged.value!);
+const handleDragDrop = (e: DragEvent) => {
+    const target = e.target as HTMLGridElement;
+    dragged!.cellX = getElementX(target);
+    dragged!.cellY = getElementY(target);
+    dragged = undefined;
 }
 
-// gridSnaps resize
-const gridSnaps = ref<null | HTMLDivElement[]>(null)
-const resized = ref<null | HTMLDivElement>(null);
-const gridSnapResizeObs = new ResizeObserver((obs) => {
-    if (!resized.value) resized.value = obs[0].target as HTMLDivElement;
+
+// GridCell Resize
+const resized = ref<HTMLCellElement | null>(null);
+const gridCellResizeObs = new ResizeObserver((obs) => {
+    if (!resized.value) resized.value = obs[0].target as HTMLCellElement;
 });
-
 const handleMouseUp = (e: MouseEvent) => {
+    nextTick(() => {
+        resized.value = null;
+    });
+
     if (!resized.value) return;
+    const source = resized.value;
+    const target = e.target as HTMLGridElement
 
-    const source = resized.value as HTMLDivElement
-    const target = e.target as HTMLDivElement
-
-    const targetRect = target.getBoundingClientRect();
-    const height = Math.abs(source.offsetTop - target.offsetTop) + targetRect.height;
-    const width = Math.abs(source.offsetLeft - target.offsetLeft) + targetRect.width;
-
-    const HeightDvh = (height / window.innerHeight) * 100;
-    const widthDvw = (width / window.innerWidth) * 100;
-
-    source.style.height = `${HeightDvh}dvh`;
-    source.style.width = `${widthDvw}dvw`;
+    const gridCell = getSelectedCell(source);
+    gridCell!.cellWidth = getElementX(target) - getElementX(source) + 1;
+    gridCell!.cellHeight = getElementY(target) - getElementY(source) + 1;
 
     setTimeout(() => {
         resized.value = null;
     }, 250);
 }
+watch(() => gridCellElements.value, () => {
+    gridCellElements.value!.forEach((gridCellElement) => gridCellResizeObs.observe(gridCellElement))
+}, { deep: true });
 
-// gridElements resize
-let prevOffset = 0;
-const gridElementsResizeObs = new ResizeObserver((entries) => {
-    const source = entries[0].target as HTMLDivElement;
-    const newOffset = window.innerWidth - source.clientWidth;
-    const offsetBy = prevOffset;
-    prevOffset = newOffset;
-
-    gridSnaps.value!.forEach((gridSnap) => {
-        const target = gridSnap;
-
-        const widthDiff = (target.clientWidth / (source.clientWidth + offsetBy)) * 100;
-        const currentWidth = parseFloat(target.style.width);
-        const widthToSub = widthDiff - currentWidth;
-        const widthDvw = currentWidth - widthToSub;
-
-        target.style.width = `${widthDvw}dvw`
-    });
+// HTMLGridElement Observer
+const gridXResizeObs = new ResizeObserver((entries) => {
+    const target = entries[0].target as HTMLGridElement;
+    const rect = target.getBoundingClientRect();
+    cellWidthPx.value = rect.width;
+    cellHeightPx.value = rect.height;
 });
-
 onMounted(() => {
-    gridElementsResizeObs.observe(gridElements.value!);
-    gridSnaps.value!.forEach((gridSnap) => {
-        gridSnapResizeObs.observe(gridSnap);
-    })
-});
+    const gridX = gridElements.value!.children[0].children[0] as HTMLGridElement;
+    gridXResizeObs.observe(gridX);
+})
 </script>
 
 <template>
-    <div class="grid-elements" ref="gridElements" :class="{ edit: editModel }" @mouseenter="resized = null"
-        @mousedown="resized = null">
-        <div v-for="i in yGrid" class="y-grid" :style="`height: ${gridHeight}dvh;`">
-            <div v-for="j in xGrid" class="x-grid" @drop="handleDrop" @dragover.prevent @mouseup="handleMouseUp">
-
-                <template v-if="i === 1 && j === 1">
-                    <div class="grid-snap" ref="gridSnaps" :class="{ resizing: !!resized }" :draggable="editModel"
-                        @dragstart="handleDragStart" @dragend="handleDragEnd">
-                        <iframe :src="link" class="iframe" />
-                    </div>
+    <div class="grid-elements" ref="gridElements" :class="{ edit: editModel }" @mouseenter="resized = null">
+        <!-- GRID Y -->
+        <div v-for="y in yGrid" class="y-grid" :style="{ height: `${cellHeight}dvh` }">
+            <!-- GRID X -->
+            <div v-for="x in xGrid" class="x-grid" @drop="handleDragDrop" @dragover.prevent @mouseup="handleMouseUp"
+                :x="x" :y=y>
+                <!-- GRID CELL -->
+                <template v-for="gridCell of gridCells">
+                    <template v-if="gridCell.cellX === x && gridCell.cellY === y">
+                        <div class="grid-cell" ref="gridCellElements" :class="{ resizing: resized }"
+                            :draggable="editModel" @dragstart="handleDragStart" @dragend="handleDragEnd" :x="x" :y="y"
+                            :style="{
+                                width: `${gridCell.cellWidth * cellWidthPx}px`,
+                                height: `${gridCell.cellHeight * cellHeightPx}px`
+                            }">
+                            <iframe :src="gridCell.link" class="iframe" />
+                        </div>
+                    </template>
                 </template>
-
-                <template v-if="i === 20 && j === 1">
-                    <div class="grid-snap" ref="gridSnaps" :class="{ resizing: !!resized }" :draggable="editModel"
-                        @dragstart="handleDragStart" @dragend="handleDragEnd">
-                        <iframe :src="link" class="iframe" />
-                    </div>
-                </template>
-
+                <!-- GRID CELL -->
             </div>
+            <!-- GRID X -->
         </div>
+        <!-- GRID Y -->
     </div>
 </template>
 
@@ -128,7 +142,7 @@ onMounted(() => {
     width: 100%;
     min-height: 100dvh;
 
-    .grid-snap {
+    .grid-cell {
         position: absolute;
         height: 100%;
         width: 100%;
@@ -148,7 +162,7 @@ onMounted(() => {
         pointer-events: none;
     }
 
-    .grid-snap {
+    .grid-cell {
         pointer-events: auto;
         resize: both;
         overflow: auto;
@@ -173,7 +187,7 @@ onMounted(() => {
         pointer-events: auto;
     }
 
-    .grid-snap {
+    .grid-cell {
         pointer-events: none;
     }
 }
