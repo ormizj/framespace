@@ -36,7 +36,9 @@ const getSelectedCell = (element: HTMLGridElement | HTMLCellElement) => gridCell
 
 // GridCell Drag
 let dragged: GridCell | undefined;
+const stopResizeMouseUp = ref(false);
 const handleDragStart = (e: DragEvent) => {
+    stopResizeMouseUp.value = true;
     const target = e.target as HTMLGridElement;
     dragged = getSelectedCell(target);
     setTimeout(() => {
@@ -58,6 +60,10 @@ const handleDragDrop = (e: DragEvent) => {
 // GridCell Resize
 const resized = ref<HTMLCellElement | null>(null);
 const gridCellResizeObs = new ResizeObserver((obs) => {
+    if (stopResizeMouseUp.value) {
+        stopResizeMouseUp.value = false;
+        return;
+    }
     if (!resized.value) resized.value = obs[0].target as HTMLCellElement;
 });
 const handleMouseUp = (e: MouseEvent) => {
