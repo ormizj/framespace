@@ -15,7 +15,7 @@ const gridCellElements = ref<null | HTMLGridElement[]>(null);
 const gridCells = ref<GridCell[]>([{
     cellX: 1,
     cellY: 1,
-    cellWidth: 6,
+    cellWidth: 5,
     cellHeight: 3,
     link,
 }, {
@@ -30,11 +30,11 @@ const gridCells = ref<GridCell[]>([{
 // helper functions
 const calcCellDvw = (gridCell: GridCell) => {
     const gridWidth = gridCell.cellWidth * cellWidthPx.value;
-    return gridWidth / window.innerWidth * 100;
+    return gridWidth;
 }
 const calcCellDvh = (gridCell: GridCell) => {
     const gridHeight = gridCell.cellHeight * cellHeightPx.value;
-    return gridHeight / window.innerHeight * 100;
+    return gridHeight;
 }
 const getElementX = (element: HTMLGridElement | HTMLCellElement) => +element.getAttribute('x')!;
 const getElementY = (element: HTMLGridElement | HTMLCellElement) => +element.getAttribute('y')!;
@@ -65,8 +65,9 @@ const handleDragDrop = (e: DragEvent) => {
 // HTMLGridElement Observer
 const gridCellResizeObs = new ResizeObserver((entries) => {
     const target = entries[0].target as HTMLGridElement;
-    cellWidthPx.value = target.clientWidth;
-    cellHeightPx.value = target.clientHeight;
+    const rect = target.getBoundingClientRect();
+    cellWidthPx.value = rect.width;
+    cellHeightPx.value = rect.height;
 });
 onMounted(() => {
     const gridCell = gridElements.value!.children[0].children[0] as HTMLGridElement;
@@ -93,8 +94,8 @@ const resized = ref(null);
                         <div class="grid-cell" ref="gridCellElements" :class="{ resizing: !!resized }"
                             :draggable="editModel" @dragstart="handleDragStart" @dragend="handleDragEnd" :x="x" :y="y"
                             :style="{
-                                width: `${calcCellDvw(gridCell)}dvw`,
-                                height: `${calcCellDvh(gridCell)}dvh`
+                                width: `${calcCellDvw(gridCell)}px`,
+                                height: `${calcCellDvh(gridCell)}px`
                             }">
                             <iframe :src="gridCell.link" class="iframe" />
                         </div>
