@@ -4,3 +4,5 @@ interface HTMLGridElement extends HTMLDivElement {
 		x: string;
 	};
 }
+
+interface HTMLCellElement extends HTMLDivElement {}

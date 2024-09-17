@@ -1,7 +1,7 @@
 interface GridCell {
-	strX: number;
-	strY: number;
-	endX: number;
-	endY: number;
+	cellX: number;
+	cellY: number;
+	cellWidth: number;
+	cellHeight: number;
 	link: string;
 }

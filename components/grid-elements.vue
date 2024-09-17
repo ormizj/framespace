@@ -3,53 +3,71 @@
 const link = "https://www.calculatorsoup.com/calculators/math/percentage.php"
 const editModel = defineModel('edit', { default: false });
 
-const gridElements = ref(null);
+const gridElements = ref<HTMLDivElement | null>(null);
 
 const xGrid = ref(10);
 const yGrid = ref(10);
 const cellHeight = ref(10);
+const cellHeightPx = ref<number>(0);
+const cellWidthPx = ref<number>(0);
 
 const gridCellElements = ref<null | HTMLGridElement[]>(null);
 const gridCells = ref<GridCell[]>([{
-    strX: 1,
-    strY: 1,
-    endX: 1,
-    endY: 1,
+    cellX: 1,
+    cellY: 1,
+    cellWidth: 10,
+    cellHeight: 10,
     link,
 }, {
-    strX: 1,
-    strY: 20,
-    endX: 1,
-    endY: 1,
-    link
+    cellX: 1,
+    cellY: 20,
+    cellWidth: 1,
+    cellHeight: 1,
+    link,
 }]);
 
 
-const getElementX = (element: HTMLGridElement) => +element.getAttribute('x')!;
-const getElementY = (element: HTMLGridElement) => +element.getAttribute('y')!;
+// helper functions
+const calcCellDvw = (gridCell: GridCell) => {
+    const gridWidth = gridCell.cellWidth * cellWidthPx.value;
+    return gridWidth / window.innerWidth * 100;
+}
+const calcCellDvh = (gridCell: GridCell) => {
+    const gridHeight = gridCell.cellHeight * cellHeightPx.value;
+    return gridHeight / window.innerHeight * 100;
+}
+const getElementX = (element: HTMLGridElement | HTMLCellElement) => +element.getAttribute('x')!;
+const getElementY = (element: HTMLGridElement | HTMLCellElement) => +element.getAttribute('y')!;
 const getSelectedCell = (element: HTMLGridElement) => gridCells.value.find(
-    gridCell => gridCell.strX === getElementX(element) && gridCell.strY === getElementY(element)
+    gridCell => gridCell.cellX === getElementX(element) && gridCell.cellY === getElementY(element)
 );
 
-
-// gridSnaps drag
+// GridCell drag
 let dragged: GridCell | undefined;
 const handleDragStart = (e: DragEvent) => {
     const target = e.target as HTMLGridElement;
     dragged = getSelectedCell(target);
-
     setTimeout(() => {
         target.style.pointerEvents = 'none';
     });
 }
+const handleDragEnd = (e: DragEvent) => {
+    const target = e.target as HTMLCellElement
+    target.style.pointerEvents = '';
+}
 const handleDragDrop = (e: DragEvent) => {
     const target = e.target as HTMLGridElement;
-    target.style.pointerEvents = '';
-    dragged!.strX = getElementX(target);
-    dragged!.strY = getElementY(target);
+    dragged!.cellX = getElementX(target);
+    dragged!.cellY = getElementY(target);
     dragged = undefined;
 }
 
+
+onMounted(() => {
+    const gridCell = gridElements.value!.children[0].children[0] as HTMLGridElement;
+    cellWidthPx.value = gridCell.clientWidth;
+    cellHeightPx.value = gridCell.clientHeight;
+})
 
 const handleMouseUp = () => { }
 const resized = ref(null);
@@ -59,15 +77,19 @@ const resized = ref(null);
     <div class="grid-elements" ref="gridElements" :class="{ edit: editModel }" @mouseenter="resized = null"
         @mousedown="resized = null">
         <!-- GRID Y -->
-        <div v-for="y in yGrid" class="y-grid" :style="`height: ${cellHeight}dvh;`">
+        <div v-for="y in yGrid" class="y-grid" :style="{ height: `${cellHeight}dvh` }">
             <!-- GRID X -->
             <div v-for="x in xGrid" class="x-grid" @drop="handleDragDrop" @dragover.prevent @mouseup="handleMouseUp"
                 :x="x" :y=y>
                 <!-- GRID CELL -->
                 <template v-for="gridCell of gridCells">
-                    <template v-if="gridCell.strX === x && gridCell.strY === y">
+                    <template v-if="gridCell.cellX === x && gridCell.cellY === y">
                         <div class="grid-snap" ref="gridCellElements" :class="{ resizing: !!resized }"
-                            :draggable="editModel" @dragstart="handleDragStart" :x="x" :y="y">
+                            :draggable="editModel" @dragstart="handleDragStart" @dragend="handleDragEnd" :x="x" :y="y"
+                            :style="{
+                                width: `${calcCellDvw(gridCell)}dvw`,
+                                height: `${calcCellDvh(gridCell)}dvh`
+                            }">
                             <iframe :src="gridCell.link" class="iframe" />
                         </div>
                     </template>
