@@ -20,7 +20,7 @@ const gridCells = ref<GridCell[]>([{
     link,
 }, {
     cellX: 1,
-    cellY: 20,
+    cellY: 7,
     cellWidth: 1,
     cellHeight: 1,
     link,
@@ -30,7 +30,7 @@ const gridCells = ref<GridCell[]>([{
 // helper functions
 const getElementX = (element: HTMLGridElement | HTMLCellElement) => +element.getAttribute('x')!;
 const getElementY = (element: HTMLGridElement | HTMLCellElement) => +element.getAttribute('y')!;
-const getSelectedCell = (element: HTMLGridElement) => gridCells.value.find(
+const getSelectedCell = (element: HTMLGridElement | HTMLCellElement) => gridCells.value.find(
     gridCell => gridCell.cellX === getElementX(element) && gridCell.cellY === getElementY(element)
 );
 
@@ -66,10 +66,28 @@ onMounted(() => {
     gridCellResizeObs.observe(gridCell);
 })
 
+watch(() => gridCellElements.value, () => {
+    gridCellElements.value!.forEach((gridCellElement) => gridSnapResizeObs.observe(gridCellElement))
+}, { deep: true });
 
 
-const handleMouseUp = () => { }
-const resized = ref(null);
+const resized = ref<HTMLCellElement | null>(null);
+const gridSnapResizeObs = new ResizeObserver((obs) => {
+    if (!resized.value) resized.value = obs[0].target as HTMLCellElement;
+});
+const handleMouseUp = (e: MouseEvent) => {
+    if (!resized.value) return;
+    const source = resized.value!;
+    const target = e.target as HTMLGridElement
+
+    const gridCell = getSelectedCell(source);
+    gridCell!.cellWidth = getElementX(target) - getElementX(source) + 1;
+    gridCell!.cellHeight = getElementY(target) - getElementY(source) + 1;
+
+    setTimeout(() => {
+        resized.value = null;
+    }, 250);
+}
 </script>
 
 <template>
