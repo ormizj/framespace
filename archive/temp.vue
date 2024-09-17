@@ -3,22 +3,10 @@
 const link = "https://www.calculatorsoup.com/calculators/math/percentage.php"
 const editModel = defineModel('edit', { default: false });
 
-const xGrid = ref(10);
+const gridElements = ref<HTMLDivElement | null>(null);
 const yGrid = ref(10);
-const cellHeight = ref(10);
-const gridCells: GridCell[] = [{
-    strX: 1,
-    strY: 1,
-    endX: 1,
-    endY: 1,
-    link
-}, {
-    strX: 1,
-    strY: 20,
-    endX: 1,
-    endY: 1,
-    link
-}];
+const xGrid = ref(10);
+const gridHeight = ref(10);
 
 // gridSnaps drag
 let dragged = ref<null | HTMLDivElement>(null);
@@ -98,17 +86,22 @@ onMounted(() => {
 <template>
     <div class="grid-elements" ref="gridElements" :class="{ edit: editModel }" @mouseenter="resized = null"
         @mousedown="resized = null">
-        <div v-for="y in yGrid" class="y-grid" :style="`height: ${cellHeight}dvh;`">
+        <div v-for="y in yGrid" class="y-grid" :style="`height: ${gridHeight}dvh;`">
             <div v-for="x in xGrid" class="x-grid" @drop="handleDrop" @dragover.prevent @mouseup="handleMouseUp" :x="x"
                 :y=y>
 
-                <template v-for="gridCell of gridCells">
-                    <template v-if="gridCell.strX === x && gridCell.strY === y">
-                        <div class="grid-snap" ref="gridSnaps" :class="{ resizing: !!resized }" :draggable="editModel"
-                            @dragstart="handleDragStart" @dragend="handleDragEnd" :x="x" :y="y">
-                            <iframe :src="gridCell.link" class="iframe" />
-                        </div>
-                    </template>
+                <template v-if="x === 1 && y === 1">
+                    <div class="grid-snap" ref="gridSnaps" :class="{ resizing: !!resized }" :draggable="editModel"
+                        @dragstart="handleDragStart" @dragend="handleDragEnd" :x="x" :y="y">
+                        <iframe :src="link" class="iframe" />
+                    </div>
+                </template>
+
+                <template v-if="x === 20 && y === 1">
+                    <div class="grid-snap" ref="gridSnaps" :class="{ resizing: !!resized }" :draggable="editModel"
+                        @dragstart="handleDragStart" @dragend="handleDragEnd" :x="x" :y="y">
+                        <iframe :src="link" class="iframe" />
+                    </div>
                 </template>
 
             </div>
