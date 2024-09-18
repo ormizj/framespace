@@ -33,9 +33,6 @@ const getElementY = (element: HTMLGridElement | HTMLCellElement) => +element.get
 const getSelectedCell = (element: HTMLGridElement | HTMLCellElement) => gridCells.value.find(
     gridCell => gridCell.cellX === getElementX(element) && gridCell.cellY === getElementY(element)
 );
-
-
-// GridCell Overlap
 const getGridCellCoordinates = (gridCell: GridCell): GridCellCoordinates => ({
     strX: gridCell.cellX,
     endX: gridCell.cellX + gridCell.cellWidth - 1,
@@ -55,9 +52,22 @@ const isTargetZoneOccupied = (gridCell: GridCell): boolean => {
     })
     return !!occupyingGridCell;
 }
-const preventOverlap = (gridCell: GridCell, sourceX: number, sourceY: number): boolean => {
+const isGridCellInBounds = (gridCell: GridCell): boolean => {
+    const coordinates = getGridCellCoordinates(gridCell);
+    return xGrid.value < coordinates.endX || yGrid.value < coordinates.endY;
+}
+
+// GridCell Rules
+const enforceNoOverlap = (gridCell: GridCell, sourceX: number, sourceY: number): boolean => {
     const willBeOverlap = isTargetZoneOccupied(gridCell);
     if (!willBeOverlap) return false;
+    gridCell.cellX = sourceX;
+    gridCell.cellY = sourceY;
+    return true;
+}
+const enforceBounds = (gridCell: GridCell, sourceX: number, sourceY: number): boolean => {
+    const willBeInBounds = isGridCellInBounds(gridCell);
+    if (!willBeInBounds) return false;
     gridCell.cellX = sourceX;
     gridCell.cellY = sourceY;
     return true;
@@ -85,7 +95,8 @@ const handleDragDrop = (e: DragEvent) => {
     const sourceY = dragged!.cellY;
     dragged!.cellX = getElementX(target);
     dragged!.cellY = getElementY(target);
-    preventOverlap(dragged!, sourceX, sourceY);
+    enforceNoOverlap(dragged!, sourceX, sourceY);
+    enforceBounds(dragged!, sourceX, sourceY);
     dragged = undefined;
 }
 
