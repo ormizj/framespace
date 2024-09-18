@@ -58,7 +58,6 @@ const isGridCellInBounds = (gridCell: GridCell): boolean => {
     const coordinates = getGridCellCoordinates(gridCell);
     return props.xGrid >= coordinates.endX && props.yGrid >= coordinates.endY;
 }
-
 const gridCellsAnimationTimeouts = new Map();
 const addGridCellAnimation = (gridCell: GridCell) => {
     const className = 'error-animation';
@@ -80,25 +79,32 @@ const clearAllGridCellAnimations = () => {
 
 
 // GridCell Enforcements
-const enforceNoOverlapAxis = (gridCellTarget: GridCell, gridCellSourceCoordinates: GridCellCoordinates): boolean => {
-    const occupyingGridCell = isTargetZoneOccupied(gridCellTarget);
+const enforceNoOverlapAxis = (gridCellSource: GridCell, targetCoordinates: GridCellCoordinates): boolean => {
+    const occupyingGridCell = isTargetZoneOccupied(gridCellSource);
     if (!occupyingGridCell) return false;
     addGridCellAnimation(occupyingGridCell);
-    setGridCellAxisFromCoordinates(gridCellTarget, gridCellSourceCoordinates);
+    setGridCellAxisFromCoordinates(gridCellSource, targetCoordinates);
     return true;
 }
-const enforceBoundsAxis = (gridCellTarget: GridCell, gridCellSourceCoordinates: GridCellCoordinates): boolean => {
-    const willBeInBounds = isGridCellInBounds(gridCellTarget);
+const enforceBoundsAxis = (gridCellSource: GridCell, targetCoordinates: GridCellCoordinates): boolean => {
+    const willBeInBounds = isGridCellInBounds(gridCellSource);
     if (willBeInBounds) return false;
     addGridElementsAnimation();
-    setGridCellAxisFromCoordinates(gridCellTarget, gridCellSourceCoordinates);
+    setGridCellAxisFromCoordinates(gridCellSource, targetCoordinates);
     return true;
 }
-const enforceNoOverlapSize = (gridCellTarget: GridCell, gridCellSourceCoordinates: GridCellCoordinates): boolean => {
-    const occupyingGridCell = isTargetZoneOccupied(gridCellTarget);
+const enforceNoOverlapSize = (gridCellSource: GridCell, sourceCoordinates: GridCellCoordinates): boolean => {
+    const occupyingGridCell = isTargetZoneOccupied(gridCellSource);
     if (!occupyingGridCell) return false;
     addGridCellAnimation(occupyingGridCell);
-    setGridCellSizeFromCoordinates(gridCellTarget, gridCellSourceCoordinates);
+    setGridCellSizeFromCoordinates(gridCellSource, sourceCoordinates);
+    return true;
+}
+const enforceNoNegativeSize = (gridCellSource: GridCell, sourceWidth: number, sourceHeight: number): boolean => {
+    if (gridCellSource.cellWidth > 0 && gridCellSource.cellHeight > 0) return false;
+    addGridCellAnimation(gridCellSource);
+    gridCellSource.cellWidth = sourceWidth;
+    gridCellSource.cellHeight = sourceHeight;
     return true;
 }
 
@@ -135,7 +141,7 @@ const handleDragDrop = (e: DragEvent) => {
 }
 const handleDragOn = (e: DragEvent) => {
     const target = e.target as HTMLGridElement;
-    addFutureGridCell(target, dragged!);
+    addFutureGridCellDrag(target, dragged!);
 }
 
 
@@ -148,25 +154,37 @@ const gridCellResizeObs = new ResizeObserver((obs) => {
     }
     if (!resized.value) resized.value = obs[0].target as HTMLCellElement;
 });
+const handleMouseEnter = (e: MouseEvent) => {
+    if (!resized.value) return;
+    const target = e.target as HTMLGridElement;
+    addFutureGridCellResize(target, getGridCellFromElement(resized.value)!);
+}
 const handleMouseUp = (e: MouseEvent) => {
     nextTick(() => {
         resized.value = null;
     });
     if (!resized.value) return;
 
-    const source = resized.value;
-    const target = e.target as HTMLGridElement
-    const gridCell = getGridCellFromElement(source)!;
-    const sourceCoordinates = getGridCellCoordinates(gridCell!);
-    gridCell!.cellWidth = getElementX(target) - getElementX(source) + 1;
-    gridCell!.cellHeight = getElementY(target) - getElementY(source) + 1;
+    const source = getGridCellFromElement(resized.value)!;
+    const target = e.target as HTMLGridElement;
+    const sourceCoordinates = getGridCellCoordinates(source);
+
+    const sourceWidth = source.cellWidth;
+    const sourceHeight = source.cellHeight;
+    source.cellWidth = getElementX(target) - source.cellX + 1;
+    source.cellHeight = getElementY(target) - source.cellY + 1;
 
     // Enforcements
     (
-        enforceNoOverlapSize(gridCell, sourceCoordinates)
+        enforceNoOverlapSize(source, sourceCoordinates),
+        enforceNoNegativeSize(source, sourceWidth, sourceHeight)
     );
 
+    const clearFutureGridCellsInterval = setInterval(() => {
+        clearFutureGridCells();
+    }, 1)
     setTimeout(() => {
+        clearInterval(clearFutureGridCellsInterval)
         resized.value = null;
     }, 250);
 }
@@ -205,10 +223,13 @@ const clearGridElementsAnimation = () => {
     const className = 'error-animation-inset';
     gridElements.value!.classList.remove(className);
 }
+const getGridXFromXY = (x: number, y: number) => {
+    return gridElements.value!.children[y - 1].children[x - 1] as HTMLGridElement
+}
 
 let previousTargetX: number;
 let previousTargetY: number;
-const addFutureGridCell = (target: HTMLGridElement, gridCell: GridCell) => {
+const addFutureGridCellDrag = (target: HTMLGridElement, gridCell: GridCell) => {
     const targetX = getElementX(target);
     const targetY = getElementY(target);
     if (previousTargetX === targetX && previousTargetY === targetY) return;
@@ -231,6 +252,24 @@ const addFutureGridCell = (target: HTMLGridElement, gridCell: GridCell) => {
     gridCell.cellX = sourceX;
     gridCell.cellY = sourceY;
 }
+const addFutureGridCellResize = (target: HTMLGridElement, gridCell: GridCell) => {
+    const sourceWidth = gridCell.cellWidth;
+    const sourceHeight = gridCell.cellHeight;
+
+    gridCell.cellWidth = getElementX(target) - gridCell.cellX + 1;
+    gridCell.cellHeight = getElementY(target) - gridCell.cellY + 1;
+
+    const futureGridCellElement = document.createElement('div');
+    futureGridCellElement.style.width = `${calcGridCellWidthPx(gridCell)}px`;
+    futureGridCellElement.style.height = `${calcGridCellHeightPx(gridCell)}px`;
+    futureGridCellElement.classList.add('future-grid-cell');
+    if (!isGridCellInBounds(gridCell) || isTargetZoneOccupied(gridCell)) futureGridCellElement.classList.add('error');
+    clearFutureGridCells();
+    getGridXFromXY(gridCell.cellX, gridCell.cellY).appendChild(futureGridCellElement);
+
+    gridCell.cellWidth = sourceWidth;
+    gridCell.cellHeight = sourceHeight;
+}
 const clearFutureGridCells = () => document.querySelectorAll('.future-grid-cell').forEach((element) => element.remove());
 const calcGridCellWidthPx = (gridCell: GridCell) => gridCell.cellWidth * cellWidthPx.value;
 const calcGridCellHeightPx = (gridCell: GridCell) => gridCell.cellHeight * cellHeightPx.value;
@@ -242,7 +281,7 @@ const calcGridCellHeightPx = (gridCell: GridCell) => gridCell.cellHeight * cellH
         <div v-for="y in yGrid" class="y-grid" :style="{ height: `${cellHeight}dvh` }" :key="y">
             <!-- GRID X -->
             <div v-for="x in xGrid" class="x-grid" @drop="handleDragDrop" @mouseup="handleMouseUp"
-                @dragover.prevent="handleDragOn" :x="x" :y=y :key="x">
+                @mouseenter="handleMouseEnter" @dragover.prevent="handleDragOn" :x="x" :y=y :key="x">
                 <!-- GRID CELL -->
                 <template v-for="gridCell of modelGridCells" :key="`${gridCell.cellX}|${gridCell.cellY}`">
                     <template v-if="gridCell.cellX === x && gridCell.cellY === y">
