@@ -30,7 +30,7 @@ const gridCells = ref<GridCell[]>([{
 // GridCell Helper Functions
 const getElementX = (element: HTMLGridElement | HTMLCellElement) => +element.getAttribute('x')!;
 const getElementY = (element: HTMLGridElement | HTMLCellElement) => +element.getAttribute('y')!;
-const getSelectedCell = (element: HTMLGridElement | HTMLCellElement) => gridCells.value.find(
+const getGridCellFromElement = (element: HTMLGridElement | HTMLCellElement) => gridCells.value.find(
     gridCell => gridCell.cellX === getElementX(element) && gridCell.cellY === getElementY(element)
 );
 const getGridCellCoordinates = (gridCell: GridCell): GridCellCoordinates => ({
@@ -47,7 +47,7 @@ const setGridCellSizeFromCoordinates = (gridCell: GridCell, coordinates: GridCel
     gridCell.cellWidth = gridCell.cellX + coordinates.endX - 1;
     gridCell.cellHeight = gridCell.cellY + coordinates.endY - 1;
 }
-const isTargetZoneOccupied = (gridCell: GridCell): boolean => {
+const isTargetZoneOccupied = (gridCell: GridCell): GridCell | undefined => {
     const coordinates = getGridCellCoordinates(gridCell);
     const occupyingGridCell = gridCells.value.find((otherGridCell) => {
         const otherCoordinates = getGridCellCoordinates(otherGridCell);
@@ -58,17 +58,19 @@ const isTargetZoneOccupied = (gridCell: GridCell): boolean => {
             coordinates.endY >= otherCoordinates.strY
         ) && gridCell !== otherGridCell;
     })
-    return !!occupyingGridCell;
+    return occupyingGridCell;
 }
 const isGridCellInBounds = (gridCell: GridCell): boolean => {
     const coordinates = getGridCellCoordinates(gridCell);
     return xGrid.value < coordinates.endX || yGrid.value < coordinates.endY;
 }
 
+
 // GridCell Enforcements
 const enforceNoOverlapAxis = (gridCellTarget: GridCell, gridCellSourceCoordinates: GridCellCoordinates): boolean => {
-    const willBeOverlap = isTargetZoneOccupied(gridCellTarget);
-    if (!willBeOverlap) return false;
+    const occupyingGridCell = isTargetZoneOccupied(gridCellTarget);
+    if (!occupyingGridCell) return false;
+    animateGridCellError(getElementFromGridCell(occupyingGridCell)!)
     setGridCellAxisFromCoordinates(gridCellTarget, gridCellSourceCoordinates);
     return true;
 }
@@ -79,8 +81,9 @@ const enforceBoundsAxis = (gridCellTarget: GridCell, gridCellSourceCoordinates: 
     return true;
 }
 const enforceNoOverlapSize = (gridCellTarget: GridCell, gridCellSourceCoordinates: GridCellCoordinates): boolean => {
-    const willBeOverlap = isTargetZoneOccupied(gridCellTarget);
-    if (!willBeOverlap) return false;
+    const occupyingGridCell = isTargetZoneOccupied(gridCellTarget);
+    if (!occupyingGridCell) return false;
+    animateGridCellError(getElementFromGridCell(occupyingGridCell)!)
     setGridCellSizeFromCoordinates(gridCellTarget, gridCellSourceCoordinates);
     return true;
 }
@@ -92,7 +95,7 @@ const stopResizeMouseUp = ref(false);
 const handleDragStart = (e: DragEvent) => {
     stopResizeMouseUp.value = true;
     const target = e.target as HTMLGridElement;
-    dragged = getSelectedCell(target);
+    dragged = getGridCellFromElement(target);
     setTimeout(() => {
         target.style.pointerEvents = 'none';
     });
@@ -112,6 +115,7 @@ const handleDragDrop = (e: DragEvent) => {
         enforceNoOverlapAxis(dragged!, sourceCoordinates) ||
         enforceBoundsAxis(dragged!, sourceCoordinates)
     );
+
 
     dragged = undefined;
 }
@@ -134,7 +138,7 @@ const handleMouseUp = (e: MouseEvent) => {
 
     const source = resized.value;
     const target = e.target as HTMLGridElement
-    const gridCell = getSelectedCell(source)!;
+    const gridCell = getGridCellFromElement(source)!;
     const sourceCoordinates = getGridCellCoordinates(gridCell!);
     gridCell!.cellWidth = getElementX(target) - getElementX(source) + 1;
     gridCell!.cellHeight = getElementY(target) - getElementY(source) + 1;
@@ -153,6 +157,23 @@ watch(() => gridCellElements.value, () => {
 }, { deep: true });
 
 
+// HTMLGridElement Helper Functions
+const getElementFromGridCell = (gridCell: GridCell): HTMLGridElement | undefined => {
+    const element = gridCellElements!.value!.find(
+        element => gridCell.cellX === getElementX(element) && gridCell.cellY === getElementY(element)
+    );
+    console.log(element);
+    return element;
+}
+
+const animateGridCellError = (htmlGridElement: HTMLGridElement) => {
+    htmlGridElement.classList.remove('error-animation');
+    setTimeout(() => {
+        htmlGridElement.classList.add('error-animation');
+    })
+}
+
+
 // HTMLGridElement Observer
 const gridXResizeObs = new ResizeObserver((entries) => {
     const target = entries[0].target as HTMLGridElement;
@@ -164,6 +185,7 @@ onMounted(() => {
     const gridX = gridElements.value!.children[0].children[0] as HTMLGridElement;
     gridXResizeObs.observe(gridX);
 })
+
 </script>
 
 <template>
@@ -203,10 +225,10 @@ onMounted(() => {
 .x-grid {
     height: 100%;
     width: 100%;
-    outline: 1px solid var(--secondary-color);
+    outline: 1px solid var(--secondary);
 
     &:hover {
-        background-color: color-mix(in srgb, var(--secondary-color), transparent 50%);
+        background-color: color-mix(in srgb, var(--secondary), transparent 50%);
     }
 }
 
@@ -217,7 +239,6 @@ onMounted(() => {
     .grid-cell {
         position: absolute;
         max-width: 100%;
-        color: rgb(255, 25, 25);
     }
 
     .iframe {
@@ -247,7 +268,7 @@ onMounted(() => {
         }
 
         &::-webkit-scrollbar-corner {
-            outline: 1px dashed var(--secondary-color);
+            outline: 1px dashed var(--secondary);
         }
     }
 }
@@ -270,12 +291,11 @@ onMounted(() => {
     }
 
     to {
-        box-shadow: 0 0 30px var(--error-color);
-        ;
+        box-shadow: 0 0 5rem var(--error);
     }
 }
 
-.animated {
-    animation: subtle-glow var(--long-animation-duration) infinite alternate;
+.error-animation {
+    animation: subtle-glow var(--animation-long-duration) calc(var(--animation-repeat-count) * 2) alternate;
 }
 </style>

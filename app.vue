@@ -19,15 +19,18 @@
 
 <style>
 body {
-  --background-color-values: 25, 25, 25;
-  --background-color: rgb(var(--background-color-values));
-  --secondary-color: rgb(230, 230, 230);
-  --error-color: rgb(230, 25, 25);
-  --short-animation-duration: 0.25s;
-  --long-animation-duration: 1s;
+  /* colors */
+  --background-values: 25, 25, 25;
+  --background: rgb(var(--background-values));
+  --secondary: rgb(230, 230, 230);
+  --error: rgb(230, 25, 25);
+  /* animation */
+  --animation-short-duration: 0.25s;
+  --animation-long-duration: 1s;
+  --animation-repeat-count: 3;
 
-  background-color: var(--background-color);
-  color: var(--secondary-color);
+  background-color: var(--background);
+  color: var(--secondary);
   margin: 0;
 
   * {

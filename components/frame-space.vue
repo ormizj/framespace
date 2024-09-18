@@ -55,7 +55,7 @@ watch(isOpen, (newValue) => {
   height: 100dvh;
   width: 100dvw;
   position: fixed;
-  transition: top var(--short-animation-duration) ease;
+  transition: top var(--animation-short-duration) ease;
   overflow-y: scroll;
   overflow-x: hidden;
 
@@ -82,13 +82,13 @@ watch(isOpen, (newValue) => {
       display: flex;
       justify-content: center;
       height: var(--tab-height);
-      background-color: rgba(var(--background-color-values), 0.5);
+      background-color: rgba(var(--background-values), 0.5);
       width: 100%;
     }
 
     .content {
       min-height: calc(100dvh - var(--tab-height));
-      background-color: var(--background-color);
+      background-color: var(--background);
     }
   }
 }
