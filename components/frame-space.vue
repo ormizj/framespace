@@ -48,7 +48,6 @@ watch(isOpen, (newValue) => {
 })
 </script>
 
-
 <template>
   <div class="frame-space-container" ref="frameSpaceContainer" :class="[
     isOpen ? 'open' : 'close',
@@ -71,8 +70,8 @@ watch(isOpen, (newValue) => {
         </button>
       </div>
       <div class="content" ref="content">
-        <!-- actual content will only be relevant to the client-side -->
         <ClientOnly>
+          <!-- component doesn't support SSR -->
           <GridElements v-model="gridCells" v-model:edit="editMode" :x-grid="10" :y-grid="10" :cell-height="10" />
         </ClientOnly>
       </div>

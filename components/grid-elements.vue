@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const modelGridCells = defineModel<GridCell[]>({ required: true });
 const modelEdit = defineModel('edit', { default: false });
+
 const props = defineProps<{
     xGrid: number;
     yGrid: number;
