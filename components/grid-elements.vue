@@ -64,8 +64,11 @@ const addGridCellAnimation = (gridCell: GridCell, className: string) => {
 }
 const clearAllGridCellAnimations = () => {
     modelGridCells.value.forEach((gridCell) => {
-        gridCell.classes = new Set();
+        removeGridCellAnimations(gridCell);
     });
+}
+const removeGridCellAnimations = (gridCell: GridCell) => {
+    gridCell.classes = new Set();
 }
 
 
@@ -115,10 +118,13 @@ const handleDragDrop = (e: DragEvent) => {
     dragged!.cellY = getElementY(target);
 
     // Enforcements
-    (
-        enforceNoOverlapAxis(dragged!, sourceCoordinates) ||
-        enforceBoundsAxis(dragged!, sourceCoordinates)
-    );
+    if (
+        !(
+            enforceNoOverlapAxis(dragged!, sourceCoordinates) ||
+            enforceBoundsAxis(dragged!, sourceCoordinates)
+        )
+    ) removeGridCellAnimations(dragged!);
+
 
     dragged = undefined;
 }
