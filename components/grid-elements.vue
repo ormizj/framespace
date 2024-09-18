@@ -58,7 +58,6 @@ const isGridCellInBounds = (gridCell: GridCell): boolean => {
     const coordinates = getGridCellCoordinates(gridCell);
     return props.xGrid >= coordinates.endX && props.yGrid >= coordinates.endY;
 }
-
 const gridCellsAnimationTimeouts = new Map();
 const addGridCellAnimation = (gridCell: GridCell) => {
     const className = 'error-animation';
@@ -224,6 +223,9 @@ const clearGridElementsAnimation = () => {
     const className = 'error-animation-inset';
     gridElements.value!.classList.remove(className);
 }
+const getGridXFromXY = (x: number, y: number) => {
+    return gridElements.value!.children[y - 1].children[x - 1] as HTMLGridElement
+}
 
 let previousTargetX: number;
 let previousTargetY: number;
@@ -251,16 +253,11 @@ const addFutureGridCellDrag = (target: HTMLGridElement, gridCell: GridCell) => {
     gridCell.cellY = sourceY;
 }
 const addFutureGridCellResize = (target: HTMLGridElement, gridCell: GridCell) => {
-    const sourceX = gridCell.cellX;
-    const sourceY = gridCell.cellY;
-    // console.log(gridCell.cellWidth,);
+    const sourceWidth = gridCell.cellWidth;
+    const sourceHeight = gridCell.cellHeight;
 
-    console.log(gridCell.cellWidth + getElementX(target));
-
-    console.log(gridCell.cellHeight + getElementY(target));
-    // return;
-    gridCell.cellWidth = gridCell.cellWidth + getElementX(target);
-    gridCell.cellHeight = gridCell.cellHeight + getElementY(target);
+    gridCell.cellWidth = getElementX(target) - gridCell.cellX + 1;
+    gridCell.cellHeight = getElementY(target) - gridCell.cellY + 1;
 
     const futureGridCellElement = document.createElement('div');
     futureGridCellElement.style.width = `${calcGridCellWidthPx(gridCell)}px`;
@@ -268,10 +265,10 @@ const addFutureGridCellResize = (target: HTMLGridElement, gridCell: GridCell) =>
     futureGridCellElement.classList.add('future-grid-cell');
     if (!isGridCellInBounds(gridCell) || isTargetZoneOccupied(gridCell)) futureGridCellElement.classList.add('error');
     clearFutureGridCells();
-    target.appendChild(futureGridCellElement);
+    getGridXFromXY(gridCell.cellX, gridCell.cellY).appendChild(futureGridCellElement);
 
-    gridCell.cellX = sourceX;
-    gridCell.cellY = sourceY;
+    gridCell.cellWidth = sourceWidth;
+    gridCell.cellHeight = sourceHeight;
 }
 const clearFutureGridCells = () => document.querySelectorAll('.future-grid-cell').forEach((element) => element.remove());
 const calcGridCellWidthPx = (gridCell: GridCell) => gridCell.cellWidth * cellWidthPx.value;
