@@ -345,6 +345,7 @@ const calcGridCellHeightPx = (gridCell: GridCell) => gridCell.cellHeight * cellH
         pointer-events: auto;
         resize: both;
         overflow: auto;
+        cursor: grab;
 
         &.resizing {
             pointer-events: none;
@@ -352,6 +353,7 @@ const calcGridCellHeightPx = (gridCell: GridCell) => gridCell.cellHeight * cellH
 
         &::-webkit-scrollbar {
             visibility: hidden;
+            cursor: default;
         }
 
         &::-webkit-scrollbar-corner {
