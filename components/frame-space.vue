@@ -55,7 +55,7 @@ watch(isOpen, (newValue) => {
   height: 100dvh;
   width: 100dvw;
   position: fixed;
-  transition: top var(--animation-duration) ease;
+  transition: top var(--short-animation-duration) ease;
   overflow-y: scroll;
   overflow-x: hidden;
 

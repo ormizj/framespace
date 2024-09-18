@@ -21,8 +21,10 @@
 body {
   --background-color-values: 25, 25, 25;
   --background-color: rgb(var(--background-color-values));
-  --animation-duration: 0.25s;
-  --secondary-color: whitesmoke;
+  --secondary-color: rgb(230, 230, 230);
+  --error-color: rgb(230, 25, 25);
+  --short-animation-duration: 0.25s;
+  --long-animation-duration: 1s;
 
   background-color: var(--background-color);
   color: var(--secondary-color);

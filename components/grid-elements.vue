@@ -217,6 +217,7 @@ onMounted(() => {
     .grid-cell {
         position: absolute;
         max-width: 100%;
+        color: rgb(255, 25, 25);
     }
 
     .iframe {
@@ -260,5 +261,21 @@ onMounted(() => {
     .grid-cell {
         pointer-events: none;
     }
+}
+
+/* animations */
+@keyframes subtle-glow {
+    from {
+        box-shadow: 0 0 0px transparent;
+    }
+
+    to {
+        box-shadow: 0 0 30px var(--error-color);
+        ;
+    }
+}
+
+.animated {
+    animation: subtle-glow var(--long-animation-duration) infinite alternate;
 }
 </style>
