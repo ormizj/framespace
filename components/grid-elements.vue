@@ -56,7 +56,7 @@ const isTargetZoneOccupied = (gridCell: GridCell): GridCell | undefined => {
 }
 const isGridCellInBounds = (gridCell: GridCell): boolean => {
     const coordinates = getGridCellCoordinates(gridCell);
-    return props.xGrid < coordinates.endX || props.yGrid < coordinates.endY;
+    return props.xGrid >= coordinates.endX && props.yGrid >= coordinates.endY;
 }
 
 const gridCellsAnimationTimeouts = new Map();
@@ -89,7 +89,7 @@ const enforceNoOverlapAxis = (gridCellTarget: GridCell, gridCellSourceCoordinate
 }
 const enforceBoundsAxis = (gridCellTarget: GridCell, gridCellSourceCoordinates: GridCellCoordinates): boolean => {
     const willBeInBounds = isGridCellInBounds(gridCellTarget);
-    if (!willBeInBounds) return false;
+    if (willBeInBounds) return false;
     addGridElementsAnimation();
     setGridCellAxisFromCoordinates(gridCellTarget, gridCellSourceCoordinates);
     return true;
@@ -135,7 +135,6 @@ const handleDragDrop = (e: DragEvent) => {
 }
 const handleDragOn = (e: DragEvent) => {
     const target = e.target as HTMLGridElement;
-    clearFutureGridCells();
     addFutureGridCell(target, dragged!);
 }
 
@@ -206,12 +205,31 @@ const clearGridElementsAnimation = () => {
     const className = 'error-animation-inset';
     gridElements.value!.classList.remove(className);
 }
+
+let previousTargetX: number;
+let previousTargetY: number;
 const addFutureGridCell = (target: HTMLGridElement, gridCell: GridCell) => {
+    const targetX = getElementX(target);
+    const targetY = getElementY(target);
+    if (previousTargetX === targetX && previousTargetY === targetY) return;
+    previousTargetX = targetX;
+    previousTargetY = targetY;
+
+    const sourceX = gridCell.cellX;
+    const sourceY = gridCell.cellY;
+    gridCell.cellX = previousTargetX;
+    gridCell.cellY = previousTargetY;
+
     const futureGridCellElement = document.createElement('div');
     futureGridCellElement.style.width = `${calcGridCellWidthPx(gridCell)}px`;
     futureGridCellElement.style.height = `${calcGridCellHeightPx(gridCell)}px`;
     futureGridCellElement.classList.add('future-grid-cell');
+    if (!isGridCellInBounds(gridCell) || isTargetZoneOccupied(gridCell)) futureGridCellElement.classList.add('error');
+    clearFutureGridCells();
     target.appendChild(futureGridCellElement);
+
+    gridCell.cellX = sourceX;
+    gridCell.cellY = sourceY;
 }
 const clearFutureGridCells = () => document.querySelectorAll('.future-grid-cell').forEach((element) => element.remove());
 const calcGridCellWidthPx = (gridCell: GridCell) => gridCell.cellWidth * cellWidthPx.value;
@@ -349,6 +367,11 @@ const calcGridCellHeightPx = (gridCell: GridCell) => gridCell.cellHeight * cellH
 .future-grid-cell {
     position: absolute;
     pointer-events: none;
-    box-shadow: 0 0 100px inset var(--success);
+    box-shadow: 0 0 100px inset;
+    color: var(--success);
+
+    &.error {
+        color: var(--error);
+    }
 }
 </style>

@@ -3,7 +3,6 @@ interface GridCell {
 	cellY: number;
 	cellWidth: number;
 	cellHeight: number;
-	link: string;
 	classes: Set<string>;
 	component: {
 		is: ShallowRef<VueElement>;
