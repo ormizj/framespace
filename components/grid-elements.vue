@@ -102,22 +102,10 @@ const enforceNoOverlapSize = (gridCellSource: GridCell, sourceCoordinates: GridC
     return true;
 }
 const enforceNoNegativeSize = (gridCellSource: GridCell, sourceWidth: number, sourceHeight: number): boolean => {
-    const targetCoordinates2 = getGridCellCoordinates(gridCellSource);
-    // console.log(targetCoordinates.strX, targetCoordinates.strX);
-    // console.log(targetCoordinates.strY, targetCoordinates.strY);
-    // console.log(targetCoordinates2, targetCoordinates);
-
-    console.log(gridCellSource.cellHeight);
-    console.log(gridCellSource.cellWidth);
-
-
-
-
-
-    return false;
-    if (!occupyingGridCell) return false;
-    addGridCellAnimation(occupyingGridCell);
-    setGridCellSizeFromCoordinates(gridCellSource, targetCoordinates);
+    if (gridCellSource.cellWidth > 0 && gridCellSource.cellHeight > 0) return false;
+    addGridCellAnimation(gridCellSource);
+    gridCellSource.cellWidth = sourceWidth;
+    gridCellSource.cellHeight = sourceHeight;
     return true;
 }
 
