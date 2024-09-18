@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ANIMATION_LONG_DURATION, ANIMATION_REPEAT_COUNT } from '~/constants/style';
+
 const modelGridCells = defineModel<GridCell[]>({ required: true });
 const modelEdit = defineModel('edit', { default: false });
 
@@ -15,7 +17,7 @@ const cellWidthPx = ref<number>(0);
 
 watch(modelEdit, () => {
     clearAllGridCellAnimations();
-    clearGridElementsAnimation('error-animation-inset');
+    clearGridElementsAnimation();
 });
 
 
@@ -56,19 +58,24 @@ const isGridCellInBounds = (gridCell: GridCell): boolean => {
     const coordinates = getGridCellCoordinates(gridCell);
     return props.xGrid < coordinates.endX || props.yGrid < coordinates.endY;
 }
-const addGridCellAnimation = (gridCell: GridCell, className: string) => {
+
+const gridCellsAnimationTimeouts = new Map();
+const addGridCellAnimation = (gridCell: GridCell) => {
+    const className = 'error-animation';
     gridCell.classes.delete(className);
+    clearTimeout(gridCellsAnimationTimeouts.get(gridCell));
+
     setTimeout(() => {
         gridCell.classes.add(className)
     });
+    gridCellsAnimationTimeouts.set(gridCell, setTimeout(() => {
+        gridCell.classes.delete(className);
+    }, ANIMATION_LONG_DURATION * ANIMATION_REPEAT_COUNT * 2));
 }
 const clearAllGridCellAnimations = () => {
     modelGridCells.value.forEach((gridCell) => {
-        removeGridCellAnimations(gridCell);
+        gridCell.classes = new Set();
     });
-}
-const removeGridCellAnimations = (gridCell: GridCell) => {
-    gridCell.classes = new Set();
 }
 
 
@@ -76,21 +83,21 @@ const removeGridCellAnimations = (gridCell: GridCell) => {
 const enforceNoOverlapAxis = (gridCellTarget: GridCell, gridCellSourceCoordinates: GridCellCoordinates): boolean => {
     const occupyingGridCell = isTargetZoneOccupied(gridCellTarget);
     if (!occupyingGridCell) return false;
-    addGridCellAnimation(occupyingGridCell, 'error-animation');
+    addGridCellAnimation(occupyingGridCell);
     setGridCellAxisFromCoordinates(gridCellTarget, gridCellSourceCoordinates);
     return true;
 }
 const enforceBoundsAxis = (gridCellTarget: GridCell, gridCellSourceCoordinates: GridCellCoordinates): boolean => {
     const willBeInBounds = isGridCellInBounds(gridCellTarget);
     if (!willBeInBounds) return false;
-    addGridElementsAnimation('error-animation-inset');
+    addGridElementsAnimation();
     setGridCellAxisFromCoordinates(gridCellTarget, gridCellSourceCoordinates);
     return true;
 }
 const enforceNoOverlapSize = (gridCellTarget: GridCell, gridCellSourceCoordinates: GridCellCoordinates): boolean => {
     const occupyingGridCell = isTargetZoneOccupied(gridCellTarget);
     if (!occupyingGridCell) return false;
-    addGridCellAnimation(occupyingGridCell, 'error-animation');
+    addGridCellAnimation(occupyingGridCell);
     setGridCellSizeFromCoordinates(gridCellTarget, gridCellSourceCoordinates);
     return true;
 }
@@ -118,12 +125,11 @@ const handleDragDrop = (e: DragEvent) => {
     dragged!.cellY = getElementY(target);
 
     // Enforcements
-    if (
-        !(
-            enforceNoOverlapAxis(dragged!, sourceCoordinates) ||
-            enforceBoundsAxis(dragged!, sourceCoordinates)
-        )
-    ) removeGridCellAnimations(dragged!);
+    (
+        enforceNoOverlapAxis(dragged!, sourceCoordinates) ||
+        enforceBoundsAxis(dragged!, sourceCoordinates)
+    )
+
     clearFutureGridCells();
     dragged = undefined;
 }
@@ -183,13 +189,21 @@ onMounted(() => {
 })
 
 // GridElements Helper Functions
-const addGridElementsAnimation = (className: string) => {
+let gridElementsAnimationTimeout: ReturnType<typeof setTimeout>;
+const addGridElementsAnimation = () => {
+    const className = 'error-animation-inset';
     gridElements.value!.classList.remove(className);
+    clearTimeout(gridElementsAnimationTimeout);
+
     setTimeout(() => {
         gridElements.value!.classList.add(className);
     });
+    gridElementsAnimationTimeout = setTimeout(() => {
+        gridElements.value!.classList.remove(className);
+    }, ANIMATION_LONG_DURATION * ANIMATION_REPEAT_COUNT * 2);
 }
-const clearGridElementsAnimation = (className: string) => {
+const clearGridElementsAnimation = () => {
+    const className = 'error-animation-inset';
     gridElements.value!.classList.remove(className);
 }
 const addFutureGridCell = (target: HTMLGridElement, gridCell: GridCell) => {

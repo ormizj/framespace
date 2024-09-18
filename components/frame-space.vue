@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ANIMATION_SHORT_DURATION } from '~/constants/style';
 import IframeCell from './cell-components/iframe-cell.vue';
 
 const link = "https://www.calculatorsoup.com/calculators/math/percentage.php"
@@ -44,7 +45,7 @@ const handleHideClick = () => {
 watch(isOpen, (newValue) => {
   setTimeout(() => {
     isOpened.value = newValue
-  }, 250 /* --animation-short-duration */);
+  }, ANIMATION_SHORT_DURATION);
 })
 </script>
 
