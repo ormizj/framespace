@@ -19,7 +19,19 @@
 
 <style>
 body {
-  /* colors */
+  background-color: var(--background);
+  color: var(--secondary);
+  margin: 0;
+
+  * {
+    box-sizing: border-box;
+  }
+}
+</style>
+
+<style>
+body {
+  /* color */
   --background-values: 25, 25, 25;
   --background: rgb(var(--background-values));
   --secondary: rgb(230, 230, 230);
@@ -28,13 +40,5 @@ body {
   --animation-short-duration: 0.25s;
   --animation-long-duration: 1s;
   --animation-repeat-count: 3;
-
-  background-color: var(--background);
-  color: var(--secondary);
-  margin: 0;
-
-  * {
-    box-sizing: border-box;
-  }
 }
 </style>
