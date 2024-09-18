@@ -35,6 +35,7 @@ body {
   --background-values: 25, 25, 25;
   --background: rgb(var(--background-values));
   --secondary: rgb(230, 230, 230);
+  --success: rgb(25, 230, 25);
   --error: rgb(230, 25, 25);
   /* animation */
   --animation-short-duration: 0.25s;

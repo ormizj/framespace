@@ -124,9 +124,13 @@ const handleDragDrop = (e: DragEvent) => {
             enforceBoundsAxis(dragged!, sourceCoordinates)
         )
     ) removeGridCellAnimations(dragged!);
-
-
+    clearFutureGridCells();
     dragged = undefined;
+}
+const handleDragOn = (e: DragEvent) => {
+    const target = e.target as HTMLGridElement;
+    clearFutureGridCells();
+    addFutureGridCell(target, dragged!);
 }
 
 
@@ -166,7 +170,7 @@ watch(() => gridCellElements.value, () => {
 }, { deep: true });
 
 
-// HTMLGridElement Observer
+// GridElements Observer
 const gridXResizeObs = new ResizeObserver((entries) => {
     const target = entries[0].target as HTMLGridElement;
     const rect = target.getBoundingClientRect();
@@ -188,6 +192,16 @@ const addGridElementsAnimation = (className: string) => {
 const clearGridElementsAnimation = (className: string) => {
     gridElements.value!.classList.remove(className);
 }
+const addFutureGridCell = (target: HTMLGridElement, gridCell: GridCell) => {
+    const futureGridCellElement = document.createElement('div');
+    futureGridCellElement.style.width = `${calcGridCellWidthPx(gridCell)}px`;
+    futureGridCellElement.style.height = `${calcGridCellHeightPx(gridCell)}px`;
+    futureGridCellElement.classList.add('future-grid-cell');
+    target.appendChild(futureGridCellElement);
+}
+const clearFutureGridCells = () => document.querySelectorAll('.future-grid-cell').forEach((element) => element.remove());
+const calcGridCellWidthPx = (gridCell: GridCell) => gridCell.cellWidth * cellWidthPx.value;
+const calcGridCellHeightPx = (gridCell: GridCell) => gridCell.cellHeight * cellHeightPx.value;
 </script>
 
 <template>
@@ -195,16 +209,16 @@ const clearGridElementsAnimation = (className: string) => {
         <!-- GRID Y -->
         <div v-for="y in yGrid" class="y-grid" :style="{ height: `${cellHeight}dvh` }" :key="y">
             <!-- GRID X -->
-            <div v-for="x in xGrid" class="x-grid" @drop="handleDragDrop" @dragover.prevent @mouseup="handleMouseUp"
-                :x="x" :y=y :key="x">
+            <div v-for="x in xGrid" class="x-grid" @drop="handleDragDrop" @mouseup="handleMouseUp"
+                @dragover.prevent="handleDragOn" :x="x" :y=y :key="x">
                 <!-- GRID CELL -->
                 <template v-for="gridCell of modelGridCells" :key="`${gridCell.cellX}|${gridCell.cellY}`">
                     <template v-if="gridCell.cellX === x && gridCell.cellY === y">
                         <div class="grid-cell" ref="gridCellElements"
                             :class="[{ resizing: resized }, ...gridCell.classes]" :draggable="modelEdit"
                             @dragstart="handleDragStart" @dragend="handleDragEnd" :x="x" :y="y" :style="{
-                                width: `${gridCell.cellWidth * cellWidthPx}px`,
-                                height: `${gridCell.cellHeight * cellHeightPx}px`
+                                width: `${calcGridCellWidthPx(gridCell)}px`,
+                                height: `${calcGridCellHeightPx(gridCell)}px`
                             }">
                             <component class="cell-component" :is="gridCell.component.is"
                                 v-bind="gridCell.component.bind" />
@@ -313,5 +327,14 @@ const clearGridElementsAnimation = (className: string) => {
 
 .error-animation-inset {
     animation: subtle-glow-inset var(--animation-long-duration) calc(var(--animation-repeat-count) * 2) alternate;
+}
+</style>
+
+<style>
+/* target placeholder */
+.future-grid-cell {
+    position: absolute;
+    pointer-events: none;
+    box-shadow: 0 0 100px inset var(--success);
 }
 </style>
