@@ -1,4 +1,21 @@
 <script setup lang="ts">
+const link = "https://www.calculatorsoup.com/calculators/math/percentage.php"
+const gridCells = ref<GridCell[]>([{
+  cellX: 1,
+  cellY: 1,
+  cellWidth: 5,
+  cellHeight: 3,
+  link,
+  classes: new Set(),
+}, {
+  cellX: 1,
+  cellY: 7,
+  cellWidth: 1,
+  cellHeight: 1,
+  link,
+  classes: new Set(),
+}]);
+
 const isOpen = ref(false);
 const isOpened = ref(false);
 const editMode = ref(false);
@@ -42,7 +59,7 @@ watch(isOpen, (newValue) => {
       <div class="content" ref="content">
         <!-- actual content will only be relevant to the client-side -->
         <ClientOnly>
-          <GridElements v-model:edit="editMode" />
+          <GridElements v-model="gridCells" v-model:edit="editMode" :x-grid="10" :y-grid="10" :cell-height="10" />
         </ClientOnly>
       </div>
     </div>

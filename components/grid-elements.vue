@@ -1,34 +1,19 @@
 <script setup lang="ts">
-// TODO temp
-const link = "https://www.calculatorsoup.com/calculators/math/percentage.php"
-const editModel = defineModel('edit', { default: false });
+const modelGridCells = defineModel<GridCell[]>({ required: true });
+const modelEdit = defineModel('edit', { default: false });
+const props = defineProps<{
+    xGrid: number;
+    yGrid: number;
+    cellHeight: number;
+}>();
 
 const gridElements = ref<HTMLDivElement | null>(null);
-
-const xGrid = ref(10);
-const yGrid = ref(10);
-const cellHeight = ref(10);
+const gridCellElements = ref<null | HTMLGridElement[]>(null);
 const cellHeightPx = ref<number>(0);
 const cellWidthPx = ref<number>(0);
 
-const gridCellElements = ref<null | HTMLGridElement[]>(null);
-const gridCells = ref<GridCell[]>([{
-    cellX: 1,
-    cellY: 1,
-    cellWidth: 5,
-    cellHeight: 3,
-    link,
-    classes: new Set(),
-}, {
-    cellX: 1,
-    cellY: 7,
-    cellWidth: 1,
-    cellHeight: 1,
-    link,
-    classes: new Set(),
-}]);
-watch(editModel, () => {
-    gridCells.value.forEach((gridCell) => {
+watch(modelEdit, () => {
+    modelGridCells.value.forEach((gridCell) => {
         clearGridCellAnimations(gridCell);
     });
 });
@@ -37,7 +22,7 @@ watch(editModel, () => {
 // GridCell Helper Functions
 const getElementX = (element: HTMLGridElement | HTMLCellElement) => +element.getAttribute('x')!;
 const getElementY = (element: HTMLGridElement | HTMLCellElement) => +element.getAttribute('y')!;
-const getGridCellFromElement = (element: HTMLGridElement | HTMLCellElement) => gridCells.value.find(
+const getGridCellFromElement = (element: HTMLGridElement | HTMLCellElement) => modelGridCells.value.find(
     gridCell => gridCell.cellX === getElementX(element) && gridCell.cellY === getElementY(element)
 );
 const getGridCellCoordinates = (gridCell: GridCell): GridCellCoordinates => ({
@@ -56,7 +41,7 @@ const setGridCellSizeFromCoordinates = (gridCell: GridCell, coordinates: GridCel
 }
 const isTargetZoneOccupied = (gridCell: GridCell): GridCell | undefined => {
     const coordinates = getGridCellCoordinates(gridCell);
-    const occupyingGridCell = gridCells.value.find((otherGridCell) => {
+    const occupyingGridCell = modelGridCells.value.find((otherGridCell) => {
         const otherCoordinates = getGridCellCoordinates(otherGridCell);
         return (
             coordinates.strX <= otherCoordinates.endX &&
@@ -69,7 +54,7 @@ const isTargetZoneOccupied = (gridCell: GridCell): GridCell | undefined => {
 }
 const isGridCellInBounds = (gridCell: GridCell): boolean => {
     const coordinates = getGridCellCoordinates(gridCell);
-    return xGrid.value < coordinates.endX || yGrid.value < coordinates.endY;
+    return props.xGrid < coordinates.endX || props.yGrid < coordinates.endY;
 }
 const addGridCellAnimation = (gridCell: GridCell, className: string) => {
     gridCell.classes.delete(className);
@@ -201,17 +186,17 @@ const clearGridElementsAnimation = (className: string) => {
 </script>
 
 <template>
-    <div class="grid-elements" ref="gridElements" :class="{ edit: editModel }" @mouseenter="resized = null">
+    <div class="grid-elements" ref="gridElements" :class="{ edit: modelEdit }" @mouseenter="resized = null">
         <!-- GRID Y -->
         <div v-for="y in yGrid" class="y-grid" :style="{ height: `${cellHeight}dvh` }" :key="y">
             <!-- GRID X -->
             <div v-for="x in xGrid" class="x-grid" @drop="handleDragDrop" @dragover.prevent @mouseup="handleMouseUp"
                 :x="x" :y=y :key="x">
                 <!-- GRID CELL -->
-                <template v-for="gridCell of gridCells" :key="`${gridCell.cellX}|${gridCell.cellY}`">
+                <template v-for="gridCell of modelGridCells" :key="`${gridCell.cellX}|${gridCell.cellY}`">
                     <template v-if="gridCell.cellX === x && gridCell.cellY === y">
                         <div class="grid-cell" ref="gridCellElements"
-                            :class="[{ resizing: resized }, ...gridCell.classes]" :draggable="editModel"
+                            :class="[{ resizing: resized }, ...gridCell.classes]" :draggable="modelEdit"
                             @dragstart="handleDragStart" @dragend="handleDragEnd" :x="x" :y="y" :style="{
                                 width: `${gridCell.cellWidth * cellWidthPx}px`,
                                 height: `${gridCell.cellHeight * cellHeightPx}px`
