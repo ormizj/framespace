@@ -7,13 +7,13 @@ const hideScroll = ref(false);
 const frameSpaceContainer = ref<HTMLDivElement | null>(null);
 const handleHideClick = () => {
   const remSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
-  frameSpaceContainer.value!.scrollTop = remSize * 2;
+  frameSpaceContainer.value!.scrollTop = remSize * 2 /* --tab-height */;
 }
 
 watch(isOpen, (newValue) => {
   setTimeout(() => {
     isOpened.value = newValue
-  }, 250)
+  }, 250 /* --animation-short-duration */);
 })
 </script>
 
