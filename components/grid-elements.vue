@@ -80,25 +80,44 @@ const clearAllGridCellAnimations = () => {
 
 
 // GridCell Enforcements
-const enforceNoOverlapAxis = (gridCellTarget: GridCell, gridCellSourceCoordinates: GridCellCoordinates): boolean => {
-    const occupyingGridCell = isTargetZoneOccupied(gridCellTarget);
+const enforceNoOverlapAxis = (gridCellSource: GridCell, targetCoordinates: GridCellCoordinates): boolean => {
+    const occupyingGridCell = isTargetZoneOccupied(gridCellSource);
     if (!occupyingGridCell) return false;
     addGridCellAnimation(occupyingGridCell);
-    setGridCellAxisFromCoordinates(gridCellTarget, gridCellSourceCoordinates);
+    setGridCellAxisFromCoordinates(gridCellSource, targetCoordinates);
     return true;
 }
-const enforceBoundsAxis = (gridCellTarget: GridCell, gridCellSourceCoordinates: GridCellCoordinates): boolean => {
-    const willBeInBounds = isGridCellInBounds(gridCellTarget);
+const enforceBoundsAxis = (gridCellSource: GridCell, targetCoordinates: GridCellCoordinates): boolean => {
+    const willBeInBounds = isGridCellInBounds(gridCellSource);
     if (willBeInBounds) return false;
     addGridElementsAnimation();
-    setGridCellAxisFromCoordinates(gridCellTarget, gridCellSourceCoordinates);
+    setGridCellAxisFromCoordinates(gridCellSource, targetCoordinates);
     return true;
 }
-const enforceNoOverlapSize = (gridCellTarget: GridCell, gridCellSourceCoordinates: GridCellCoordinates): boolean => {
-    const occupyingGridCell = isTargetZoneOccupied(gridCellTarget);
+const enforceNoOverlapSize = (gridCellSource: GridCell, sourceCoordinates: GridCellCoordinates): boolean => {
+    const occupyingGridCell = isTargetZoneOccupied(gridCellSource);
     if (!occupyingGridCell) return false;
     addGridCellAnimation(occupyingGridCell);
-    setGridCellSizeFromCoordinates(gridCellTarget, gridCellSourceCoordinates);
+    setGridCellSizeFromCoordinates(gridCellSource, sourceCoordinates);
+    return true;
+}
+const enforceNoNegativeSize = (gridCellSource: GridCell, sourceWidth: number, sourceHeight: number): boolean => {
+    const targetCoordinates2 = getGridCellCoordinates(gridCellSource);
+    // console.log(targetCoordinates.strX, targetCoordinates.strX);
+    // console.log(targetCoordinates.strY, targetCoordinates.strY);
+    // console.log(targetCoordinates2, targetCoordinates);
+
+    console.log(gridCellSource.cellHeight);
+    console.log(gridCellSource.cellWidth);
+
+
+
+
+
+    return false;
+    if (!occupyingGridCell) return false;
+    addGridCellAnimation(occupyingGridCell);
+    setGridCellSizeFromCoordinates(gridCellSource, targetCoordinates);
     return true;
 }
 
@@ -154,16 +173,19 @@ const handleMouseUp = (e: MouseEvent) => {
     });
     if (!resized.value) return;
 
-    const source = resized.value;
-    const target = e.target as HTMLGridElement
-    const gridCell = getGridCellFromElement(source)!;
-    const sourceCoordinates = getGridCellCoordinates(gridCell!);
-    gridCell!.cellWidth = getElementX(target) - getElementX(source) + 1;
-    gridCell!.cellHeight = getElementY(target) - getElementY(source) + 1;
+    const source = getGridCellFromElement(resized.value)!;
+    const target = e.target as HTMLGridElement;
+    const sourceCoordinates = getGridCellCoordinates(source);
+
+    const sourceWidth = source.cellWidth;
+    const sourceHeight = source.cellHeight;
+    source.cellWidth = getElementX(target) - source.cellX + 1;
+    source.cellHeight = getElementY(target) - source.cellY + 1;
 
     // Enforcements
     (
-        enforceNoOverlapSize(gridCell, sourceCoordinates)
+        enforceNoOverlapSize(source, sourceCoordinates),
+        enforceNoNegativeSize(source, sourceWidth, sourceHeight)
     );
 
     setTimeout(() => {
