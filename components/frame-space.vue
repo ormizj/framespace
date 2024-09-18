@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import IframeCell from './cell-components/iframe-cell.vue';
+
 const link = "https://www.calculatorsoup.com/calculators/math/percentage.php"
 const gridCells = ref<GridCell[]>([{
   cellX: 1,
@@ -7,6 +9,12 @@ const gridCells = ref<GridCell[]>([{
   cellHeight: 3,
   link,
   classes: new Set(),
+  component: {
+    is: shallowRef(IframeCell),
+    bind: {
+      src: link
+    }
+  }
 }, {
   cellX: 1,
   cellY: 7,
@@ -14,6 +22,12 @@ const gridCells = ref<GridCell[]>([{
   cellHeight: 1,
   link,
   classes: new Set(),
+  component: {
+    is: shallowRef(IframeCell),
+    bind: {
+      src: link
+    },
+  }
 }]);
 
 const isOpen = ref(false);

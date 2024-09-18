@@ -5,4 +5,8 @@ interface GridCell {
 	cellHeight: number;
 	link: string;
 	classes: Set<string>;
+	component: {
+		is: ShallowRef<VueElement>;
+		bind: HTMLElementAttributes;
+	};
 }

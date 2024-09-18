@@ -13,9 +13,8 @@ const cellHeightPx = ref<number>(0);
 const cellWidthPx = ref<number>(0);
 
 watch(modelEdit, () => {
-    modelGridCells.value.forEach((gridCell) => {
-        clearGridCellAnimations(gridCell);
-    });
+    clearAllGridCellAnimations();
+    clearGridElementsAnimation('error-animation-inset');
 });
 
 
@@ -62,8 +61,10 @@ const addGridCellAnimation = (gridCell: GridCell, className: string) => {
         gridCell.classes.add(className)
     });
 }
-const clearGridCellAnimations = (gridCell: GridCell) => {
-    gridCell.classes = new Set();
+const clearAllGridCellAnimations = () => {
+    modelGridCells.value.forEach((gridCell) => {
+        gridCell.classes = new Set();
+    });
 }
 
 
@@ -117,8 +118,6 @@ const handleDragDrop = (e: DragEvent) => {
         enforceNoOverlapAxis(dragged!, sourceCoordinates) ||
         enforceBoundsAxis(dragged!, sourceCoordinates)
     );
-    clearGridElementsAnimation('error-animation-inset');
-    clearGridCellAnimations(dragged!);
 
     dragged = undefined;
 }
@@ -150,7 +149,6 @@ const handleMouseUp = (e: MouseEvent) => {
     (
         enforceNoOverlapSize(gridCell, sourceCoordinates)
     );
-    clearGridCellAnimations(gridCell);
 
     setTimeout(() => {
         resized.value = null;
@@ -201,7 +199,8 @@ const clearGridElementsAnimation = (className: string) => {
                                 width: `${gridCell.cellWidth * cellWidthPx}px`,
                                 height: `${gridCell.cellHeight * cellHeightPx}px`
                             }">
-                            <iframe :src="gridCell.link" class="iframe" />
+                            <component class="cell-component" :is="gridCell.component.is"
+                                v-bind="gridCell.component.bind" />
                         </div>
                     </template>
                 </template>
@@ -238,8 +237,7 @@ const clearGridElementsAnimation = (className: string) => {
         max-width: 100%;
     }
 
-    .iframe {
-        border: unset;
+    .cell-component {
         width: 100%;
         height: 100%;
     }
@@ -247,7 +245,7 @@ const clearGridElementsAnimation = (className: string) => {
 
 /* gridElements edit */
 .grid-elements.edit {
-    .iframe {
+    .cell-component {
         pointer-events: none;
     }
 
@@ -272,7 +270,7 @@ const clearGridElementsAnimation = (className: string) => {
 
 /* gridElements not edit */
 .grid-elements:not('.edit') {
-    .iframe {
+    .cell-component {
         pointer-events: auto;
     }
 
