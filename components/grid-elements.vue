@@ -26,6 +26,16 @@ const gridCells = ref<GridCell[]>([{
     link,
 }]);
 
+
+// GridCell Helper Functions
+const getElementX = (element: HTMLGridElement | HTMLCellElement) => +element.getAttribute('x')!;
+const getElementY = (element: HTMLGridElement | HTMLCellElement) => +element.getAttribute('y')!;
+const getSelectedCell = (element: HTMLGridElement | HTMLCellElement) => gridCells.value.find(
+    gridCell => gridCell.cellX === getElementX(element) && gridCell.cellY === getElementY(element)
+);
+
+
+// GridCell Overlap
 const getGridCellCoordinates = (gridCell: GridCell): GridCellCoordinates => ({
     strX: gridCell.cellX,
     endX: gridCell.cellX + gridCell.cellWidth - 1,
@@ -53,12 +63,6 @@ const preventOverlap = (gridCell: GridCell, sourceX: number, sourceY: number): b
     return true;
 }
 
-// helper functions
-const getElementX = (element: HTMLGridElement | HTMLCellElement) => +element.getAttribute('x')!;
-const getElementY = (element: HTMLGridElement | HTMLCellElement) => +element.getAttribute('y')!;
-const getSelectedCell = (element: HTMLGridElement | HTMLCellElement) => gridCells.value.find(
-    gridCell => gridCell.cellX === getElementX(element) && gridCell.cellY === getElementY(element)
-);
 
 // GridCell Drag
 let dragged: GridCell | undefined;
@@ -115,6 +119,7 @@ const handleMouseUp = (e: MouseEvent) => {
 watch(() => gridCellElements.value, () => {
     gridCellElements.value!.forEach((gridCellElement) => gridCellResizeObs.observe(gridCellElement))
 }, { deep: true });
+
 
 // HTMLGridElement Observer
 const gridXResizeObs = new ResizeObserver((entries) => {
