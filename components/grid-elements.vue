@@ -184,8 +184,6 @@ onMounted(() => {
 
     .grid-cell {
         position: absolute;
-        height: 100%;
-        width: 100%;
         max-width: 100%;
     }
 
