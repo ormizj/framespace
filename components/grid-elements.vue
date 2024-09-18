@@ -18,12 +18,14 @@ const gridCells = ref<GridCell[]>([{
     cellWidth: 5,
     cellHeight: 3,
     link,
+    classes: new Set(),
 }, {
     cellX: 1,
     cellY: 7,
     cellWidth: 1,
     cellHeight: 1,
     link,
+    classes: new Set(),
 }]);
 
 
@@ -44,8 +46,8 @@ const setGridCellAxisFromCoordinates = (gridCell: GridCell, coordinates: GridCel
     gridCell.cellY = coordinates.strY;
 }
 const setGridCellSizeFromCoordinates = (gridCell: GridCell, coordinates: GridCellCoordinates) => {
-    gridCell.cellWidth = gridCell.cellX + coordinates.endX - 1;
-    gridCell.cellHeight = gridCell.cellY + coordinates.endY - 1;
+    gridCell.cellWidth = coordinates.endX - gridCell.cellX + 1;
+    gridCell.cellHeight = coordinates.endY - gridCell.cellY + 1;
 }
 const isTargetZoneOccupied = (gridCell: GridCell): GridCell | undefined => {
     const coordinates = getGridCellCoordinates(gridCell);
@@ -64,13 +66,22 @@ const isGridCellInBounds = (gridCell: GridCell): boolean => {
     const coordinates = getGridCellCoordinates(gridCell);
     return xGrid.value < coordinates.endX || yGrid.value < coordinates.endY;
 }
+const addGridCellAnimation = (gridCell: GridCell, className: string) => {
+    gridCell.classes.delete(className);
+    setTimeout(() => {
+        gridCell.classes.add(className)
+    });
+}
+const clearGridCellAnimations = (gridCell: GridCell) => {
+    gridCell.classes = new Set();
+}
 
 
 // GridCell Enforcements
 const enforceNoOverlapAxis = (gridCellTarget: GridCell, gridCellSourceCoordinates: GridCellCoordinates): boolean => {
     const occupyingGridCell = isTargetZoneOccupied(gridCellTarget);
     if (!occupyingGridCell) return false;
-    animateGridCellError(getElementFromGridCell(occupyingGridCell)!)
+    addGridCellAnimation(occupyingGridCell, 'error-animation');
     setGridCellAxisFromCoordinates(gridCellTarget, gridCellSourceCoordinates);
     return true;
 }
@@ -83,7 +94,7 @@ const enforceBoundsAxis = (gridCellTarget: GridCell, gridCellSourceCoordinates: 
 const enforceNoOverlapSize = (gridCellTarget: GridCell, gridCellSourceCoordinates: GridCellCoordinates): boolean => {
     const occupyingGridCell = isTargetZoneOccupied(gridCellTarget);
     if (!occupyingGridCell) return false;
-    animateGridCellError(getElementFromGridCell(occupyingGridCell)!)
+    addGridCellAnimation(occupyingGridCell, 'error-animation');
     setGridCellSizeFromCoordinates(gridCellTarget, gridCellSourceCoordinates);
     return true;
 }
@@ -115,7 +126,7 @@ const handleDragDrop = (e: DragEvent) => {
         enforceNoOverlapAxis(dragged!, sourceCoordinates) ||
         enforceBoundsAxis(dragged!, sourceCoordinates)
     );
-
+    clearGridCellAnimations(dragged!);
 
     dragged = undefined;
 }
@@ -147,6 +158,7 @@ const handleMouseUp = (e: MouseEvent) => {
     (
         enforceNoOverlapSize(gridCell, sourceCoordinates)
     );
+    clearGridCellAnimations(gridCell);
 
     setTimeout(() => {
         resized.value = null;
@@ -155,23 +167,6 @@ const handleMouseUp = (e: MouseEvent) => {
 watch(() => gridCellElements.value, () => {
     gridCellElements.value!.forEach((gridCellElement) => gridCellResizeObs.observe(gridCellElement))
 }, { deep: true });
-
-
-// HTMLGridElement Helper Functions
-const getElementFromGridCell = (gridCell: GridCell): HTMLGridElement | undefined => {
-    const element = gridCellElements!.value!.find(
-        element => gridCell.cellX === getElementX(element) && gridCell.cellY === getElementY(element)
-    );
-    console.log(element);
-    return element;
-}
-
-const animateGridCellError = (htmlGridElement: HTMLGridElement) => {
-    htmlGridElement.classList.remove('error-animation');
-    setTimeout(() => {
-        htmlGridElement.classList.add('error-animation');
-    })
-}
 
 
 // HTMLGridElement Observer
@@ -198,9 +193,9 @@ onMounted(() => {
                 <!-- GRID CELL -->
                 <template v-for="gridCell of gridCells" :key="`${gridCell.cellX}|${gridCell.cellY}`">
                     <template v-if="gridCell.cellX === x && gridCell.cellY === y">
-                        <div class="grid-cell" ref="gridCellElements" :class="{ resizing: resized }"
-                            :draggable="editModel" @dragstart="handleDragStart" @dragend="handleDragEnd" :x="x" :y="y"
-                            :style="{
+                        <div class="grid-cell" ref="gridCellElements"
+                            :class="[{ resizing: resized }, ...gridCell.classes]" :draggable="editModel"
+                            @dragstart="handleDragStart" @dragend="handleDragEnd" :x="x" :y="y" :style="{
                                 width: `${gridCell.cellWidth * cellWidthPx}px`,
                                 height: `${gridCell.cellHeight * cellHeightPx}px`
                             }">

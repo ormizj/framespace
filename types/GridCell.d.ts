@@ -4,4 +4,5 @@ interface GridCell {
 	cellWidth: number;
 	cellHeight: number;
 	link: string;
+	classes: Set<string>;
 }
