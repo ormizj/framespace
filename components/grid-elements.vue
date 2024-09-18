@@ -26,6 +26,32 @@ const gridCells = ref<GridCell[]>([{
     link,
 }]);
 
+const getGridCellCoordinates = (gridCell: GridCell): GridCellCoordinates => ({
+    strX: gridCell.cellX,
+    endX: gridCell.cellX + gridCell.cellWidth - 1,
+    strY: gridCell.cellY,
+    endY: gridCell.cellY + gridCell.cellHeight - 1,
+});
+const isTargetZoneOccupied = (gridCell: GridCell): boolean => {
+    const coordinates = getGridCellCoordinates(gridCell);
+    const occupyingGridCell = gridCells.value.find((otherGridCell) => {
+        const otherCoordinates = getGridCellCoordinates(otherGridCell);
+        return (
+            coordinates.strX <= otherCoordinates.endX &&
+            coordinates.endX >= otherCoordinates.strX &&
+            coordinates.strY <= otherCoordinates.endY &&
+            coordinates.endY >= otherCoordinates.strY
+        ) && gridCell !== otherGridCell;
+    })
+    return !!occupyingGridCell;
+}
+const preventOverlap = (gridCell: GridCell, sourceX: number, sourceY: number): boolean => {
+    const willBeOverlap = isTargetZoneOccupied(gridCell);
+    if (!willBeOverlap) return false;
+    gridCell.cellX = sourceX;
+    gridCell.cellY = sourceY;
+    return true;
+}
 
 // helper functions
 const getElementX = (element: HTMLGridElement | HTMLCellElement) => +element.getAttribute('x')!;
@@ -51,8 +77,11 @@ const handleDragEnd = (e: DragEvent) => {
 }
 const handleDragDrop = (e: DragEvent) => {
     const target = e.target as HTMLGridElement;
+    const sourceX = dragged!.cellX;
+    const sourceY = dragged!.cellY;
     dragged!.cellX = getElementX(target);
     dragged!.cellY = getElementY(target);
+    preventOverlap(dragged!, sourceX, sourceY);
     dragged = undefined;
 }
 
