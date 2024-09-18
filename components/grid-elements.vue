@@ -142,7 +142,7 @@ const handleDragDrop = (e: DragEvent) => {
 }
 const handleDragOn = (e: DragEvent) => {
     const target = e.target as HTMLGridElement;
-    addFutureGridCell(target, dragged!);
+    addFutureGridCellDrag(target, dragged!);
 }
 
 
@@ -155,6 +155,11 @@ const gridCellResizeObs = new ResizeObserver((obs) => {
     }
     if (!resized.value) resized.value = obs[0].target as HTMLCellElement;
 });
+const handleMouseEnter = (e: MouseEvent) => {
+    if (!resized.value) return;
+    const target = e.target as HTMLGridElement;
+    addFutureGridCellResize(target, getGridCellFromElement(resized.value)!);
+}
 const handleMouseUp = (e: MouseEvent) => {
     nextTick(() => {
         resized.value = null;
@@ -176,7 +181,11 @@ const handleMouseUp = (e: MouseEvent) => {
         enforceNoNegativeSize(source, sourceWidth, sourceHeight)
     );
 
+    const clearFutureGridCellsInterval = setInterval(() => {
+        clearFutureGridCells();
+    }, 1)
     setTimeout(() => {
+        clearInterval(clearFutureGridCellsInterval)
         resized.value = null;
     }, 250);
 }
@@ -218,7 +227,7 @@ const clearGridElementsAnimation = () => {
 
 let previousTargetX: number;
 let previousTargetY: number;
-const addFutureGridCell = (target: HTMLGridElement, gridCell: GridCell) => {
+const addFutureGridCellDrag = (target: HTMLGridElement, gridCell: GridCell) => {
     const targetX = getElementX(target);
     const targetY = getElementY(target);
     if (previousTargetX === targetX && previousTargetY === targetY) return;
@@ -229,6 +238,29 @@ const addFutureGridCell = (target: HTMLGridElement, gridCell: GridCell) => {
     const sourceY = gridCell.cellY;
     gridCell.cellX = previousTargetX;
     gridCell.cellY = previousTargetY;
+
+    const futureGridCellElement = document.createElement('div');
+    futureGridCellElement.style.width = `${calcGridCellWidthPx(gridCell)}px`;
+    futureGridCellElement.style.height = `${calcGridCellHeightPx(gridCell)}px`;
+    futureGridCellElement.classList.add('future-grid-cell');
+    if (!isGridCellInBounds(gridCell) || isTargetZoneOccupied(gridCell)) futureGridCellElement.classList.add('error');
+    clearFutureGridCells();
+    target.appendChild(futureGridCellElement);
+
+    gridCell.cellX = sourceX;
+    gridCell.cellY = sourceY;
+}
+const addFutureGridCellResize = (target: HTMLGridElement, gridCell: GridCell) => {
+    const sourceX = gridCell.cellX;
+    const sourceY = gridCell.cellY;
+    // console.log(gridCell.cellWidth,);
+
+    console.log(gridCell.cellWidth + getElementX(target));
+
+    console.log(gridCell.cellHeight + getElementY(target));
+    // return;
+    gridCell.cellWidth = gridCell.cellWidth + getElementX(target);
+    gridCell.cellHeight = gridCell.cellHeight + getElementY(target);
 
     const futureGridCellElement = document.createElement('div');
     futureGridCellElement.style.width = `${calcGridCellWidthPx(gridCell)}px`;
@@ -252,7 +284,7 @@ const calcGridCellHeightPx = (gridCell: GridCell) => gridCell.cellHeight * cellH
         <div v-for="y in yGrid" class="y-grid" :style="{ height: `${cellHeight}dvh` }" :key="y">
             <!-- GRID X -->
             <div v-for="x in xGrid" class="x-grid" @drop="handleDragDrop" @mouseup="handleMouseUp"
-                @dragover.prevent="handleDragOn" :x="x" :y=y :key="x">
+                @mouseenter="handleMouseEnter" @dragover.prevent="handleDragOn" :x="x" :y=y :key="x">
                 <!-- GRID CELL -->
                 <template v-for="gridCell of modelGridCells" :key="`${gridCell.cellX}|${gridCell.cellY}`">
                     <template v-if="gridCell.cellX === x && gridCell.cellY === y">
