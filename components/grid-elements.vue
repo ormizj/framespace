@@ -65,7 +65,7 @@ const isGridCellInBounds = (gridCell: GridCell): boolean => {
     return xGrid.value < coordinates.endX || yGrid.value < coordinates.endY;
 }
 
-// GridCell Rules
+// GridCell Enforcements
 const enforceNoOverlapAxis = (gridCellTarget: GridCell, gridCellSourceCoordinates: GridCellCoordinates): boolean => {
     const willBeOverlap = isTargetZoneOccupied(gridCellTarget);
     if (!willBeOverlap) return false;
