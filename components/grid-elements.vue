@@ -27,6 +27,11 @@ const gridCells = ref<GridCell[]>([{
     link,
     classes: new Set(),
 }]);
+watch(editModel, () => {
+    gridCells.value.forEach((gridCell) => {
+        clearGridCellAnimations(gridCell);
+    });
+});
 
 
 // GridCell Helper Functions
@@ -88,6 +93,7 @@ const enforceNoOverlapAxis = (gridCellTarget: GridCell, gridCellSourceCoordinate
 const enforceBoundsAxis = (gridCellTarget: GridCell, gridCellSourceCoordinates: GridCellCoordinates): boolean => {
     const willBeInBounds = isGridCellInBounds(gridCellTarget);
     if (!willBeInBounds) return false;
+    addGridElementsAnimation('error-animation-inset');
     setGridCellAxisFromCoordinates(gridCellTarget, gridCellSourceCoordinates);
     return true;
 }
@@ -126,6 +132,7 @@ const handleDragDrop = (e: DragEvent) => {
         enforceNoOverlapAxis(dragged!, sourceCoordinates) ||
         enforceBoundsAxis(dragged!, sourceCoordinates)
     );
+    clearGridElementsAnimation('error-animation-inset');
     clearGridCellAnimations(dragged!);
 
     dragged = undefined;
@@ -181,6 +188,16 @@ onMounted(() => {
     gridXResizeObs.observe(gridX);
 })
 
+// GridElements Helper Functions
+const addGridElementsAnimation = (className: string) => {
+    gridElements.value!.classList.remove(className);
+    setTimeout(() => {
+        gridElements.value!.classList.add(className);
+    });
+}
+const clearGridElementsAnimation = (className: string) => {
+    gridElements.value!.classList.remove(className);
+}
 </script>
 
 <template>
@@ -286,11 +303,25 @@ onMounted(() => {
     }
 
     to {
-        box-shadow: 0 0 5rem var(--error);
+        box-shadow: 0 0 100px var(--error);
     }
 }
 
 .error-animation {
     animation: subtle-glow var(--animation-long-duration) calc(var(--animation-repeat-count) * 2) alternate;
+}
+
+@keyframes subtle-glow-inset {
+    from {
+        box-shadow: 0 0 0px inset transparent;
+    }
+
+    to {
+        box-shadow: 0 0 100px inset var(--error);
+    }
+}
+
+.error-animation-inset {
+    animation: subtle-glow-inset var(--animation-long-duration) calc(var(--animation-repeat-count) * 2) alternate;
 }
 </style>
