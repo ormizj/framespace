@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ANIMATION_SHORT_DURATION } from '~/constants/style';
+import { ANIMATION_SHORT_DURATION, TAB_HEIGHT } from '~/constants/style';
 import IframeCell from './cell-components/iframe-cell.vue';
 
 const link = "https://www.calculatorsoup.com/calculators/math/percentage.php"
@@ -37,7 +37,7 @@ const hideScroll = ref(false);
 const frameSpaceContainer = ref<HTMLDivElement | null>(null);
 const handleHideClick = () => {
   const remSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
-  frameSpaceContainer.value!.scrollTop = remSize * 2 /* --tab-height */;
+  frameSpaceContainer.value!.scrollTop = remSize * TAB_HEIGHT;
 }
 
 watch(isOpen, (newValue) => {
@@ -82,7 +82,6 @@ watch(isOpen, (newValue) => {
 <style scoped>
 .frame-space-container {
   z-index: 1;
-  --tab-height: 2rem;
   height: 100dvh;
   width: 100dvw;
   position: fixed;

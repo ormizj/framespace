@@ -6,6 +6,6 @@ interface GridCell {
 	classes: Set<string>;
 	component: {
 		is: ShallowRef<VueElement>;
-		bind: HTMLElementAttributes;
+		bind?: HTMLElementAttributes;
 	};
 }

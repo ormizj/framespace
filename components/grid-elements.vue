@@ -152,7 +152,7 @@ const gridCellResizeObs = new ResizeObserver((obs) => {
         stopResizeMouseUp.value = false;
         return;
     }
-    if (!resized.value && isMouseDown.value) resized.value = obs[0].target as HTMLCellElement;
+    if (!resized.value && isMouseDown.value && !dragged) resized.value = obs[0].target as HTMLCellElement;
 });
 const handleMouseEnter = (e: MouseEvent) => {
     if (!resized.value) return;
@@ -324,6 +324,7 @@ const calcGridCellHeightPx = (gridCell: GridCell) => gridCell.cellHeight * cellH
 
 .grid-elements {
     position: relative;
+    overflow: hidden;
 
     .grid-cell {
         position: absolute;
