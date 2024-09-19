@@ -62,11 +62,11 @@ watch(isOpen, (newValue) => {
         <button @click="isOpen = !isOpen">
           {{ isOpen ? 'Close' : 'Open' }}
         </button>
-        <button @click="handleHideClick" :disabled="!isOpened">
-          Hide
-        </button>
         <button @click="editMode = !editMode" :disabled="!isOpened">
           {{ editMode ? 'View' : 'Edit' }}
+        </button>
+        <button @click="handleHideClick" :disabled="!isOpened">
+          Hide Tab
         </button>
         <button @click="hideScroll = !hideScroll" :disabled="!isOpened">
           {{ hideScroll ? 'Show Scroll' : 'Hide Scroll' }}
