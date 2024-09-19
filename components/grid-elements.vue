@@ -144,7 +144,7 @@ const handleDragOn = (e: DragEvent) => {
     addFutureGridCellDrag(target, dragged!);
 }
 
-
+let isMouseDown = ref<boolean>(false);
 // GridCell Resize
 const resized = ref<HTMLCellElement | null>(null);
 const gridCellResizeObs = new ResizeObserver((obs) => {
@@ -152,7 +152,7 @@ const gridCellResizeObs = new ResizeObserver((obs) => {
         stopResizeMouseUp.value = false;
         return;
     }
-    if (!resized.value) resized.value = obs[0].target as HTMLCellElement;
+    if (!resized.value && isMouseDown.value) resized.value = obs[0].target as HTMLCellElement;
 });
 const handleMouseEnter = (e: MouseEvent) => {
     if (!resized.value) return;
@@ -160,6 +160,7 @@ const handleMouseEnter = (e: MouseEvent) => {
     addFutureGridCellResize(target, getGridCellFromElement(resized.value)!);
 }
 const handleMouseUp = (e: MouseEvent) => {
+    isMouseDown.value = false;
     nextTick(() => {
         resized.value = null;
     });
@@ -281,7 +282,8 @@ const calcGridCellHeightPx = (gridCell: GridCell) => gridCell.cellHeight * cellH
         <div v-for="y in yGrid" class="y-grid" :style="{ height: `${cellHeight}dvh` }" :key="y">
             <!-- GRID X -->
             <div v-for="x in xGrid" class="x-grid" @drop="handleDragDrop" @mouseup="handleMouseUp"
-                @mouseenter="handleMouseEnter" @dragover.prevent="handleDragOn" :x="x" :y=y :key="x">
+                @mousedown="isMouseDown = true" @mouseenter="handleMouseEnter" @dragover.prevent="handleDragOn" :x="x"
+                :y=y :key="x">
                 <!-- GRID CELL -->
                 <template v-for="gridCell of modelGridCells" :key="`${gridCell.cellX}|${gridCell.cellY}`">
                     <template v-if="gridCell.cellX === x && gridCell.cellY === y">
@@ -321,9 +323,7 @@ const calcGridCellHeightPx = (gridCell: GridCell) => gridCell.cellHeight * cellH
 }
 
 .grid-elements {
-    overflow-y: auto;
     position: relative;
-
 
     .grid-cell {
         position: absolute;
