@@ -300,7 +300,7 @@ const calcGridCellHeightPx = (gridCell: GridCell) => gridCell.cellHeight * cellH
                             <component :class="['cell-component', { 'always-interactive': alwaysInteractive }]"
                                 :is="gridCell.component.is" v-bind="{
                                     ...gridCell.component.bind,
-                                    ...gridCell.component.props as unknown as object
+                                    ...gridCell.component.props
                                 }" />
                         </div>
                     </template>
