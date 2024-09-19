@@ -1,28 +1,60 @@
 <script setup lang="ts">
-import SettingCell from './cell-components/setting-cell.vue';
+import SettingTextCell from './cell-components/setting-text-cell.vue';
 import GridElements from './grid-elements.vue';
+
+const frameSpaceStore = useFrameSpaceStore();
+const { xGrid, yGrid, cellHeight } = storeToRefs(frameSpaceStore);
 
 const editMode = ref(true);
 const gridCells = ref<GridCell[]>([{
-    cellX: 1,
+    cellX: 7,
     cellY: 1,
-    cellWidth: 1,
+    cellWidth: 3,
     cellHeight: 1,
     classes: new Set(),
     component: {
-        is: shallowRef(SettingCell),
+        is: shallowRef(SettingTextCell),
+        bind: {
+            'modelValue': xGrid,
+            'onUpdate:modelValue': (value: string) => xGrid.value = +value,
+            'title': '# X-Grid:',
+            'id': 'x-grid',
+            'type': 'number',
+        }
     }
 }, {
-    cellX: 1,
-    cellY: 7,
-    cellWidth: 1,
+    cellX: 7,
+    cellY: 2,
+    cellWidth: 3,
     cellHeight: 1,
     classes: new Set(),
     component: {
-        is: shallowRef(SettingCell),
+        is: shallowRef(SettingTextCell),
+        bind: {
+            'modelValue': yGrid,
+            'onUpdate:modelValue': (value: string) => yGrid.value = +value,
+            'title': '# Y-Grid:',
+            'id': 'y-grid',
+            'type': 'number',
+        }
+    }
+}, {
+    cellX: 7,
+    cellY: 3,
+    cellWidth: 3,
+    cellHeight: 1,
+    classes: new Set(),
+    component: {
+        is: shallowRef(SettingTextCell),
+        bind: {
+            'modelValue': cellHeight,
+            'onUpdate:modelValue': (value: string) => cellHeight.value = +value,
+            'title': '% Cell-Height:',
+            'id': 'cell-height',
+            'type': 'number',
+        }
     }
 }]);
-
 </script>
 
 <template>

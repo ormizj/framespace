@@ -2,6 +2,9 @@
 import { ANIMATION_SHORT_DURATION, TAB_HEIGHT } from '~/constants/style';
 import IframeCell from './cell-components/iframe-cell.vue';
 
+const frameSpaceStore = useFrameSpaceStore();
+const { xGrid, yGrid, cellHeight } = storeToRefs(frameSpaceStore);
+
 const link = "https://www.calculatorsoup.com/calculators/math/percentage.php"
 const gridCells = ref<GridCell[]>([{
   cellX: 1,
@@ -71,8 +74,8 @@ watch(isOpen, (newValue) => {
       <div class="content" ref="content">
         <ClientOnly>
           <!-- component doesn't support SSR -->
-          <GridElements class="grid-elements" v-model="gridCells" v-model:edit="editMode" :x-grid="10" :y-grid="10"
-            :cell-height="10" />
+          <GridElements class="grid-elements" v-model="gridCells" v-model:edit="editMode" :x-grid="xGrid"
+            :y-grid="yGrid" :cell-height="cellHeight" />
         </ClientOnly>
       </div>
     </div>
