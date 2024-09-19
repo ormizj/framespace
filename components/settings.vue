@@ -67,7 +67,7 @@ const gridCells = ref<GridCell<typeof SettingTextCell>[]>([{
         </div>
         <div class="content">
             <ClientOnly>
-                <!-- TODO temp type -->
+                <!-- TODO temp "as" type -->
                 <GridElements class="grid-elements" v-model="gridCells as unknown as GridCell[]" v-model:edit="editMode"
                     :x-grid="15" :y-grid="15" :cell-height="10" :always-interactive="true" />
             </ClientOnly>
