@@ -75,7 +75,7 @@ watch(isOpen, (newValue) => {
       <div class="content" ref="content">
         <ClientOnly>
           <!-- component doesn't support SSR -->
-          <GridElements class="grid-elements" v-model="gridCells" v-model:edit="editMode" :x-grid="xGrid"
+          <GridElements class="grid-elements" v-model="gridCells as GridCell[]" v-model:edit="editMode" :x-grid="xGrid"
             :y-grid="yGrid" :cell-height="cellHeight" />
         </ClientOnly>
       </div>
