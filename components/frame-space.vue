@@ -118,6 +118,7 @@ watch(isOpen, (newValue) => {
     }
 
     .content {
+      border-top: 1px solid var(--secondary);
       min-height: calc(100dvh - var(--tab-height));
       background-color: var(--background);
     }
