@@ -8,7 +8,6 @@ const gridCells = ref<GridCell[]>([{
   cellY: 1,
   cellWidth: 5,
   cellHeight: 3,
-  link,
   classes: new Set(),
   component: {
     is: shallowRef(IframeCell),
@@ -21,7 +20,6 @@ const gridCells = ref<GridCell[]>([{
   cellY: 7,
   cellWidth: 1,
   cellHeight: 1,
-  link,
   classes: new Set(),
   component: {
     is: shallowRef(IframeCell),
@@ -73,7 +71,8 @@ watch(isOpen, (newValue) => {
       <div class="content" ref="content">
         <ClientOnly>
           <!-- component doesn't support SSR -->
-          <GridElements v-model="gridCells" v-model:edit="editMode" :x-grid="10" :y-grid="10" :cell-height="10" />
+          <GridElements class="grid-elements" v-model="gridCells" v-model:edit="editMode" :x-grid="10" :y-grid="10"
+            :cell-height="10" />
         </ClientOnly>
       </div>
     </div>
@@ -120,6 +119,11 @@ watch(isOpen, (newValue) => {
     .content {
       min-height: calc(100dvh - var(--tab-height));
       background-color: var(--background);
+    }
+
+    .grid-elements {
+      min-height: 100dvh;
+      width: 100%;
     }
   }
 }
