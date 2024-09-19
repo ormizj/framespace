@@ -14,6 +14,7 @@
 		"nuxt": "^3.13.0",
 		"pinia": "^2.2.2",
 		"vue": "latest",
+		"vue-component-type-helpers": "^2.1.6",
 		"vue-router": "latest"
 	},
 	"devDependencies": {

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ANIMATION_LONG_DURATION, ANIMATION_REPEAT_COUNT } from '~/constants/style';
+import type { GridCell } from '~/types/GridCell';
 
 const modelGridCells = defineModel<GridCell[]>({ required: true });
 const modelEdit = defineModel('edit', { default: false });
@@ -297,7 +298,10 @@ const calcGridCellHeightPx = (gridCell: GridCell) => gridCell.cellHeight * cellH
                                 height: `${calcGridCellHeightPx(gridCell)}px`
                             }">
                             <component :class="['cell-component', { 'always-interactive': alwaysInteractive }]"
-                                :is="gridCell.component.is" v-bind="gridCell.component.bind" />
+                                :is="gridCell.component.is" v-bind="{
+                                    ...gridCell.component.bind,
+                                    ...gridCell.component.props as unknown as object
+                                }" />
                         </div>
                     </template>
                 </template>

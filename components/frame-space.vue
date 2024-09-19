@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { ANIMATION_SHORT_DURATION, TAB_HEIGHT } from '~/constants/style';
 import IframeCell from './cell-components/iframe-cell.vue';
+import type { GridCell } from '~/types/GridCell';
 
 const frameSpaceStore = useFrameSpaceStore();
 const { xGrid, yGrid, cellHeight } = storeToRefs(frameSpaceStore);
 
 const link = "https://www.calculatorsoup.com/calculators/math/percentage.php"
-const gridCells = ref<GridCell[]>([{
+const gridCells = ref<GridCell<typeof IframeCell>[]>([{
   cellX: 1,
   cellY: 1,
   cellWidth: 5,
