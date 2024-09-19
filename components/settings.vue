@@ -92,4 +92,19 @@ const gridCells = ref<GridCell<typeof SettingTextCell>[]>([{
         border-top: 1px solid var(--secondary);
     }
 }
+
+
+@keyframes subtle-glow {
+    from {
+        box-shadow: 0 0 1px var(--secondary);
+    }
+
+    to {
+        box-shadow: 0 0 10px var(--secondary);
+    }
+}
+
+.content:deep(.grid-cell) {
+    animation: subtle-glow var(--animation-longer-duration) infinite alternate;
+}
 </style>

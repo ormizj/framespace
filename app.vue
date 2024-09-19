@@ -40,6 +40,7 @@ body {
   /* animation */
   --animation-short-duration: 0.25s;
   --animation-long-duration: 1s;
+  --animation-longer-duration: 5s;
   --animation-repeat-count: 3;
   /* layout */
   --tab-height: 2rem;
