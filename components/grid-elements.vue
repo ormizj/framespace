@@ -297,7 +297,8 @@ const calcGridCellHeightPx = (gridCell: GridCell) => gridCell.cellHeight * cellH
                                 width: `${calcGridCellWidthPx(gridCell)}px`,
                                 height: `${calcGridCellHeightPx(gridCell)}px`
                             }">
-                            <component :class="['cell-component', { 'always-interactive': alwaysInteractive }]"
+                            <component
+                                :class="['cell-component', { 'always-interactive': alwaysInteractive && !isMouseDown }]"
                                 :is="gridCell.component.is" v-bind="{
                                     ...gridCell.component.bind,
                                     ...gridCell.component.props
@@ -354,7 +355,7 @@ const calcGridCellHeightPx = (gridCell: GridCell) => gridCell.cellHeight * cellH
     .grid-cell {
         pointer-events: auto;
         resize: both;
-        overflow: auto;
+        overflow: hidden;
         cursor: grab;
 
         &.resizing {

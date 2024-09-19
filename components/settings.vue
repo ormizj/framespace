@@ -104,7 +104,7 @@ const gridCells = ref<GridCell<typeof SettingTextCell>[]>([{
     }
 }
 
-.content:deep(.grid-cell) {
+:deep(.grid-cell) {
     animation: subtle-glow var(--animation-longer-duration) infinite alternate;
 }
 </style>
