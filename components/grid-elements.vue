@@ -334,6 +334,7 @@ const calcGridCellHeightPx = (gridCell: GridCell) => gridCell.cellHeight * cellH
     .cell-component {
         width: 100%;
         height: 100%;
+        overflow: auto;
     }
 }
 

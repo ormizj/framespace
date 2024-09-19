@@ -28,7 +28,9 @@ const gridCells = ref<GridCell[]>([{
 <template>
     <div class="settings">
         <div class="header">
-            Settings
+            <h2>
+                Settings
+            </h2>
         </div>
         <div class="content">
             <ClientOnly>
@@ -41,11 +43,14 @@ const gridCells = ref<GridCell[]>([{
 
 <style scoped>
 .settings {
+    height: 100%;
+
     .header {
         height: var(--header-height);
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
-
-    height: 100%;
 
     .content {
         overflow-y: auto;
