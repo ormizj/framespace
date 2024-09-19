@@ -74,7 +74,7 @@ watch(isOpen, (newValue) => {
       </div>
       <div class="content" ref="content">
         <ClientOnly>
-          <!-- component doesn't support SSR -->
+          <!-- TODO temp type -->
           <GridElements class="grid-elements" v-model="gridCells as GridCell[]" v-model:edit="editMode" :x-grid="xGrid"
             :y-grid="yGrid" :cell-height="cellHeight" />
         </ClientOnly>
