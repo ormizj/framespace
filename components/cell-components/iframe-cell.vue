@@ -1,11 +1,11 @@
 <script setup></script>
 
 <template>
-    <iframe />
+    <iframe class="iframe" />
 </template>
 
 <style scoped>
-iframe {
+.iframe {
     border: unset;
 }
 </style>

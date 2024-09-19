@@ -13,7 +13,6 @@ const handleInput = (event: KeyboardEvent) => {
     event.key !== 'Backspace' &&
     event.key !== 'Delete'
   ) event.preventDefault();
-
 };
 </script>
 
