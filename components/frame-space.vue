@@ -2,11 +2,11 @@
 import { ANIMATION_SHORT_DURATION, TAB_HEIGHT } from '~/constants/style';
 import IframeCell from './cell-components/iframe-cell.vue';
 import type { GridCell } from '~/types/GridCell';
+import OpenCorsSites from '~/enums/OpenCorsSites';
 
 const frameSpaceStore = useFrameSpaceStore();
 const { xGrid, yGrid, cellHeight } = storeToRefs(frameSpaceStore);
 
-const link = "https://www.calculatorsoup.com/calculators/math/percentage.php"
 const gridCells = ref<GridCell<typeof IframeCell>[]>([{
   cellX: 1,
   cellY: 1,
@@ -16,7 +16,7 @@ const gridCells = ref<GridCell<typeof IframeCell>[]>([{
   component: {
     is: shallowRef(IframeCell),
     bind: {
-      src: link
+      src: OpenCorsSites.calculatorsoup
     }
   }
 }, {
@@ -28,7 +28,7 @@ const gridCells = ref<GridCell<typeof IframeCell>[]>([{
   component: {
     is: shallowRef(IframeCell),
     bind: {
-      src: link
+      src: OpenCorsSites.calculatorsoup
     },
   }
 }]);
