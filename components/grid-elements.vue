@@ -129,6 +129,7 @@ const handleDragEnd = (e: DragEvent) => {
     target.style.pointerEvents = '';
 }
 const handleDragDrop = (e: DragEvent) => {
+    isMouseDown.value = false;
     const target = e.target as HTMLGridElement;
     const sourceCoordinates = getGridCellCoordinates(dragged!);
     dragged!.cellX = getElementX(target);
