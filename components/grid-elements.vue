@@ -322,6 +322,8 @@ const calcGridCellHeightPx = (gridCell: GridCell) => gridCell.cellHeight * cellH
 
 .grid-elements {
     overflow-y: auto;
+    position: relative;
+
 
     .grid-cell {
         position: absolute;

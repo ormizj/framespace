@@ -81,6 +81,7 @@ watch(isOpen, (newValue) => {
 
 <style scoped>
 .frame-space-container {
+  z-index: 1;
   --tab-height: 2rem;
   height: 100dvh;
   width: 100dvw;
