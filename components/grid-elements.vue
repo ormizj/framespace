@@ -4,11 +4,14 @@ import { ANIMATION_LONG_DURATION, ANIMATION_REPEAT_COUNT } from '~/constants/sty
 const modelGridCells = defineModel<GridCell[]>({ required: true });
 const modelEdit = defineModel('edit', { default: false });
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
     xGrid: number;
     yGrid: number;
     cellHeight: number;
-}>();
+    alwaysInteractive?: boolean
+}>(), {
+    alwaysInteractive: false
+});
 
 const gridElements = ref<HTMLDivElement | null>(null);
 const gridCellElements = ref<null | HTMLGridElement[]>(null);
@@ -293,8 +296,8 @@ const calcGridCellHeightPx = (gridCell: GridCell) => gridCell.cellHeight * cellH
                                 width: `${calcGridCellWidthPx(gridCell)}px`,
                                 height: `${calcGridCellHeightPx(gridCell)}px`
                             }">
-                            <component class="cell-component" :is="gridCell.component.is"
-                                v-bind="gridCell.component.bind" />
+                            <component :class="['cell-component', { 'always-interactive': alwaysInteractive }]"
+                                :is="gridCell.component.is" v-bind="gridCell.component.bind" />
                         </div>
                     </template>
                 </template>
@@ -340,7 +343,7 @@ const calcGridCellHeightPx = (gridCell: GridCell) => gridCell.cellHeight * cellH
 
 /* gridElements edit */
 .grid-elements.edit {
-    .cell-component {
+    .cell-component:not(.always-interactive) {
         pointer-events: none;
     }
 
@@ -366,7 +369,7 @@ const calcGridCellHeightPx = (gridCell: GridCell) => gridCell.cellHeight * cellH
 }
 
 /* gridElements not edit */
-.grid-elements:not('.edit') {
+.grid-elements:not(.edit) {
     .cell-component {
         pointer-events: auto;
     }

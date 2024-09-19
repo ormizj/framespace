@@ -35,7 +35,7 @@ const gridCells = ref<GridCell[]>([{
         <div class="content">
             <ClientOnly>
                 <GridElements class="grid-elements" v-model="gridCells" v-model:edit="editMode" :x-grid="15"
-                    :y-grid="15" :cell-height="10" />
+                    :y-grid="15" :cell-height="10" :always-interactive="true" />
             </ClientOnly>
         </div>
     </div>
