@@ -8,7 +8,7 @@ import SettingSelectCell from './cell-components/setting-select-cell.vue';
 import SettingButtonCell from './cell-components/setting-button-cell.vue';
 
 const frameSpaceStore = useFrameSpaceStore();
-const { xGrid, yGrid, cellHeight, iframesSrcOptions } = storeToRefs(frameSpaceStore);
+const { xGrid, yGrid, cellHeight, iframesSrcOptions, outOfBoundIframes } = storeToRefs(frameSpaceStore);
 
 const handleSubmitIframe = () => {
     if (!iframeSrc.value) {
@@ -134,9 +134,21 @@ const gridCells = ref<GridCell<SettingCells>[]>([{
 <template>
     <div class="settings">
         <div class="header">
+            <div class="message-container">
+                <h3 class="message" :class="{ warning: outOfBoundIframes.amount }">
+                    Iframes out of bound: {{ outOfBoundIframes.amount }}
+                </h3>
+            </div>
             <h2>
                 Settings
             </h2>
+            <div class="message-container">
+                <h3 class="message" :class="{ warning: outOfBoundIframes.amount }">Highest X-Grid: {{
+                    outOfBoundIframes.maxX }}</h3>
+                &nbsp;&nbsp;&nbsp;
+                <h3 class="message" :class="{ warning: outOfBoundIframes.amount }">Highest Y-Grid: {{
+                    outOfBoundIframes.maxY }}</h3>
+            </div>
         </div>
         <div class="content">
             <ClientOnly>
@@ -156,7 +168,7 @@ const gridCells = ref<GridCell<SettingCells>[]>([{
         height: var(--header-height);
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: space-around;
     }
 
     .content {
@@ -164,6 +176,20 @@ const gridCells = ref<GridCell<SettingCells>[]>([{
         height: calc(100% - var(--header-height) - var(--tab-height));
         border-bottom: 1px solid var(--secondary);
         border-top: 1px solid var(--secondary);
+    }
+
+    .message-container {
+        display: flex;
+        align-items: center;
+
+        .message {
+            border-radius: var(--border-glow-radius);
+            padding: 0.5rem;
+
+            &.warning {
+                animation: subtle-glow-warning var(--animation-long-duration) infinite alternate;
+            }
+        }
     }
 }
 
@@ -180,5 +206,16 @@ const gridCells = ref<GridCell<SettingCells>[]>([{
 
 :deep(.grid-cell:not(.error-animation)) {
     animation: subtle-glow var(--animation-longer-duration) infinite alternate;
+}
+
+
+@keyframes subtle-glow-warning {
+    from {
+        box-shadow: 0 0 1px var(--warning) inset;
+    }
+
+    to {
+        box-shadow: 0 0 calc(var(--border-glow-radius) / 2) var(--warning) inset;
+    }
 }
 </style>

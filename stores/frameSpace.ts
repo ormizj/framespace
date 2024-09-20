@@ -12,6 +12,26 @@ export const useFrameSpaceStore = defineStore({
 		iframeGridCells: [] as GridCell<typeof IframeCell>[],
 		iframesSrcOptions: [...Object.values(OpenCorsSites)] as string[],
 	}),
+	getters: {
+		outOfBoundIframes() {
+			let amount = 0;
+			let maxX = 0;
+			let maxY = 0;
+			this.iframeGridCells.forEach((iframe) => {
+				const endX = iframe.cellX + iframe.cellWidth - 1;
+				const endY = iframe.cellY + iframe.cellHeight - 1;
+				if (endX > maxX) maxX = endX;
+				if (endY > maxY) maxY = endY;
+				if (endX > this.xGrid || endY > this.yGrid) amount++;
+			});
+
+			return {
+				amount,
+				maxX: maxX,
+				maxY: maxY,
+			};
+		},
+	},
 	actions: {
 		addIframe({
 			cellX,

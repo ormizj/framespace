@@ -17,10 +17,9 @@ defineProps<{
 
 <style scoped>
 .setting-cell {
-    z-index: 9999;
     background-color: var(--background);
     outline: 1px dashed var(--secondary);
-    border-radius: 25px;
+    border-radius: var(--border-glow-radius);
     overflow: hidden !important;
 
     .button-block {
