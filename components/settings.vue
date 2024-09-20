@@ -40,10 +40,10 @@ const gridCells = ref<GridCell<SettingCells>[]>([
         component: {
             is: shallowRef(SettingLabelInputCell),
             props: {
-                'modelValue': cellHeight,
-                'onUpdate:modelValue': (value: string) => cellHeight.value = +value,
-                'title': '% Cell-Height:',
-                'id': 'cell-height',
+                'modelValue': xGrid,
+                'onUpdate:modelValue': (value: string) => xGrid.value = +value,
+                'title': '# X-Grid:',
+                'id': 'x-grid',
                 'type': 'number',
             }
         }
@@ -56,10 +56,10 @@ const gridCells = ref<GridCell<SettingCells>[]>([
         component: {
             is: shallowRef(SettingLabelInputCell),
             props: {
-                'modelValue': xGrid,
-                'onUpdate:modelValue': (value: string) => xGrid.value = +value,
-                'title': '# X-Grid:',
-                'id': 'x-grid',
+                'modelValue': yGrid,
+                'onUpdate:modelValue': (value: string) => yGrid.value = +value,
+                'title': '# Y-Grid:',
+                'id': 'y-grid',
                 'type': 'number',
             }
         }
@@ -72,10 +72,10 @@ const gridCells = ref<GridCell<SettingCells>[]>([
         component: {
             is: shallowRef(SettingLabelInputCell),
             props: {
-                'modelValue': yGrid,
-                'onUpdate:modelValue': (value: string) => yGrid.value = +value,
-                'title': '# Y-Grid:',
-                'id': 'y-grid',
+                'modelValue': cellHeight,
+                'onUpdate:modelValue': (value: string) => cellHeight.value = +value,
+                'title': '% Cell-Height:',
+                'id': 'cell-height',
                 'type': 'number',
             }
         }
@@ -204,9 +204,8 @@ const gridCells = ref<GridCell<SettingCells>[]>([
         </div>
         <div class="content">
             <ClientOnly>
-                <!-- TODO temp "as" type -->
-                <GridElements class="grid-elements" v-model="gridCells as unknown as GridCell[]" v-model:edit="editMode"
-                    :x-grid="15" :y-grid="15" :cell-height="10" :always-interactive="true" />
+                <GridElements class="grid-elements" v-model="gridCells" v-model:edit="editMode" :x-grid="15"
+                    :y-grid="15" :cell-height="10" :always-interactive="true" />
             </ClientOnly>
         </div>
     </div>
