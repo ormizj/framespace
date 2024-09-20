@@ -2,7 +2,7 @@
 const props = defineProps<{
   title: string;
   id: string;
-  type: 'text' | 'number';
+  type: 'text' | 'number' | 'email';
 }>()
 const model = defineModel();
 

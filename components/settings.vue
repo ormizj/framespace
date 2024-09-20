@@ -11,10 +11,14 @@ import type IframeCell from './cell-components/iframe-cell.vue';
 const frameSpaceStore = useFrameSpaceStore();
 const { xGrid, yGrid, cellHeight, iframesSrcOptions, outOfBoundIframes, iframeGridCells } = storeToRefs(frameSpaceStore);
 
-const username = ref('');
+const email = ref('');
 const password = ref('');
 const handleLogin = () => {
-    console.log(username.value);
+    console.log(email.value);
+    console.log(password.value);
+}
+const handleRegister = () => {
+    console.log(email.value);
     console.log(password.value);
 }
 
@@ -187,7 +191,7 @@ const gridCells = ref<GridCell<SettingCells>[]>([
     }, { /* LOGIN */
         cellX: 1,
         cellY: 1,
-        cellWidth: 3,
+        cellWidth: 2,
         cellHeight: 1,
         classes: new Set(),
         component: {
@@ -200,23 +204,23 @@ const gridCells = ref<GridCell<SettingCells>[]>([
     }, {
         cellX: 1,
         cellY: 2,
-        cellWidth: 3,
+        cellWidth: 2,
         cellHeight: 1,
         classes: new Set(),
         component: {
             is: shallowRef(SettingLabelInputCell),
             props: {
-                'modelValue': username,
-                'onUpdate:modelValue': (value: string) => username.value = value,
-                'title': 'Username',
-                'id': 'username',
-                'type': 'text',
+                'modelValue': email,
+                'onUpdate:modelValue': (value: string) => email.value = value,
+                'title': 'Email',
+                'id': 'email',
+                'type': 'email',
             }
         }
     }, {
         cellX: 1,
         cellY: 3,
-        cellWidth: 3,
+        cellWidth: 2,
         cellHeight: 1,
         classes: new Set(),
         component: {
@@ -232,7 +236,20 @@ const gridCells = ref<GridCell<SettingCells>[]>([
     }, {
         cellX: 1,
         cellY: 4,
-        cellWidth: 3,
+        cellWidth: 1,
+        cellHeight: 1,
+        classes: new Set(),
+        component: {
+            is: shallowRef(SettingButtonCell),
+            props: {
+                'title': 'Register',
+                'onClick': handleRegister,
+            }
+        }
+    }, {
+        cellX: 2,
+        cellY: 4,
+        cellWidth: 1,
         cellHeight: 1,
         classes: new Set(),
         component: {

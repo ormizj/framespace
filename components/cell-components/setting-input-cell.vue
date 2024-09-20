@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 const props = defineProps<{
     id: string;
-    type: 'text' | 'number';
+    type: 'text' | 'number' | 'email';
 }>()
 const model = defineModel();
 

@@ -15,7 +15,7 @@ export interface GridCell<T extends Component | unknown = unknown> {
 	classes: Set<string>;
 	component: {
 		is: ShallowUnwrapRef<T>;
-		props?: Partial<ComponentProps<T>>;
+		props?: ComponentProps<T>;
 		bind?: { [key: string]: string };
 	};
 }
