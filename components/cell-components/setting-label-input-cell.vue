@@ -55,7 +55,7 @@ const handleInput = (event: KeyboardEvent) => {
       justify-content: start;
 
       .input {
-        max-width: 50%;
+        width: 75%;
       }
     }
   }

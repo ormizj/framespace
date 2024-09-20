@@ -1,7 +1,7 @@
 <script lang="ts" generic="T" setup>
 withDefaults(defineProps<{
     id: string;
-    formatter(option: T): string;
+    formatter?(option: T): string;
 }>(), {
     formatter: (option: T) => option as string,
 });

@@ -11,6 +11,13 @@ import type IframeCell from './cell-components/iframe-cell.vue';
 const frameSpaceStore = useFrameSpaceStore();
 const { xGrid, yGrid, cellHeight, iframesSrcOptions, outOfBoundIframes, iframeGridCells } = storeToRefs(frameSpaceStore);
 
+const username = ref('');
+const password = ref('');
+const handleLogin = () => {
+    console.log(username.value);
+    console.log(password.value);
+}
+
 const handleAddIframe = () => {
     if (!addIframeSrc.value) {
         alert('Iframe url is missing!');
@@ -131,7 +138,7 @@ const gridCells = ref<GridCell<SettingCells>[]>([
         component: {
             is: shallowRef(SettingButtonCell),
             props: {
-                'title': 'Submit Add Iframe',
+                'title': 'Add Iframe',
                 'onClick': handleAddIframe
             }
         }
@@ -173,8 +180,66 @@ const gridCells = ref<GridCell<SettingCells>[]>([
         component: {
             is: shallowRef(SettingButtonCell),
             props: {
-                'title': 'Submit Remove Iframe',
+                'title': 'Remove Iframe',
                 'onClick': handleRemoveIframe,
+            }
+        }
+    }, { /* LOGIN */
+        cellX: 1,
+        cellY: 1,
+        cellWidth: 3,
+        cellHeight: 1,
+        classes: new Set(),
+        component: {
+            is: shallowRef(SettingLabelCell),
+            props: {
+                'title': 'Login',
+                'id': 'login',
+            }
+        }
+    }, {
+        cellX: 1,
+        cellY: 2,
+        cellWidth: 3,
+        cellHeight: 1,
+        classes: new Set(),
+        component: {
+            is: shallowRef(SettingLabelInputCell),
+            props: {
+                'modelValue': username,
+                'onUpdate:modelValue': (value: string) => username.value = value,
+                'title': 'Username',
+                'id': 'username',
+                'type': 'text',
+            }
+        }
+    }, {
+        cellX: 1,
+        cellY: 3,
+        cellWidth: 3,
+        cellHeight: 1,
+        classes: new Set(),
+        component: {
+            is: shallowRef(SettingLabelInputCell),
+            props: {
+                'modelValue': password,
+                'onUpdate:modelValue': (value: string) => password.value = value,
+                'title': 'Password',
+                'id': 'password',
+                'type': 'text',
+            }
+        }
+    }, {
+        cellX: 1,
+        cellY: 4,
+        cellWidth: 3,
+        cellHeight: 1,
+        classes: new Set(),
+        component: {
+            is: shallowRef(SettingButtonCell),
+            props: {
+                'title': 'Login',
+                'onClick': handleLogin,
             }
         }
     },
