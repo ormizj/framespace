@@ -56,7 +56,7 @@ export const useFrameSpaceStore = defineStore({
 			let cellX: number = -1;
 			let cellY: number = -1;
 
-			outerLoop: for (let y = 1; y <= this.yGrid; y++) {
+			outerLoop: for (let y = 1; true; y++) {
 				for (let x = 1; x <= this.xGrid; x++) {
 					let isOutsideAllIframes = true;
 
