@@ -134,15 +134,17 @@ const gridCells = ref<GridCell<SettingCells>[]>([{
 <template>
     <div class="settings">
         <div class="header">
-            <div class="message-container">
+            <div class="message-container start">
                 <h3 class="message" :class="{ warning: outOfBoundIframes.amount }">
                     Iframes out of bound: {{ outOfBoundIframes.amount }}
                 </h3>
             </div>
-            <h2>
-                Settings
-            </h2>
-            <div class="message-container">
+            <div class="message-container center">
+                <h2>
+                    Settings
+                </h2>
+            </div>
+            <div class="message-container end">
                 <h3 class="message" :class="{ warning: outOfBoundIframes.amount }">Highest X-Grid: {{
                     outOfBoundIframes.maxX }}</h3>
                 &nbsp;&nbsp;&nbsp;
@@ -168,7 +170,6 @@ const gridCells = ref<GridCell<SettingCells>[]>([{
         height: var(--header-height);
         display: flex;
         align-items: center;
-        justify-content: space-around;
     }
 
     .content {
@@ -180,7 +181,19 @@ const gridCells = ref<GridCell<SettingCells>[]>([{
 
     .message-container {
         display: flex;
-        align-items: center;
+        width: 100%;
+
+        &.start {
+            justify-content: end;
+        }
+
+        &.center {
+            justify-content: center;
+        }
+
+        &.end {
+            justify-content: start;
+        }
 
         .message {
             border-radius: var(--border-glow-radius);
