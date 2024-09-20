@@ -107,6 +107,13 @@ export const useFrameSpaceStore = defineStore({
 				classes,
 			});
 		},
+
+		removeIframe(iframe: (typeof this.iframeGridCells)[number]) {
+			const iframeIndex = this.iframeGridCells.findIndex(
+				(otherIframe) => otherIframe === iframe
+			);
+			this.iframeGridCells = this.iframeGridCells.splice(iframeIndex, 1);
+		},
 	},
 });
 
