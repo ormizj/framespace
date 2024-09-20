@@ -11,6 +11,10 @@ const frameSpaceStore = useFrameSpaceStore();
 const { xGrid, yGrid, cellHeight, iframesSrcOptions } = storeToRefs(frameSpaceStore);
 
 const handleSubmitIframe = () => {
+    if (!iframeSrc.value) {
+        alert('Iframe url is missing!');
+        return;
+    }
     frameSpaceStore.addIframeInFreeCell({
         src: iframeSrc.value,
         classes: new Set(['golden-animation'])
