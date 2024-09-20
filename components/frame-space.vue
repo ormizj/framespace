@@ -31,21 +31,6 @@ const initializeIframes = () => {
   // TODO temp "as" type
   iframes.value.forEach((iframe) => iframe.component.is = shallowRef(IframeCell) as unknown as typeof IframeCell);
 }
-frameSpaceStore.addIframe({
-  cellX: 1,
-  cellY: 1,
-  cellWidth: 5,
-  cellHeight: 3,
-  src: OpenCorsSites.calculatorsoup,
-  classes: new Set(['golden-animation']),
-});
-frameSpaceStore.addIframe({
-  cellX: 1,
-  cellY: 7,
-  cellWidth: 1,
-  cellHeight: 1,
-  src: OpenCorsSites.calculatorsoup
-});
 initializeIframes();
 watch(iframesUpdater, initializeIframes);
 </script>

@@ -11,8 +11,10 @@ const frameSpaceStore = useFrameSpaceStore();
 const { xGrid, yGrid, cellHeight } = storeToRefs(frameSpaceStore);
 
 const handleSubmitIframe = () => {
-    console.log(123);
-
+    frameSpaceStore.addIframeInFreeCell({
+        src: iframeSrc.value,
+        classes: new Set(['golden-animation'])
+    });
 }
 
 const iframeSrc = ref('');
