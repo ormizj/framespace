@@ -1,18 +1,22 @@
 <script setup lang="ts">
 import type { GridCell } from '~/types/GridCell';
-import SettingLabelInputCell from './cell-components/setting-label-input-cell.vue';
 import GridElements from './grid-elements.vue';
+import SettingLabelInputCell from './cell-components/setting-label-input-cell.vue';
 import SettingLabelCell from './cell-components/setting-label-cell.vue';
 import SettingInputCell from './cell-components/setting-input-cell.vue';
 import SettingSelectCell from './cell-components/setting-select-cell.vue';
+import SettingButtonCell from './cell-components/setting-button-cell.vue';
 
 const frameSpaceStore = useFrameSpaceStore();
 const { xGrid, yGrid, cellHeight } = storeToRefs(frameSpaceStore);
 
+const handleSubmitIframe = () => {
+    console.log(123);
+
+}
+
 const iframeSrc = ref('');
-
-type SettingCells = typeof SettingLabelInputCell | typeof SettingLabelCell | typeof SettingInputCell | typeof SettingSelectCell;
-
+type SettingCells = typeof SettingLabelInputCell | typeof SettingLabelCell | typeof SettingInputCell | typeof SettingSelectCell | typeof SettingButtonCell;
 const editMode = ref(true);
 const gridCells = ref<GridCell<SettingCells>[]>([{
     cellX: 7,
@@ -103,6 +107,19 @@ const gridCells = ref<GridCell<SettingCells>[]>([{
             'onUpdate:modelValue': (value: string) => iframeSrc.value = value,
             'id': 'add-iframe-select',
             'options': frameSpaceStore.iframesSrcOptions,
+        }
+    }
+}, {
+    cellX: 10,
+    cellY: 1,
+    cellWidth: 2,
+    cellHeight: 2,
+    classes: new Set(),
+    component: {
+        is: shallowRef(SettingButtonCell),
+        props: {
+            'title': 'Submit Add Iframe',
+            'onClick': handleSubmitIframe
         }
     }
 }]);
