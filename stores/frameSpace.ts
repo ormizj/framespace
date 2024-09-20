@@ -30,6 +30,10 @@ export const useFrameSpaceStore = defineStore({
 			src: string;
 			classes?: Set<string>;
 		}) {
+			if (!this.iframesSrcOptions.find((otherSrc) => otherSrc === src)) {
+				this.iframesSrcOptions.unshift(src);
+			}
+
 			this.iframesUpdater++;
 			this.iframes.push({
 				cellX,

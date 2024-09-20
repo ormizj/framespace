@@ -1,10 +1,9 @@
 <script lang="ts" setup>
 defineProps<{
-    options: string[];
     id: string;
 }>()
 const model = defineModel();
-
+const modelOptions = defineModel('options');
 </script>
 
 <template>
@@ -12,7 +11,7 @@ const model = defineModel();
         <div class="select-block">
             <div class="select-container">
                 <select v-model="model" :name="id" :id="id" class="select">
-                    <option v-for="option in options" :key="option" :value="option">
+                    <option v-for="option in modelOptions" :key="option" :value="option">
                         {{ option }}
                     </option>
                 </select>

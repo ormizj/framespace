@@ -8,7 +8,7 @@ import SettingSelectCell from './cell-components/setting-select-cell.vue';
 import SettingButtonCell from './cell-components/setting-button-cell.vue';
 
 const frameSpaceStore = useFrameSpaceStore();
-const { xGrid, yGrid, cellHeight } = storeToRefs(frameSpaceStore);
+const { xGrid, yGrid, cellHeight, iframesSrcOptions } = storeToRefs(frameSpaceStore);
 
 const handleSubmitIframe = () => {
     frameSpaceStore.addIframeInFreeCell({
@@ -108,7 +108,7 @@ const gridCells = ref<GridCell<SettingCells>[]>([{
             'modelValue': iframeSrc,
             'onUpdate:modelValue': (value: string) => iframeSrc.value = value,
             'id': 'add-iframe-select',
-            'options': frameSpaceStore.iframesSrcOptions,
+            'options': iframesSrcOptions,
         }
     }
 }, {
