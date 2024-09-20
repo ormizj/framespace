@@ -9,12 +9,7 @@ const props = defineProps<{
     <div class="setting-cell">
         <div class="input-block">
             <div class="label-container">
-                <label :for="id">{{ title }} {{ title }} {{ title }} {{ title }} {{ title }} {{ title }} {{ title }} {{
-                    title }} {{ title }} {{ title }} {{ title }} {{ title }} {{ title }} {{ title }} {{ title }} {{
-                        title }} {{ title }} {{ title }} {{ title }} {{ title }} {{ title }} {{ title }} {{ title }} {{
-                        title }} {{ title }} {{ title }} {{ title }} {{ title }} {{ title }} {{ title }} {{ title }} {{
-                        title }} {{ title }} {{ title }} {{ title }} {{ title }} {{ title }} {{ title }} {{ title }} {{
-                        title }} {{ title }} {{ title }} </label>
+                <label :for="id">{{ title }}</label>
             </div>
         </div>
     </div>
