@@ -19,12 +19,14 @@ export const useFrameSpaceStore = defineStore({
 			cellWidth,
 			cellHeight,
 			link,
+			classes = new Set(),
 		}: {
 			cellX: number;
 			cellY: number;
 			cellWidth: number;
 			cellHeight: number;
 			link: string;
+			classes?: Set<string>;
 		}) {
 			this.iframesUpdater++;
 			this.iframes.push({
@@ -32,7 +34,7 @@ export const useFrameSpaceStore = defineStore({
 				cellY,
 				cellHeight,
 				cellWidth,
-				classes: new Set(),
+				classes,
 				component: {
 					// TODO temp "as" type
 					is: null as unknown as typeof IframeCell,

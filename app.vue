@@ -37,6 +37,7 @@ body {
   --secondary: rgb(230, 230, 230);
   --success: rgb(25, 230, 25);
   --error: rgb(230, 25, 25);
+  --gold: rgb(255, 215, 0);
   /* animation */
   --animation-short-duration: 0.25s;
   --animation-long-duration: 1s;

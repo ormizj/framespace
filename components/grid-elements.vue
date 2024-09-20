@@ -412,6 +412,20 @@ const calcGridCellHeightPx = (gridCell: GridCell) => gridCell.cellHeight * cellH
 .error-animation-inset {
     animation: subtle-glow-inset var(--animation-long-duration) calc(var(--animation-repeat-count) * 2) alternate;
 }
+
+@keyframes subtle-gold {
+    from {
+        box-shadow: 0 0 0px inset transparent;
+    }
+
+    to {
+        box-shadow: 0 0 100px inset var(--gold);
+    }
+}
+
+.golden-animation {
+    animation: subtle-glow var(--animation-long-duration) infinite alternate;
+}
 </style>
 
 <style>
