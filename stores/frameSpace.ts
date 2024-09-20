@@ -46,6 +46,48 @@ export const useFrameSpaceStore = defineStore({
 				},
 			});
 		},
+		addIframeInFreeCell({
+			src,
+			classes = new Set(),
+		}: {
+			src: string;
+			classes?: Set<string>;
+		}) {
+			let cellX: number = -1;
+			let cellY: number = -1;
+
+			outerLoop: for (let y = 1; y <= this.yGrid; y++) {
+				for (let x = 1; x <= this.xGrid; x++) {
+					let isOutsideAllIframes = true;
+
+					for (const iframe of this.iframes) {
+						let strX = iframe.cellX;
+						let endX = iframe.cellX + iframe.cellWidth - 1;
+						let strY = iframe.cellY;
+						let endY = iframe.cellY + iframe.cellHeight - 1;
+
+						if (x >= strX && x <= endX && y >= strY && y <= endY) {
+							isOutsideAllIframes = false;
+							break;
+						}
+					}
+
+					if (isOutsideAllIframes) {
+						cellX = x;
+						cellY = y;
+						break outerLoop;
+					}
+				}
+			}
+			this.addIframe({
+				cellX,
+				cellY,
+				cellWidth: 1,
+				cellHeight: 1,
+				src,
+				classes,
+			});
+		},
 	},
 });
 
