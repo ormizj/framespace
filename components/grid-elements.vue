@@ -333,7 +333,6 @@ const calcGridCellHeightPx = (gridCell: GridCell) => gridCell.cellHeight * cellH
 
 .grid-elements {
     position: relative;
-    overflow: hidden;
 
     .grid-cell {
         position: absolute;
@@ -348,6 +347,8 @@ const calcGridCellHeightPx = (gridCell: GridCell) => gridCell.cellHeight * cellH
 
 /* gridElements edit */
 .grid-elements.edit {
+    overflow: hidden;
+
     .cell-component:not(.always-interactive) {
         pointer-events: none;
     }

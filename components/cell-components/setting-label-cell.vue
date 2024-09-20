@@ -9,7 +9,12 @@ const props = defineProps<{
     <div class="setting-cell">
         <div class="input-block">
             <div class="label-container">
-                <label :for="id">{{ title }}</label>
+                <label :for="id">{{ title }} {{ title }} {{ title }} {{ title }} {{ title }} {{ title }} {{ title }} {{
+                    title }} {{ title }} {{ title }} {{ title }} {{ title }} {{ title }} {{ title }} {{ title }} {{
+                        title }} {{ title }} {{ title }} {{ title }} {{ title }} {{ title }} {{ title }} {{ title }} {{
+                        title }} {{ title }} {{ title }} {{ title }} {{ title }} {{ title }} {{ title }} {{ title }} {{
+                        title }} {{ title }} {{ title }} {{ title }} {{ title }} {{ title }} {{ title }} {{ title }} {{
+                        title }} {{ title }} {{ title }} </label>
             </div>
         </div>
     </div>
@@ -20,7 +25,6 @@ const props = defineProps<{
     background-color: var(--background);
     outline: 1px dashed var(--secondary);
     border-radius: var(--border-glow-radius);
-    overflow: hidden !important;
 
     .input-block {
         width: 100%;

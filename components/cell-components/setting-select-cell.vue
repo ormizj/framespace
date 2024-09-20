@@ -28,7 +28,6 @@ const modelOptions = defineModel('options');
     background-color: var(--background);
     outline: 1px dashed var(--secondary);
     border-radius: var(--border-glow-radius);
-    overflow: hidden !important;
 
     .select-block {
         width: 100%;

@@ -20,7 +20,6 @@ defineProps<{
     background-color: var(--background);
     outline: 1px dashed var(--secondary);
     border-radius: var(--border-glow-radius);
-    overflow: hidden !important;
 
     .button-block {
         width: 100%;

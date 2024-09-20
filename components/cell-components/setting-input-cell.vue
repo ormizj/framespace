@@ -30,7 +30,6 @@ const handleInput = (event: KeyboardEvent) => {
     background-color: var(--background);
     outline: 1px dashed var(--secondary);
     border-radius: var(--border-glow-radius);
-    overflow: hidden !important;
 
     .input-block {
         width: 100%;
