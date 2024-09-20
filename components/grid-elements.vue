@@ -382,6 +382,7 @@ const calcGridCellHeightPx = (gridCell: GridCell) => gridCell.cellHeight * cellH
 
     .grid-cell {
         pointer-events: none;
+        background-color: var(--background);
     }
 }
 
