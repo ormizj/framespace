@@ -1,4 +1,5 @@
 import { acceptHMRUpdate, defineStore } from 'pinia';
+import type { ShallowRef } from 'vue';
 import IframeCell from '~/components/cell-components/iframe-cell.vue';
 import type { GridCell } from '~/types/GridCell';
 
@@ -9,6 +10,7 @@ export const useFrameSpaceStore = defineStore({
 		yGrid: 10,
 		cellHeight: 10,
 		iframes: [] as GridCell<typeof IframeCell>[],
+		iframesUpdater: 0,
 	}),
 	actions: {
 		addIframe({
@@ -24,6 +26,7 @@ export const useFrameSpaceStore = defineStore({
 			cellHeight: number;
 			link: string;
 		}) {
+			this.iframesUpdater++;
 			this.iframes.push({
 				cellX,
 				cellY,
@@ -32,7 +35,7 @@ export const useFrameSpaceStore = defineStore({
 				classes: new Set(),
 				component: {
 					// TODO temp "as" type
-					is: shallowRef(IframeCell) as unknown as typeof IframeCell,
+					is: null as unknown as typeof IframeCell,
 					bind: {
 						src: link,
 					},
