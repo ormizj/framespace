@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { ANIMATION_SHORT_DURATION, TAB_HEIGHT } from '~/constants/style';
-import IframeCell from './cell-components/iframe-cell.vue';
 import type { GridCell } from '~/types/GridCell';
-import OpenCorsSites from '~/enums/OpenCorsSites';
 
 const frameSpaceStore = useFrameSpaceStore();
-const { xGrid, yGrid, cellHeight, iframesUpdater } = storeToRefs(frameSpaceStore);
+const { xGrid, yGrid, cellHeight, iframeGridCells } = storeToRefs(frameSpaceStore);
 
 const isOpen = ref(false);
 const isOpened = ref(false);
@@ -23,16 +21,6 @@ watch(isOpen, (newValue) => {
     isOpened.value = newValue
   }, ANIMATION_SHORT_DURATION);
 })
-
-// iframes handler
-const iframes = ref<GridCell<typeof IframeCell>[]>([]);
-const initializeIframes = () => {
-  iframes.value = structuredClone(toRaw(useFrameSpaceStore().iframes));
-  // TODO temp "as" type
-  iframes.value.forEach((iframe) => iframe.component.is = shallowRef(IframeCell) as unknown as typeof IframeCell);
-}
-initializeIframes();
-watch(iframesUpdater, initializeIframes);
 </script>
 
 <template>
@@ -59,8 +47,8 @@ watch(iframesUpdater, initializeIframes);
       <div class="content" ref="content">
         <ClientOnly>
           <!-- TODO temp "as" type -->
-          <GridElements class="grid-elements" v-model="iframes as GridCell[]" v-model:edit="editMode" :x-grid="xGrid"
-            :y-grid="yGrid" :cell-height="cellHeight" />
+          <GridElements class="grid-elements" v-model="iframeGridCells as GridCell[]" v-model:edit="editMode"
+            :x-grid="xGrid" :y-grid="yGrid" :cell-height="cellHeight" />
         </ClientOnly>
       </div>
     </div>

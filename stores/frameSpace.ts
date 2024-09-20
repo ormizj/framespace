@@ -1,5 +1,4 @@
 import { acceptHMRUpdate, defineStore } from 'pinia';
-import type { ShallowRef } from 'vue';
 import IframeCell from '~/components/cell-components/iframe-cell.vue';
 import OpenCorsSites from '~/enums/OpenCorsSites';
 import type { GridCell } from '~/types/GridCell';
@@ -10,8 +9,7 @@ export const useFrameSpaceStore = defineStore({
 		xGrid: 10,
 		yGrid: 10,
 		cellHeight: 10,
-		iframes: [] as GridCell<typeof IframeCell>[],
-		iframesUpdater: 0,
+		iframeGridCells: [] as GridCell<typeof IframeCell>[],
 		iframesSrcOptions: [...Object.values(OpenCorsSites)] as string[],
 	}),
 	actions: {
@@ -33,9 +31,7 @@ export const useFrameSpaceStore = defineStore({
 			if (!this.iframesSrcOptions.find((otherSrc) => otherSrc === src)) {
 				this.iframesSrcOptions.unshift(src);
 			}
-
-			this.iframesUpdater++;
-			this.iframes.push({
+			this.iframeGridCells.push({
 				cellX,
 				cellY,
 				cellHeight,
@@ -43,7 +39,7 @@ export const useFrameSpaceStore = defineStore({
 				classes,
 				component: {
 					// TODO temp "as" type
-					is: null as unknown as typeof IframeCell,
+					is: shallowRef(IframeCell) as unknown as typeof IframeCell,
 					bind: {
 						src,
 					},
@@ -64,7 +60,7 @@ export const useFrameSpaceStore = defineStore({
 				for (let x = 1; x <= this.xGrid; x++) {
 					let isOutsideAllIframes = true;
 
-					for (const iframe of this.iframes) {
+					for (const iframe of this.iframeGridCells) {
 						let strX = iframe.cellX;
 						let endX = iframe.cellX + iframe.cellWidth - 1;
 						let strY = iframe.cellY;
