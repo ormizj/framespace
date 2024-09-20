@@ -30,15 +30,13 @@ const initializeIframes = () => {
   iframes.value = structuredClone(toRaw(useFrameSpaceStore().iframes));
   // TODO temp "as" type
   iframes.value.forEach((iframe) => iframe.component.is = shallowRef(IframeCell) as unknown as typeof IframeCell);
-  console.log(iframes.value.length);
-
 }
 frameSpaceStore.addIframe({
   cellX: 1,
   cellY: 1,
   cellWidth: 5,
   cellHeight: 3,
-  link: OpenCorsSites.calculatorsoup,
+  src: OpenCorsSites.calculatorsoup,
   classes: new Set(['golden-animation']),
 });
 frameSpaceStore.addIframe({
@@ -46,7 +44,7 @@ frameSpaceStore.addIframe({
   cellY: 7,
   cellWidth: 1,
   cellHeight: 1,
-  link: OpenCorsSites.calculatorsoup
+  src: OpenCorsSites.calculatorsoup
 });
 initializeIframes();
 watch(iframesUpdater, initializeIframes);

@@ -29,7 +29,7 @@ const handleInput = (event: KeyboardEvent) => {
   </div>
 </template>
 
-<style>
+<style scoped>
 .setting-cell {
   background-color: var(--background);
   outline: 1px dashed var(--secondary);

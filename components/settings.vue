@@ -1,20 +1,27 @@
 <script setup lang="ts">
 import type { GridCell } from '~/types/GridCell';
-import SettingTextCell from './cell-components/setting-text-cell.vue';
+import SettingLabelInputCell from './cell-components/setting-label-input-cell.vue';
 import GridElements from './grid-elements.vue';
+import SettingLabelCell from './cell-components/setting-label-cell.vue';
+import SettingInputCell from './cell-components/setting-input-cell.vue';
+import SettingSelectCell from './cell-components/setting-select-cell.vue';
 
 const frameSpaceStore = useFrameSpaceStore();
 const { xGrid, yGrid, cellHeight } = storeToRefs(frameSpaceStore);
 
+const iframeSrc = ref('');
+
+type SettingCells = typeof SettingLabelInputCell | typeof SettingLabelCell | typeof SettingInputCell | typeof SettingSelectCell;
+
 const editMode = ref(true);
-const gridCells = ref<GridCell<typeof SettingTextCell>[]>([{
+const gridCells = ref<GridCell<SettingCells>[]>([{
     cellX: 7,
-    cellY: 1,
+    cellY: 3,
     cellWidth: 3,
     cellHeight: 1,
     classes: new Set(),
     component: {
-        is: shallowRef(SettingTextCell),
+        is: shallowRef(SettingLabelInputCell),
         props: {
             'modelValue': xGrid,
             'onUpdate:modelValue': (value: string) => xGrid.value = +value,
@@ -25,12 +32,12 @@ const gridCells = ref<GridCell<typeof SettingTextCell>[]>([{
     }
 }, {
     cellX: 7,
-    cellY: 2,
+    cellY: 4,
     cellWidth: 3,
     cellHeight: 1,
     classes: new Set(),
     component: {
-        is: shallowRef(SettingTextCell),
+        is: shallowRef(SettingLabelInputCell),
         props: {
             'modelValue': yGrid,
             'onUpdate:modelValue': (value: string) => yGrid.value = +value,
@@ -41,18 +48,61 @@ const gridCells = ref<GridCell<typeof SettingTextCell>[]>([{
     }
 }, {
     cellX: 7,
-    cellY: 3,
+    cellY: 5,
     cellWidth: 3,
     cellHeight: 1,
     classes: new Set(),
     component: {
-        is: shallowRef(SettingTextCell),
+        is: shallowRef(SettingLabelInputCell),
         props: {
             'modelValue': cellHeight,
             'onUpdate:modelValue': (value: string) => cellHeight.value = +value,
             'title': '% Cell-Height:',
             'id': 'cell-height',
             'type': 'number',
+        }
+    }
+}, {
+    cellX: 5,
+    cellY: 1,
+    cellWidth: 2,
+    cellHeight: 2,
+    classes: new Set(),
+    component: {
+        is: shallowRef(SettingLabelCell),
+        props: {
+            'title': 'Add Iframe',
+            'id': 'add-iframe',
+        }
+    }
+}, {
+    cellX: 7,
+    cellY: 2,
+    cellWidth: 3,
+    cellHeight: 1,
+    classes: new Set(),
+    component: {
+        is: shallowRef(SettingInputCell),
+        props: {
+            'modelValue': iframeSrc,
+            'onUpdate:modelValue': (value: string) => iframeSrc.value = value,
+            'id': 'add-iframe',
+            'type': 'text',
+        }
+    }
+}, {
+    cellX: 7,
+    cellY: 1,
+    cellWidth: 3,
+    cellHeight: 1,
+    classes: new Set(),
+    component: {
+        is: shallowRef(SettingSelectCell),
+        props: {
+            'modelValue': iframeSrc,
+            'onUpdate:modelValue': (value: string) => iframeSrc.value = value,
+            'id': 'add-iframe-select',
+            'options': frameSpaceStore.iframesSrcOptions,
         }
     }
 }]);
