@@ -260,11 +260,13 @@ const gridCells = ref<GridCell<SettingCells>[]>([
                 </h2>
             </div>
             <div class="message-container end">
-                <h3 class="message" :class="{ warning: outOfBoundIframes.amount }">Highest X-Grid: {{
-                    outOfBoundIframes.maxX }}</h3>
+                <h3 class="message" :class="{ warning: outOfBoundIframes.amount }">
+                    Highest X-Grid: {{ outOfBoundIframes.maxX }}
+                </h3>
                 &nbsp;&nbsp;&nbsp;
-                <h3 class="message" :class="{ warning: outOfBoundIframes.amount }">Highest Y-Grid: {{
-                    outOfBoundIframes.maxY }}</h3>
+                <h3 class="message" :class="{ warning: outOfBoundIframes.amount }">
+                    Highest Y-Grid: {{ outOfBoundIframes.maxY }}
+                </h3>
             </div>
         </div>
         <div class="content">
