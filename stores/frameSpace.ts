@@ -112,7 +112,7 @@ export const useFrameSpaceStore = defineStore({
 			const iframeIndex = this.iframeGridCells.findIndex(
 				(otherIframe) => otherIframe === iframe
 			);
-			this.iframeGridCells = this.iframeGridCells.splice(iframeIndex, 1);
+			this.iframeGridCells.splice(iframeIndex, 1);
 		},
 	},
 });

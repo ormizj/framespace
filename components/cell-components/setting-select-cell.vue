@@ -1,7 +1,10 @@
-<script lang="ts" setup>
-defineProps<{
+<script lang="ts" generic="T" setup>
+withDefaults(defineProps<{
     id: string;
-}>()
+    formatter(option: T): string;
+}>(), {
+    formatter: (option: T) => option as string,
+});
 const model = defineModel();
 const modelOptions = defineModel('options');
 </script>
@@ -12,7 +15,7 @@ const modelOptions = defineModel('options');
             <div class="select-container">
                 <select v-model="model" :name="id" :id="id" class="select">
                     <option v-for="option in modelOptions" :key="option" :value="option">
-                        {{ option }}
+                        {{ formatter(option) }}
                     </option>
                 </select>
             </div>
@@ -41,7 +44,7 @@ const modelOptions = defineModel('options');
             justify-content: center;
 
             .select {
-                max-width: 75%;
+                width: 75%;
             }
         }
     }

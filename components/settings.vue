@@ -6,22 +6,28 @@ import SettingLabelCell from './cell-components/setting-label-cell.vue';
 import SettingInputCell from './cell-components/setting-input-cell.vue';
 import SettingSelectCell from './cell-components/setting-select-cell.vue';
 import SettingButtonCell from './cell-components/setting-button-cell.vue';
+import type IframeCell from './cell-components/iframe-cell.vue';
 
 const frameSpaceStore = useFrameSpaceStore();
 const { xGrid, yGrid, cellHeight, iframesSrcOptions, outOfBoundIframes, iframeGridCells } = storeToRefs(frameSpaceStore);
 
-const handleSubmitIframe = () => {
-    if (!iframeSrc.value) {
+const handleAddIframe = () => {
+    if (!addIframeSrc.value) {
         alert('Iframe url is missing!');
         return;
     }
     frameSpaceStore.addIframeInFreeCell({
-        src: iframeSrc.value,
+        src: addIframeSrc.value,
         classes: new Set(['golden-animation'])
     });
 }
+const handleRemoveIframe = () => {
+    if (removeIframe.value === '') return;
+    frameSpaceStore.removeIframe(removeIframe.value)
+}
 
-const iframeSrc = ref('');
+const addIframeSrc = ref('');
+const removeIframe = ref<GridCell<typeof IframeCell> | ''>('');
 type SettingCells = typeof SettingLabelInputCell | typeof SettingLabelCell | typeof SettingInputCell | typeof SettingSelectCell | typeof SettingButtonCell;
 const editMode = ref(true);
 const gridCells = ref<GridCell<SettingCells>[]>([
@@ -95,8 +101,8 @@ const gridCells = ref<GridCell<SettingCells>[]>([
         component: {
             is: shallowRef(SettingSelectCell),
             props: {
-                'modelValue': iframeSrc,
-                'onUpdate:modelValue': (value: string) => iframeSrc.value = value,
+                'modelValue': addIframeSrc,
+                'onUpdate:modelValue': (value: string) => addIframeSrc.value = value,
                 'id': 'add-iframe-select',
                 'options': iframesSrcOptions,
             }
@@ -110,8 +116,8 @@ const gridCells = ref<GridCell<SettingCells>[]>([
         component: {
             is: shallowRef(SettingInputCell),
             props: {
-                'modelValue': iframeSrc,
-                'onUpdate:modelValue': (value: string) => iframeSrc.value = value,
+                'modelValue': addIframeSrc,
+                'onUpdate:modelValue': (value: string) => addIframeSrc.value = value,
                 'id': 'add-iframe',
                 'type': 'text',
             }
@@ -126,7 +132,7 @@ const gridCells = ref<GridCell<SettingCells>[]>([
             is: shallowRef(SettingButtonCell),
             props: {
                 'title': 'Submit Add Iframe',
-                'onClick': handleSubmitIframe
+                'onClick': handleAddIframe
             }
         }
     }, { /* REMOVE IFRAME */
@@ -139,7 +145,7 @@ const gridCells = ref<GridCell<SettingCells>[]>([
             is: shallowRef(SettingLabelCell),
             props: {
                 'title': 'Remove Iframe',
-                'id': 'remove-iframe',
+                'id': 'remove-iframe-select',
             }
         }
     }, {
@@ -151,10 +157,11 @@ const gridCells = ref<GridCell<SettingCells>[]>([
         component: {
             is: shallowRef(SettingSelectCell),
             props: {
-                'modelValue': iframeSrc,
-                'onUpdate:modelValue': (value: string) => iframeSrc.value = value,
+                'modelValue': removeIframe,
+                'onUpdate:modelValue': (value: GridCell<typeof IframeCell>) => removeIframe.value = value,
                 'id': 'remove-iframe-select',
                 'options': iframeGridCells,
+                'formatter': (option: GridCell<typeof IframeCell>) => `[${option.cellX}-${option.cellY}]: ${option.component.bind!.src}`
             }
         }
     }, {
@@ -167,7 +174,7 @@ const gridCells = ref<GridCell<SettingCells>[]>([
             is: shallowRef(SettingButtonCell),
             props: {
                 'title': 'Submit Remove Iframe',
-                'onClick': handleSubmitIframe
+                'onClick': handleRemoveIframe,
             }
         }
     },
