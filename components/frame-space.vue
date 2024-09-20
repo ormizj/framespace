@@ -46,7 +46,7 @@ frameSpaceStore.addIframe({
   link: OpenCorsSites.calculatorsoup
 });
 initializeIframes();
-watch(iframesUpdater, () => initializeIframes());
+watch(iframesUpdater, initializeIframes);
 </script>
 
 <template>
