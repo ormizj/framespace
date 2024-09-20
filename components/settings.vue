@@ -161,7 +161,7 @@ const gridCells = ref<GridCell<SettingCells>[]>([
                 'onUpdate:modelValue': (value: GridCell<typeof IframeCell>) => removeIframe.value = value,
                 'id': 'remove-iframe-select',
                 'options': iframeGridCells,
-                'formatter': (option: GridCell<typeof IframeCell>) => `[${option.cellX}-${option.cellY}]: ${option.component.bind!.src}`
+                'formatter': (option: GridCell<typeof IframeCell>) => `[${option.cellY}-${option.cellX}]: ${option.component.bind!.src}`
             }
         }
     }, {
