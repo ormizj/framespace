@@ -1,4 +1,10 @@
-import type { Component, DefineComponent, ShallowRef } from 'vue';
+import type {
+	Component,
+	DefineComponent,
+	ShallowRef,
+	ShallowUnwrapRef,
+	UnwrapRef,
+} from 'vue';
 import type { ComponentProps } from 'vue-component-type-helpers';
 
 export interface GridCell<T extends Component = DefineComponent> {
@@ -8,7 +14,7 @@ export interface GridCell<T extends Component = DefineComponent> {
 	cellHeight: number;
 	classes: Set<string>;
 	component: {
-		is: ShallowRef<T>;
+		is: ShallowUnwrapRef<T>;
 		props?: Partial<ComponentProps<T>>;
 		bind?: { [key: string]: string };
 	};

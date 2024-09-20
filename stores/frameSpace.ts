@@ -38,8 +38,7 @@ export const useFrameSpaceStore = defineStore({
 				cellWidth,
 				classes,
 				component: {
-					// TODO temp "as" type
-					is: shallowRef(IframeCell) as unknown as typeof IframeCell,
+					is: shallowRef(IframeCell),
 					bind: {
 						src,
 					},
