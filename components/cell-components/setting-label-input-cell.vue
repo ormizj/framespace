@@ -5,14 +5,19 @@ const props = defineProps<{
   type: 'text' | 'number' | 'email';
 }>()
 const model = defineModel();
-
+const inputRef = ref<HTMLInputElement | null>(null);
 const handleInput = (event: KeyboardEvent) => {
+
   if (
     props.type === 'number' &&
-    !/[0-9]/.test(event.key) &&
+    !(/\d/).test(event.key) &&
     event.key !== 'Backspace' &&
     event.key !== 'Delete'
-  ) event.preventDefault();
+  ) {
+    inputRef.value!.setCustomValidity('Invalid value');
+    inputRef.value!.reportValidity();
+    event.preventDefault();
+  }
 };
 </script>
 
@@ -23,7 +28,7 @@ const handleInput = (event: KeyboardEvent) => {
         <label :for="id">{{ title }}</label>
       </div>
       <div class="input-container">
-        <input v-model="model" @keypress="handleInput" :name="id" :id="id" :type="type" class="input" />
+        <input v-model="model" ref="inputRef" @keypress="handleInput" :name="id" :id="id" :type="type" class="input" />
       </div>
     </div>
   </div>

@@ -14,12 +14,22 @@ const { xGrid, yGrid, cellHeight, iframesSrcOptions, outOfBoundIframes, iframeGr
 const email = ref('');
 const password = ref('');
 const handleLogin = () => {
+    if (!validateEmail(email.value)) return;
     console.log(email.value);
     console.log(password.value);
 }
 const handleRegister = () => {
+    if (!validateEmail(email.value)) return;
     console.log(email.value);
     console.log(password.value);
+}
+const validateEmail = (email: string) => {
+    if (!(/^[^@]+@[^@]+\.[^@]+$/).test(email)) {
+        // inputRef.value!.setCustomValidity('Invalid value');
+        // inputRef.value!.reportValidity();
+        return false;
+    }
+    return true;
 }
 
 const handleAddIframe = () => {
