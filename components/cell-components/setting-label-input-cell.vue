@@ -1,19 +1,32 @@
 <script lang="ts" setup>
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   title: string;
   id: string;
-  type: 'text' | 'number';
-}>()
+  type: 'text' | 'number' | 'email';
+  required?: boolean;
+  setRef?(toSet: typeof inputRef): void;
+}>(), {
+  required: false,
+  setRef: () => { },
+})
 const model = defineModel();
-
+const inputRef = ref<HTMLInputElement | null>(null);
 const handleInput = (event: KeyboardEvent) => {
   if (
     props.type === 'number' &&
-    !/[0-9]/.test(event.key) &&
+    !(/\d/).test(event.key) &&
     event.key !== 'Backspace' &&
     event.key !== 'Delete'
-  ) event.preventDefault();
+  ) {
+    inputRef.value!.setCustomValidity('Invalid value');
+    inputRef.value!.reportValidity();
+    event.preventDefault();
+  }
 };
+
+onMounted(() => {
+  props.setRef(inputRef);
+});
 </script>
 
 <template>
@@ -23,7 +36,8 @@ const handleInput = (event: KeyboardEvent) => {
         <label :for="id">{{ title }}</label>
       </div>
       <div class="input-container">
-        <input v-model="model" @keypress="handleInput" :name="id" :id="id" :type="type" class="input" />
+        <input :required="required" v-model="model" ref="inputRef" @keypress="handleInput" :name="id" :id="id"
+          :type="type" class="input" />
       </div>
     </div>
   </div>

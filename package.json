@@ -7,10 +7,13 @@
 		"dev": "nuxt dev",
 		"generate": "nuxt generate",
 		"preview": "nuxt preview",
-		"postinstall": "nuxt prepare"
+		"postinstall": "nuxt prepare",
+		"db:generate": "drizzle-kit generate"
 	},
 	"dependencies": {
+		"@nuxthub/core": "^0.7.19",
 		"@pinia/nuxt": "^0.5.4",
+		"drizzle-orm": "^0.33.0",
 		"nuxt": "^3.13.0",
 		"pinia": "^2.2.2",
 		"vue": "latest",
@@ -18,6 +21,9 @@
 		"vue-router": "latest"
 	},
 	"devDependencies": {
-		"prettier": "^3.3.3"
+		"consola": "^3.2.3",
+		"drizzle-kit": "^0.24.2",
+		"prettier": "^3.3.3",
+		"wrangler": "^3.78.7"
 	}
 }

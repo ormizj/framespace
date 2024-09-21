@@ -11,11 +11,27 @@ import type IframeCell from './cell-components/iframe-cell.vue';
 const frameSpaceStore = useFrameSpaceStore();
 const { xGrid, yGrid, cellHeight, iframesSrcOptions, outOfBoundIframes, iframeGridCells } = storeToRefs(frameSpaceStore);
 
-const username = ref('');
+const emailRef = ref<HTMLInputElement | null>(null);
+const email = ref('');
 const password = ref('');
 const handleLogin = () => {
-    console.log(username.value);
+    if (!validateEmailInput(emailRef.value!)) return;
+    console.log(email.value);
     console.log(password.value);
+}
+const handleRegister = () => {
+    if (!validateEmailInput(emailRef.value!)) return;
+    console.log(email.value);
+    console.log(password.value);
+}
+const validateEmailInput = (emailRef: HTMLInputElement) => {
+    const isValid = emailRef.checkValidity();
+    if (!isValid) {
+        setTimeout(() => {
+            emailRef.reportValidity();
+        });
+    }
+    return isValid;
 }
 
 const handleAddIframe = () => {
@@ -187,7 +203,7 @@ const gridCells = ref<GridCell<SettingCells>[]>([
     }, { /* LOGIN */
         cellX: 1,
         cellY: 1,
-        cellWidth: 3,
+        cellWidth: 2,
         cellHeight: 1,
         classes: new Set(),
         component: {
@@ -200,23 +216,25 @@ const gridCells = ref<GridCell<SettingCells>[]>([
     }, {
         cellX: 1,
         cellY: 2,
-        cellWidth: 3,
+        cellWidth: 2,
         cellHeight: 1,
         classes: new Set(),
         component: {
             is: shallowRef(SettingLabelInputCell),
             props: {
-                'modelValue': username,
-                'onUpdate:modelValue': (value: string) => username.value = value,
-                'title': 'Username',
-                'id': 'username',
-                'type': 'text',
+                'modelValue': email,
+                'onUpdate:modelValue': (value: string) => email.value = value,
+                'title': 'Email',
+                'id': 'email',
+                'type': 'email',
+                'required': true,
+                'setRef': (componentRef) => emailRef.value = componentRef.value,
             }
         }
     }, {
         cellX: 1,
         cellY: 3,
-        cellWidth: 3,
+        cellWidth: 2,
         cellHeight: 1,
         classes: new Set(),
         component: {
@@ -227,12 +245,26 @@ const gridCells = ref<GridCell<SettingCells>[]>([
                 'title': 'Password',
                 'id': 'password',
                 'type': 'text',
+                'required': true,
             }
         }
     }, {
         cellX: 1,
         cellY: 4,
-        cellWidth: 3,
+        cellWidth: 1,
+        cellHeight: 1,
+        classes: new Set(),
+        component: {
+            is: shallowRef(SettingButtonCell),
+            props: {
+                'title': 'Register',
+                'onClick': handleRegister,
+            }
+        }
+    }, {
+        cellX: 2,
+        cellY: 4,
+        cellWidth: 1,
         cellHeight: 1,
         classes: new Set(),
         component: {

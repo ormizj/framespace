@@ -1,11 +1,5 @@
-import type {
-	Component,
-	DefineComponent,
-	ShallowRef,
-	ShallowUnwrapRef,
-	UnwrapRef,
-} from 'vue';
-import type { ComponentProps } from 'vue-component-type-helpers';
+import type { Component, ShallowUnwrapRef } from 'vue';
+import type { VueComponent } from './VueComponent';
 
 export interface GridCell<T extends Component | unknown = unknown> {
 	cellX: number;
@@ -13,9 +7,5 @@ export interface GridCell<T extends Component | unknown = unknown> {
 	cellWidth: number;
 	cellHeight: number;
 	classes: Set<string>;
-	component: {
-		is: ShallowUnwrapRef<T>;
-		props?: Partial<ComponentProps<T>>;
-		bind?: { [key: string]: string };
-	};
+	component: VueComponent<T>;
 }
