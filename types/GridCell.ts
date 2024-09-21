@@ -1,7 +1,9 @@
 import type { Component, ShallowUnwrapRef } from 'vue';
 import type { VueComponent } from './VueComponent';
 
-export interface GridCell<T extends Component | unknown = unknown> {
+export interface GridCell<
+	T extends Component | HTMLElement | unknown = unknown,
+> {
 	cellX: number;
 	cellY: number;
 	cellWidth: number;

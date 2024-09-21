@@ -1,0 +1,43 @@
+import type { Component } from 'vue';
+import type { VueComponent } from '~/types/VueComponent';
+
+export default class GridCell<T extends Component> {
+	component: VueComponent<T>;
+	yGrid: number;
+	xGrid: number;
+	width: number;
+	height: number;
+	initialClasses: Set<string>;
+
+	constructor({
+		component,
+		yGrid,
+		xGrid,
+		width,
+		height,
+		initialClasses,
+	}: {
+		component: VueComponent<T>;
+		yGrid: number;
+		xGrid: number;
+		width?: number;
+		height?: number;
+		initialClasses?: Set<string>;
+	}) {
+		this.component = component;
+		this.yGrid = yGrid;
+		this.xGrid = xGrid;
+		this.width = width ?? 1;
+		this.height = height ?? 1;
+		this.initialClasses = initialClasses ?? new Set();
+	}
+
+	get gridCellCoordinates() {
+		return {
+			strY: this.yGrid,
+			endY: this.yGrid + this.height - 1,
+			strX: this.xGrid,
+			endX: this.xGrid + this.width - 1,
+		};
+	}
+}
