@@ -11,16 +11,16 @@ import type IframeCell from './cell-components/iframe-cell.vue';
 const frameSpaceStore = useFrameSpaceStore();
 const { xGrid, yGrid, cellHeight, iframesSrcOptions, outOfBoundIframes, iframeGridCells } = storeToRefs(frameSpaceStore);
 
-let emailRef: Ref<HTMLInputElement> | null = null;
+const emailRef = ref<HTMLInputElement | null>(null);
 const email = ref('');
 const password = ref('');
 const handleLogin = () => {
-    if (!validateEmailInput(emailRef!.value)) return;
+    if (!validateEmailInput(emailRef.value!)) return;
     console.log(email.value);
     console.log(password.value);
 }
 const handleRegister = () => {
-    if (!validateEmailInput(emailRef!.value)) return;
+    if (!validateEmailInput(emailRef.value!)) return;
     console.log(email.value);
     console.log(password.value);
 }
@@ -227,7 +227,8 @@ const gridCells = ref<GridCell<SettingCells>[]>([
                 'title': 'Email',
                 'id': 'email',
                 'type': 'email',
-                'setRef': (childRef) => emailRef = childRef,
+                'required': true,
+                'setRef': (componentRef) => emailRef.value = componentRef.value,
             }
         }
     }, {
@@ -244,6 +245,7 @@ const gridCells = ref<GridCell<SettingCells>[]>([
                 'title': 'Password',
                 'id': 'password',
                 'type': 'text',
+                'required': true,
             }
         }
     }, {

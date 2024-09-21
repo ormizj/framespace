@@ -3,8 +3,10 @@ const props = withDefaults(defineProps<{
   title: string;
   id: string;
   type: 'text' | 'number' | 'email';
+  required?: boolean;
   setRef?(toSet: typeof inputRef): void;
 }>(), {
+  required: false,
   setRef: () => { },
 })
 const model = defineModel();
@@ -34,7 +36,8 @@ onMounted(() => {
         <label :for="id">{{ title }}</label>
       </div>
       <div class="input-container">
-        <input v-model="model" ref="inputRef" @keypress="handleInput" :name="id" :id="id" :type="type" class="input" />
+        <input :required="required" v-model="model" ref="inputRef" @keypress="handleInput" :name="id" :id="id"
+          :type="type" class="input" />
       </div>
     </div>
   </div>
