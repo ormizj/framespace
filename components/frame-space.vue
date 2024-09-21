@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { ANIMATION_SHORT_DURATION, TAB_HEIGHT } from '~/constants/style';
-import type { GridCell } from '~/types/GridCell';
 
 const frameSpaceStore = useFrameSpaceStore();
-const { xGrid, yGrid, cellHeight, iframeGridCells } = storeToRefs(frameSpaceStore);
+const { yGrid, xGrid, cellHeight, iframeGridCells } = storeToRefs(frameSpaceStore);
 
 const isOpen = ref(false);
 const isOpened = ref(false);

@@ -6,8 +6,8 @@ import type { GridCell } from '~/types/GridCell';
 export const useFrameSpaceStore = defineStore({
 	id: 'frameSpaceStore',
 	state: () => ({
-		xGrid: 10,
 		yGrid: 10,
+		xGrid: 10,
 		cellHeight: 10,
 		iframeGridCells: [] as GridCell<typeof IframeCell>[],
 		iframesSrcOptions: [...Object.values(OpenCorsSites)] as string[],

@@ -6,7 +6,7 @@ import type {
 	ComponentType,
 } from 'vue-component-type-helpers';
 
-interface VueComponent<T extends Component | unknown> {
+interface VueComponent<T extends Component> {
 	is: ShallowRef<T>;
 	props?: ComponentProps<T>;
 	emits?: ComponentEmit<T>;
