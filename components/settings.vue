@@ -11,25 +11,27 @@ import type IframeCell from './cell-components/iframe-cell.vue';
 const frameSpaceStore = useFrameSpaceStore();
 const { xGrid, yGrid, cellHeight, iframesSrcOptions, outOfBoundIframes, iframeGridCells } = storeToRefs(frameSpaceStore);
 
+let emailRef: Ref<HTMLInputElement> | null = null;
 const email = ref('');
 const password = ref('');
 const handleLogin = () => {
-    if (!validateEmail(email.value)) return;
+    if (!validateEmailInput(emailRef!.value)) return;
     console.log(email.value);
     console.log(password.value);
 }
 const handleRegister = () => {
-    if (!validateEmail(email.value)) return;
+    if (!validateEmailInput(emailRef!.value)) return;
     console.log(email.value);
     console.log(password.value);
 }
-const validateEmail = (email: string) => {
-    if (!(/^[^@]+@[^@]+\.[^@]+$/).test(email)) {
-        // inputRef.value!.setCustomValidity('Invalid value');
-        // inputRef.value!.reportValidity();
-        return false;
+const validateEmailInput = (emailRef: HTMLInputElement) => {
+    const isValid = emailRef.checkValidity();
+    if (!isValid) {
+        setTimeout(() => {
+            emailRef.reportValidity();
+        });
     }
-    return true;
+    return isValid;
 }
 
 const handleAddIframe = () => {
@@ -225,6 +227,7 @@ const gridCells = ref<GridCell<SettingCells>[]>([
                 'title': 'Email',
                 'id': 'email',
                 'type': 'email',
+                'setRef': (childRef) => emailRef = childRef,
             }
         }
     }, {

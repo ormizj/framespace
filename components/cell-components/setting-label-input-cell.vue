@@ -1,13 +1,15 @@
 <script lang="ts" setup>
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   title: string;
   id: string;
   type: 'text' | 'number' | 'email';
-}>()
+  setRef?(toSet: typeof inputRef): void;
+}>(), {
+  setRef: () => { },
+})
 const model = defineModel();
 const inputRef = ref<HTMLInputElement | null>(null);
 const handleInput = (event: KeyboardEvent) => {
-
   if (
     props.type === 'number' &&
     !(/\d/).test(event.key) &&
@@ -19,6 +21,10 @@ const handleInput = (event: KeyboardEvent) => {
     event.preventDefault();
   }
 };
+
+onMounted(() => {
+  props.setRef(inputRef);
+});
 </script>
 
 <template>
