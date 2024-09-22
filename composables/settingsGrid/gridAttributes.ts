@@ -17,6 +17,7 @@ export default () => {
 				is: SettingLabelInputCell,
 				props: {
 					'v-model': xGridBoundary,
+					'modelValue': xGridBoundary,
 					'onUpdate:modelValue': (value: string) =>
 						(xGridBoundary.value = +value),
 					'title': '# X-Grid:',
@@ -35,6 +36,7 @@ export default () => {
 				is: SettingLabelInputCell,
 				props: {
 					'v-model': yGridBoundary,
+					'modelValue': yGridBoundary,
 					'onUpdate:modelValue': (value: string) =>
 						(yGridBoundary.value = +value),
 					'title': '# Y-Grid:',
@@ -53,6 +55,7 @@ export default () => {
 				is: SettingLabelInputCell,
 				props: {
 					'v-model': cellHeight,
+					'modelValue': cellHeight,
 					'onUpdate:modelValue': (value: string) => (cellHeight.value = +value),
 					'title': '% Cell-Height:',
 					'id': 'cell-height',

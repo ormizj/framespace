@@ -53,6 +53,7 @@ export default () => {
 				is: SettingLabelInputCell,
 				props: {
 					'v-model': email,
+					'modelValue': email,
 					'onUpdate:modelValue': (value: string) => (email.value = value),
 					'title': 'Email',
 					'id': 'email',
@@ -73,6 +74,7 @@ export default () => {
 				is: SettingLabelInputCell,
 				props: {
 					'v-model': password,
+					'modelValue': password,
 					'onUpdate:modelValue': (value: string) => (password.value = value),
 					'title': 'Password',
 					'id': 'password',
