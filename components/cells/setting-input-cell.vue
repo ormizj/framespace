@@ -19,7 +19,7 @@ const handleInput = (event: KeyboardEvent) => {
     <div class="setting-cell">
         <div class="input-block">
             <div class="input-container">
-                <input v-model="model" @keypress="handleInput" :name="id" :id="id" :type="type" class="input" />
+                <NuxtInput v-model="model" @keypress="handleInput" :name="id" :id="id" :type="type" class="input" />
             </div>
         </div>
     </div>

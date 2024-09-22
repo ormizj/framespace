@@ -10,6 +10,7 @@ const props = withDefaults(defineProps<{
   setRef: () => { },
 })
 const model = defineModel();
+
 const inputRef = ref<HTMLInputElement | null>(null);
 const handleInput = (event: KeyboardEvent) => {
   if (
@@ -36,7 +37,7 @@ onMounted(() => {
         <label :for="id">{{ title }}</label>
       </div>
       <div class="input-container">
-        <input :required="required" v-model="model" ref="inputRef" @keypress="handleInput" :name="id" :id="id"
+        <NuxtInput :required="required" v-model="model" ref="inputRef" @keypress="handleInput" :name="id" :id="id"
           :type="type" class="input" />
       </div>
     </div>
