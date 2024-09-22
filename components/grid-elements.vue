@@ -152,8 +152,8 @@ const addFutureGridCellDrag = (target: HTMLGridElement) => {
     futureGridCellElement.classList.add('future-grid-cell');
 
     // Enforcements
-    const wasEnforced = !isGridCellInBounds(dragged!.yGridEnd, dragged!.xGridEnd) || isTargetZoneOccupied(dragged!.id, newCoordinates);
-    if (wasEnforced) futureGridCellElement.classList.add('error');
+    const invalidZone = isTargetZoneOccupied(dragged!.id, newCoordinates) || isGridCellInBounds(newCoordinates.endY, newCoordinates.endX);
+    if (invalidZone) futureGridCellElement.classList.add('error');
 
     clearFutureGridCells();
     target.appendChild(futureGridCellElement);
@@ -235,8 +235,8 @@ const addFutureGridCellResize = (gridCell: GridCell, target: HTMLGridElement) =>
     futureGridCellElement.classList.add('future-grid-cell');
 
     // Enforcements
-    const wasEnforced = !isGridCellInBounds(resized.value!.yGridEnd, resized.value!.xGridEnd) || isTargetZoneOccupied(resized.value!.id, newCoordinates);
-    if (wasEnforced) futureGridCellElement.classList.add('error');
+    const validZone = isTargetZoneOccupied(resized.value!.id, newCoordinates) || addGridCellAnimation(resized.value!);
+    if (!validZone) futureGridCellElement.classList.add('error');
 
     clearFutureGridCells();
     getGridXFromXY(gridCell.xGrid, gridCell.yGrid).appendChild(futureGridCellElement);
