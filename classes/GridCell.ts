@@ -37,12 +37,20 @@ export default class GridCell<T extends Component = Component> {
 		this.id = id ?? crypto.randomUUID();
 	}
 
-	get gridCellCoordinates() {
+	get gridCellCoordinates(): GridCellCoordinates {
 		return {
 			strY: this.yGrid,
 			endY: this.yGrid + this.height - 1,
 			strX: this.xGrid,
 			endX: this.xGrid + this.width - 1,
 		};
+	}
+
+	get yGridEnd() {
+		return this.yGrid + this.height - 1;
+	}
+
+	get xGridEnd() {
+		return this.xGrid + this.width - 1;
 	}
 }

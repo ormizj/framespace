@@ -33,3 +33,22 @@ export const getFreeGridXY = (gridCells: GridCell[], maxXGrid: number) => {
 		xGrid,
 	};
 };
+
+export const getGridCellCoordinates = ({
+	yGrid,
+	xGrid,
+	height,
+	width,
+}: {
+	yGrid: number;
+	xGrid: number;
+	height: number;
+	width: number;
+}): GridCellCoordinates => {
+	return {
+		strY: yGrid,
+		endY: yGrid + height - 1,
+		strX: xGrid,
+		endX: xGrid + width - 1,
+	};
+};

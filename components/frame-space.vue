@@ -45,8 +45,8 @@ watch(isOpen, (newValue) => {
       </div>
       <div class="content" ref="content">
         <ClientOnly>
-          <GridElements class="grid-elements" v-model="iframeGridCells" v-model:edit="editMode" :y-grid="yGridBoundary"
-            :x-grid="xGridBoundary" :cell-height="cellHeight" />
+          <GridElements class="grid-elements" v-model="iframeGridCells" v-model:edit="editMode"
+            :yGridBoundary="yGridBoundary" :xGridBoundary="xGridBoundary" :cell-height="cellHeight" />
         </ClientOnly>
       </div>
     </div>
