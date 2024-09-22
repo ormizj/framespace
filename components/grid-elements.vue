@@ -101,12 +101,7 @@ const handleDragStart = (e: DragEvent) => {
     dragged = getGridCellFromElement(target);
     setTimeout(() => {
         isDragging.value = true;
-        target.style.pointerEvents = 'none';
     });
-}
-const handleDragEnd = (e: DragEvent) => {
-    const target = e.target as HTMLCellElement
-    target.style.pointerEvents = '';
 }
 const handleDragDrop = (e: DragEvent) => {
     isMouseDown.value = false;
@@ -294,8 +289,7 @@ const calcGridCellWidthPx = (gridCellWidth: number) => gridCellWidth * cellWidth
                     <template v-if="gridCell.xGrid === x && gridCell.yGrid === y">
                         <div class="grid-cell" ref="gridCellElements"
                             :class="[{ resizing: resized, dragging: isDragging }, ...gridCell.initialClasses]"
-                            :draggable="modelEdit" @dragstart="handleDragStart" @dragend="handleDragEnd" :y="y" :x="x"
-                            :style="{
+                            :draggable="modelEdit" @dragstart="handleDragStart" :y="y" :x="x" :style="{
                                 height: `${calcGridCellHeightPx(gridCell.height)}px`,
                                 width: `${calcGridCellWidthPx(gridCell.width)}px`,
                             }">
