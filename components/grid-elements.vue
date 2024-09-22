@@ -44,6 +44,9 @@ const isTargetZoneOccupied = (gridCellId: string, gridCellCoordinates: GridCellC
 const isGridCellInBounds = (gridCellYGridEnd: number, gridCellXGridEnd: number): boolean => {
     return props.yGridBoundary >= gridCellYGridEnd && props.xGridBoundary >= gridCellXGridEnd;
 }
+const isGridCellSizeValid = (gridCellHeight: number, gridCellWidth: number) => {
+    return gridCellHeight > 0 && gridCellWidth > 0;
+}
 const gridCellsAnimationTimeouts = new Map();
 const addGridCellAnimation = (gridCell: GridCell) => {
     const className = 'error-animation';
@@ -65,7 +68,7 @@ const clearAllGridCellAnimations = () => {
 
 
 // GridCell Enforcements
-const enforceNoOverlapAxis = (gridCellId: string, gridCellCoordinates: GridCellCoordinates): boolean => {
+const enforceNoOverlap = (gridCellId: string, gridCellCoordinates: GridCellCoordinates): boolean => {
     const occupyingGridCell = isTargetZoneOccupied(gridCellId, gridCellCoordinates);
     if (!occupyingGridCell) return false;
     addGridCellAnimation(occupyingGridCell);
@@ -77,14 +80,9 @@ const enforceBoundsAxis = (gridCellYGridEnd: number, gridCellXGridEnd: number): 
     addGridElementsAnimation();
     return true;
 }
-const enforceNoOverlapSize = (gridCellId: string, gridCellCoordinates: GridCellCoordinates): boolean => {
-    const occupyingGridCell = isTargetZoneOccupied(gridCellId, gridCellCoordinates);
-    if (!occupyingGridCell) return false;
-    addGridCellAnimation(occupyingGridCell);
-    return true;
-}
-const enforceNoNegativeSize = (gridCell: GridCell): boolean => {
-    if (gridCell.width > 0 && gridCell.height > 0) return false;
+const enforceNoInvalidSize = (gridCell: GridCell): boolean => {
+    const isInvalidSize = isGridCellSizeValid(gridCell.height, gridCell.width);
+    if (!isInvalidSize) false;
     addGridCellAnimation(gridCell);
     return true;
 }
@@ -118,7 +116,7 @@ const handleDragDrop = (e: DragEvent) => {
     })
 
     // Enforcements
-    const wasEnforced = enforceNoOverlapAxis(dragged!.id, newCoordinates) || enforceBoundsAxis(newCoordinates.endY, newCoordinates.endX);
+    const wasEnforced = enforceNoOverlap(dragged!.id, newCoordinates) || enforceBoundsAxis(newCoordinates.endY, newCoordinates.endX);
     if (!wasEnforced) {
         dragged!.yGrid = targetYGrid;
         dragged!.xGrid = targetXGrid;
@@ -152,7 +150,7 @@ const addFutureGridCellDrag = (target: HTMLGridElement) => {
     futureGridCellElement.classList.add('future-grid-cell');
 
     // Enforcements
-    const invalidZone = isTargetZoneOccupied(dragged!.id, newCoordinates) || isGridCellInBounds(newCoordinates.endY, newCoordinates.endX);
+    const invalidZone = isTargetZoneOccupied(dragged!.id, newCoordinates) || !isGridCellInBounds(newCoordinates.endY, newCoordinates.endX);
     if (invalidZone) futureGridCellElement.classList.add('error');
 
     clearFutureGridCells();
@@ -194,13 +192,8 @@ const handleMouseUp = (e: MouseEvent) => {
         width: getGridSizeAxis(resized.value!.xGrid, targetXGrid),
     });
 
-    console.log(targetYGrid, targetXGrid);
-
-    console.log(newCoordinates);
-
-
     // Enforcements
-    const wasEnforced = enforceNoOverlapSize(resized.value!.id, newCoordinates) || enforceNoNegativeSize(resized.value!);
+    const wasEnforced = enforceNoOverlap(resized.value!.id, newCoordinates) || enforceNoInvalidSize(resized.value!);
     if (!wasEnforced) {
         resized.value!.height = targetYGrid - resized.value!.yGrid + 1;
         resized.value!.width = targetXGrid - resized.value!.xGrid + 1;
@@ -235,8 +228,8 @@ const addFutureGridCellResize = (gridCell: GridCell, target: HTMLGridElement) =>
     futureGridCellElement.classList.add('future-grid-cell');
 
     // Enforcements
-    const validZone = isTargetZoneOccupied(resized.value!.id, newCoordinates) || addGridCellAnimation(resized.value!);
-    if (!validZone) futureGridCellElement.classList.add('error');
+    const invalidZone = isTargetZoneOccupied(resized.value!.id, newCoordinates) || addGridCellAnimation(resized.value!);
+    if (invalidZone) futureGridCellElement.classList.add('error');
 
     clearFutureGridCells();
     getGridXFromXY(gridCell.xGrid, gridCell.yGrid).appendChild(futureGridCellElement);
