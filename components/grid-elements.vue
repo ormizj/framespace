@@ -292,9 +292,9 @@ const calcGridCellWidthPx = (gridCellWidth: number) => gridCellWidth * cellWidth
         <!-- GRID Y -->
         <div v-for="y in yGridBoundary" class="y-grid" :style="{ height: `${cellHeight}dvh` }" :key="y">
             <!-- GRID X -->
-            <div v-for="x in xGridBoundary" class="x-grid" @drop="handleDragDrop" @mouseup="handleMouseUp"
-                @mousedown="isMouseDown = true" @mouseenter="handleMouseEnter" @dragover.prevent="handleDragOn" :x="x"
-                :y=y :key="x">
+            <div v-for="x in xGridBoundary" class="x-grid" :class="{ resizing: resized }" @drop="handleDragDrop"
+                @mouseup="handleMouseUp" @mousedown="isMouseDown = true" @mouseenter="handleMouseEnter"
+                @dragover.prevent="handleDragOn" :x="x" :y=y :key="x">
                 <!-- GRID CELL -->
                 <template v-for="gridCell of modelGridCells" :key="gridCell.id">
                     <template v-if="gridCell.xGrid === x && gridCell.yGrid === y">
@@ -337,7 +337,7 @@ const calcGridCellWidthPx = (gridCellWidth: number) => gridCellWidth * cellWidth
     width: 100%;
     outline: 1px solid var(--secondary);
 
-    &:hover {
+    &:hover:not(:has(:hover)):not(.resizing) {
         background-color: color-mix(in srgb, var(--secondary), transparent 50%);
     }
 }
