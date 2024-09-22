@@ -1,174 +1,24 @@
 <script setup lang="ts">
-import GridElements from '../grid-elements.vue';
-import type IframeCell from '../cell-components/iframe-cell.vue';
-import SettingLabelInputCell from './cells/setting-label-input-cell.vue';
-import SettingLabelCell from './cells/setting-label-cell.vue';
-import SettingInputCell from './cells/setting-input-cell.vue';
-import SettingSelectCell from './cells/setting-select-cell.vue';
-import SettingButtonCell from './cells/setting-button-cell.vue';
 import type GridCell from '~/classes/GridCell';
+import GridElements from '~/components/grid-elements.vue';
+import gridAttributes from './grid-attributes';
+import addIframe from './add-iframe';
+import removeIframe from './remove-iframe';
+import loginRegister from './login-register';
 
 const frameSpaceStore = useFrameSpaceStore();
-const { outOfBoundIframes, iframeGridCells } = storeToRefs(frameSpaceStore);
+const { outOfBoundIframes } = storeToRefs(frameSpaceStore);
 
-const emailRef = ref<HTMLInputElement | null>(null);
-const email = ref('');
-const password = ref('');
-const handleLogin = () => {
-    if (!validateEmailInput(emailRef.value!)) return;
-    console.log(email.value);
-    console.log(password.value);
-}
-const handleRegister = () => {
-    if (!validateEmailInput(emailRef.value!)) return;
-    console.log(email.value);
-    console.log(password.value);
-}
-const validateEmailInput = (emailRef: HTMLInputElement) => {
-    const isValid = emailRef.checkValidity();
-    if (!isValid) {
-        setTimeout(() => {
-            emailRef.reportValidity();
-        });
-    }
-    return isValid;
-}
-
-
-const handleRemoveIframe = () => {
-    if (removeIframe.value === '') return;
-    frameSpaceStore.removeIframe(removeIframe.value)
-}
-
-const removeIframe = ref<GridCell<typeof IframeCell> | ''>('');
 const editMode = ref(true);
-
-type SettingCells = Component & (
-    typeof SettingLabelInputCell |
-    typeof SettingLabelCell |
-    typeof SettingInputCell |
-    typeof SettingSelectCell |
-    typeof SettingButtonCell
-);
-const gridCells = ref<GridCell<SettingCells>[]>([
-    { /* REMOVE IFRAME */
-        cellX: 5,
-        cellY: 3,
-        cellWidth: 2,
-        cellHeight: 1,
-        classes: new Set(),
-        component: {
-            is: shallowRef(SettingLabelCell),
-            props: {
-                'title': 'Remove Iframe',
-                'id': 'remove-iframe-select',
-            }
-        }
-    }, {
-        cellX: 7,
-        cellY: 3,
-        cellWidth: 3,
-        cellHeight: 1,
-        classes: new Set(),
-        component: {
-            is: shallowRef(SettingSelectCell),
-            props: {
-                'modelValue': removeIframe,
-                'onUpdate:modelValue': (value: GridCell<typeof IframeCell>) => removeIframe.value = value,
-                'id': 'remove-iframe-select',
-                'options': iframeGridCells,
-                'formatter': (option: GridCell<typeof IframeCell>) => `[${option.cellY}-${option.cellX}]: ${option.component.bind!.src}`
-            }
-        }
-    }, {
-        cellX: 10,
-        cellY: 3,
-        cellWidth: 2,
-        cellHeight: 1,
-        classes: new Set(),
-        component: {
-            is: shallowRef(SettingButtonCell),
-            props: {
-                'title': 'Remove Iframe',
-                'onClick': handleRemoveIframe,
-            }
-        }
-    }, { /* LOGIN */
-        cellX: 1,
-        cellY: 1,
-        cellWidth: 2,
-        cellHeight: 1,
-        classes: new Set(),
-        component: {
-            is: shallowRef(SettingLabelCell),
-            props: {
-                'title': 'Login',
-                'id': 'login',
-            }
-        }
-    }, {
-        cellX: 1,
-        cellY: 2,
-        cellWidth: 2,
-        cellHeight: 1,
-        classes: new Set(),
-        component: {
-            is: SettingLabelInputCell,
-            props: {
-                'modelValue': email,
-                'onUpdate:modelValue': (value: string) => email.value = value,
-                'title': 'Email',
-                'id': 'email',
-                'type': 'email',
-                'required': true,
-                'setRef': (componentRef) => emailRef.value = componentRef.value,
-            }
-        }
-    }, {
-        cellX: 1,
-        cellY: 3,
-        cellWidth: 2,
-        cellHeight: 1,
-        classes: new Set(),
-        component: {
-            is: shallowRef(SettingLabelInputCell),
-            props: {
-                'modelValue': password,
-                'onUpdate:modelValue': (value: string) => password.value = value,
-                'title': 'Password',
-                'id': 'password',
-                'type': 'text',
-                'required': true,
-            }
-        }
-    }, {
-        cellX: 1,
-        cellY: 4,
-        cellWidth: 1,
-        cellHeight: 1,
-        classes: new Set(),
-        component: {
-            is: shallowRef(SettingButtonCell),
-            props: {
-                'title': 'Register',
-                'onClick': handleRegister,
-            }
-        }
-    }, {
-        cellX: 2,
-        cellY: 4,
-        cellWidth: 1,
-        cellHeight: 1,
-        classes: new Set(),
-        component: {
-            is: shallowRef(SettingButtonCell),
-            props: {
-                'title': 'Login',
-                'onClick': handleLogin,
-            }
-        }
-    },
+const gridCells = ref<GridCell[]>([
+    ...gridAttributes,
+    ...addIframe,
+    ...removeIframe,
+    ...loginRegister,
 ]);
+
+console.log(gridCells.value);
+
 </script>
 
 <template>
