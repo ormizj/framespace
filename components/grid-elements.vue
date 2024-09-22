@@ -296,6 +296,9 @@ const calcGridCellHeightPx = (gridCell: GridCell) => gridCell.height * cellHeigh
                                 :class="['cell-component', { 'always-interactive': alwaysInteractive && !isMouseDown }]"
                                 :is="gridCell.component.is" v-bind="{
                                     ...gridCell.component.props,
+                                    ...gridCell.component.bind,
+                                    ...gridCell.component.emits,
+                                    ...gridCell.component.exposed,
                                 }" />
                             <!-- TODO gridCell slots -->
                             <!-- {{ gridCell.component.slots }} -->
