@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { ANIMATION_SHORT_DURATION, TAB_HEIGHT } from '~/constants/style';
-import type { GridCell } from '~/types/GridCell';
 
 const frameSpaceStore = useFrameSpaceStore();
-const { xGrid, yGrid, cellHeight, iframeGridCells } = storeToRefs(frameSpaceStore);
+const { yGridBoundary, xGridBoundary, cellHeight, iframeGridCells } = storeToRefs(frameSpaceStore);
 
 const isOpen = ref(false);
 const isOpened = ref(false);
@@ -20,7 +19,7 @@ watch(isOpen, (newValue) => {
   setTimeout(() => {
     isOpened.value = newValue
   }, ANIMATION_SHORT_DURATION);
-})
+});
 </script>
 
 <template>
@@ -46,8 +45,8 @@ watch(isOpen, (newValue) => {
       </div>
       <div class="content" ref="content">
         <ClientOnly>
-          <GridElements class="grid-elements" v-model="iframeGridCells" v-model:edit="editMode" :x-grid="xGrid"
-            :y-grid="yGrid" :cell-height="cellHeight" />
+          <GridElements class="grid-elements" v-model="iframeGridCells" v-model:edit="editMode"
+            :yGridBoundary="yGridBoundary" :xGridBoundary="xGridBoundary" :cell-height="cellHeight" />
         </ClientOnly>
       </div>
     </div>

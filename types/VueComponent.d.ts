@@ -1,4 +1,3 @@
-import type { ShallowUnwrapRef } from 'vue';
 import type {
 	ComponentEmit,
 	ComponentExposed,
@@ -7,8 +6,8 @@ import type {
 	ComponentType,
 } from 'vue-component-type-helpers';
 
-interface VueComponent<T extends Component | unknown> {
-	is: ShallowUnwrapRef<T>;
+interface VueComponent<T extends Component> {
+	is: ShallowRef<T>;
 	props?: ComponentProps<T>;
 	emits?: ComponentEmit<T>;
 	exposed?: ComponentExposed<T>;
