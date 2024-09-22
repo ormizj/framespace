@@ -9,7 +9,7 @@ defineProps<{
     <div class="setting-cell">
         <div class="button-block">
             <div class="button-container">
-                <button class="button" @mousedown="onClick">{{ title }}</button>
+                <NuxtButton class="button" @mousedown="onClick">{{ title }}</NuxtButton>
             </div>
         </div>
     </div>

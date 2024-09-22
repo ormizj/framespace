@@ -30,18 +30,18 @@ watch(isOpen, (newValue) => {
   ]">
     <div class="frame-space">
       <div class="top-tab">
-        <button @click="isOpen = !isOpen">
+        <NuxtButton @click="isOpen = !isOpen">
           {{ isOpen ? 'Close' : 'Open' }}
-        </button>
-        <button @click="editMode = !editMode" :disabled="!isOpened">
+        </NuxtButton>
+        <NuxtButton @click="editMode = !editMode" :disabled="!isOpened">
           {{ editMode ? 'View' : 'Edit' }}
-        </button>
-        <button @click="handleHideClick" :disabled="!isOpened">
+        </NuxtButton>
+        <NuxtButton @click="handleHideClick" :disabled="!isOpened">
           Hide Tab
-        </button>
-        <button @click="hideScroll = !hideScroll" :disabled="!isOpened">
+        </NuxtButton>
+        <NuxtButton @click="hideScroll = !hideScroll" :disabled="!isOpened">
           {{ hideScroll ? 'Show Scroll' : 'Hide Scroll' }}
-        </button>
+        </NuxtButton>
       </div>
       <div class="content" ref="content">
         <ClientOnly>
