@@ -19,7 +19,7 @@ const isHydrating = useIsHydrating();
 
     &:disabled {
         pointer-events: none;
-        background-color: color-mix(in srgb, var(--secondary), transparent 50%);
+        background-color: color-mix(in srgb, var(--secondary), transparent 29%);
         color: var(--secondary);
         animation: unset;
     }
