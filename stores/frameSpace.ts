@@ -1,13 +1,14 @@
 import { acceptHMRUpdate, defineStore } from 'pinia';
+import GridCell from '~/classes/GridCell';
 import IframeCell from '~/components/cell-components/iframe-cell.vue';
 import OpenCorsSites from '~/enums/OpenCorsSites';
-import type { GridCell } from '~/types/GridCell';
+import { getFreeGridXY } from '~/utils/GridCell.ts';
 
 export const useFrameSpaceStore = defineStore({
 	id: 'frameSpaceStore',
 	state: () => ({
-		yGrid: 10,
-		xGrid: 10,
+		yGridBoundary: 10,
+		xGridBoundary: 10,
 		cellHeight: 10,
 		iframeGridCells: [] as GridCell<typeof IframeCell>[],
 		iframesSrcOptions: [...Object.values(OpenCorsSites)] as string[],
@@ -18,11 +19,11 @@ export const useFrameSpaceStore = defineStore({
 			let maxX = 0;
 			let maxY = 0;
 			this.iframeGridCells.forEach((iframe) => {
-				const endX = iframe.cellX + iframe.cellWidth - 1;
-				const endY = iframe.cellY + iframe.cellHeight - 1;
+				const endX = iframe.xGrid + iframe.width - 1;
+				const endY = iframe.yGrid + iframe.height - 1;
 				if (endX > maxX) maxX = endX;
 				if (endY > maxY) maxY = endY;
-				if (endX > this.xGrid || endY > this.yGrid) amount++;
+				if (endX > this.xGridBoundary || endY > this.yGridBoundary) amount++;
 			});
 
 			return {
@@ -34,29 +35,30 @@ export const useFrameSpaceStore = defineStore({
 	},
 	actions: {
 		addIframe({
-			cellX,
-			cellY,
-			cellWidth,
-			cellHeight,
+			yGrid,
+			xGrid,
+			height,
+			width,
 			src,
-			classes = new Set(),
+			initialClasses,
 		}: {
-			cellX: number;
-			cellY: number;
-			cellWidth: number;
-			cellHeight: number;
+			xGrid: number;
+			yGrid: number;
+			height: number;
+			width: number;
+			initialClasses?: Set<string>;
 			src: string;
-			classes?: Set<string>;
 		}) {
 			if (!this.iframesSrcOptions.find((otherSrc) => otherSrc === src)) {
 				this.iframesSrcOptions.unshift(src);
 			}
-			this.iframeGridCells.push({
-				cellX,
-				cellY,
-				cellHeight,
-				cellWidth,
-				classes,
+			const cellGrid = new GridCell<typeof IframeCell>({
+				id: crypto.randomUUID(),
+				yGrid,
+				xGrid,
+				height,
+				width,
+				initialClasses,
 				component: {
 					is: shallowRef(IframeCell),
 					bind: {
@@ -64,47 +66,21 @@ export const useFrameSpaceStore = defineStore({
 					},
 				},
 			});
+			this.iframeGridCells.push(cellGrid);
 		},
-		addIframeInFreeCell({
-			src,
-			classes = new Set(),
-		}: {
-			src: string;
-			classes?: Set<string>;
-		}) {
-			let cellX: number = -1;
-			let cellY: number = -1;
 
-			outerLoop: for (let y = 1; true; y++) {
-				for (let x = 1; x <= this.xGrid; x++) {
-					let isOutsideAllIframes = true;
-
-					for (const iframe of this.iframeGridCells) {
-						let strX = iframe.cellX;
-						let endX = iframe.cellX + iframe.cellWidth - 1;
-						let strY = iframe.cellY;
-						let endY = iframe.cellY + iframe.cellHeight - 1;
-
-						if (x >= strX && x <= endX && y >= strY && y <= endY) {
-							isOutsideAllIframes = false;
-							break;
-						}
-					}
-
-					if (isOutsideAllIframes) {
-						cellX = x;
-						cellY = y;
-						break outerLoop;
-					}
-				}
-			}
+		addIframeInFreeCell(src: string, initialClasses?: Set<string>) {
+			const { yGrid, xGrid } = getFreeGridXY(
+				this.iframeGridCells,
+				this.xGridBoundary
+			);
 			this.addIframe({
-				cellX,
-				cellY,
-				cellWidth: 1,
-				cellHeight: 1,
+				yGrid,
+				xGrid,
+				width: 1,
+				height: 1,
+				initialClasses,
 				src,
-				classes,
 			});
 		},
 
