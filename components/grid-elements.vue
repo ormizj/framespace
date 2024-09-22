@@ -29,14 +29,6 @@ watch(modelEdit, () => {
 const getGridCellFromElement = (element: HTMLGridElement | HTMLCellElement) => modelGridCells.value.find(
     gridCell => gridCell.xGrid === getGridElementXGrid(element) && gridCell.yGrid === getGridElementYGrid(element)
 );
-const setGridCellAxisFromCoordinates = (gridCell: GridCell, coordinates: GridCellCoordinates) => {
-    gridCell.xGrid = coordinates.strX;
-    gridCell.yGrid = coordinates.strY;
-}
-const setGridCellSizeFromCoordinates = (gridCell: GridCell, coordinates: GridCellCoordinates) => {
-    gridCell.width = coordinates.endX - gridCell.xGrid + 1;
-    gridCell.height = coordinates.endY - gridCell.yGrid + 1;
-}
 const isTargetZoneOccupied = (gridCellId: string, gridCellCoordinates: GridCellCoordinates): GridCell | undefined => {
     const occupyingGridCell = modelGridCells.value.find((otherGridCell) => {
         const otherCoordinates = otherGridCell.gridCellCoordinates;
@@ -91,9 +83,9 @@ const enforceNoOverlapSize = (gridCellId: string, gridCellCoordinates: GridCellC
     addGridCellAnimation(occupyingGridCell);
     return true;
 }
-const enforceNoNegativeSize = (gridCellSource: GridCell, sourceWidth: number, sourceHeight: number): boolean => {
-    if (gridCellSource.width > 0 && gridCellSource.height > 0) return false;
-    addGridCellAnimation(gridCellSource);
+const enforceNoNegativeSize = (gridCell: GridCell): boolean => {
+    if (gridCell.width > 0 && gridCell.height > 0) return false;
+    addGridCellAnimation(gridCell);
     return true;
 }
 
@@ -137,30 +129,30 @@ const handleDragDrop = (e: DragEvent) => {
 }
 const handleDragOn = (e: DragEvent) => {
     const target = e.target as HTMLGridElement;
-    addFutureGridCellDrag(target, dragged!);
+    addFutureGridCellDrag(target);
 }
 let previousTargetYGrid: number;
 let previousTargetXGrid: number;
-const addFutureGridCellDrag = (target: HTMLGridElement, gridCell: GridCell) => {
+const addFutureGridCellDrag = (target: HTMLGridElement) => {
     const targetYGrid = getGridElementYGrid(target);
     const targetXGrid = getGridElementXGrid(target);
     if (previousTargetYGrid === targetYGrid && previousTargetXGrid === targetXGrid) return;
     previousTargetYGrid = targetYGrid;
     previousTargetXGrid = targetXGrid;
-
     const newCoordinates = getGridCellCoordinates({
         yGrid: targetYGrid,
         xGrid: targetXGrid,
         height: dragged!.height,
         width: dragged!.width,
-    })
+    });
+
     const futureGridCellElement = document.createElement('div');
-    futureGridCellElement.style.width = `${calcGridCellWidthPx(gridCell.width)}px`;
-    futureGridCellElement.style.height = `${calcGridCellHeightPx(gridCell.height)}px`;
+    futureGridCellElement.style.width = `${calcGridCellWidthPx(dragged!.width)}px`;
+    futureGridCellElement.style.height = `${calcGridCellHeightPx(dragged!.height)}px`;
     futureGridCellElement.classList.add('future-grid-cell');
 
     // Enforcements
-    const wasEnforced = !isGridCellInBounds(gridCell.yGridEnd, gridCell.xGridEnd) || isTargetZoneOccupied(dragged!.id, newCoordinates);
+    const wasEnforced = !isGridCellInBounds(dragged!.yGridEnd, dragged!.xGridEnd) || isTargetZoneOccupied(dragged!.id, newCoordinates);
     if (wasEnforced) futureGridCellElement.classList.add('error');
 
     clearFutureGridCells();
@@ -169,70 +161,85 @@ const addFutureGridCellDrag = (target: HTMLGridElement, gridCell: GridCell) => {
 
 
 // GridCell Resize
+let resized = ref<GridCell | undefined>(undefined);
 let isMouseDown = ref<boolean>(false);
-const resized = ref<HTMLCellElement | null>(null);
 const gridCellResizeObs = new ResizeObserver((obs) => {
     if (stopResizeMouseUp.value) {
         stopResizeMouseUp.value = false;
         return;
     }
-    if (!resized.value && isMouseDown.value && !dragged) resized.value = obs[0].target as HTMLCellElement;
+    if (!resized.value && isMouseDown.value && !dragged) {
+        resized.value = getGridCellFromElement(obs[0].target as HTMLCellElement);
+    }
 });
 const handleMouseEnter = (e: MouseEvent) => {
     if (!resized.value) return;
     const target = e.target as HTMLGridElement;
-    addFutureGridCellResize(target, getGridCellFromElement(resized.value)!);
+    addFutureGridCellResize(resized.value!, target);
 }
 const handleMouseUp = (e: MouseEvent) => {
     isMouseDown.value = false;
     nextTick(() => {
-        resized.value = null;
+        resized.value = undefined;
     });
     if (!resized.value) return;
 
-    const source = getGridCellFromElement(resized.value)!;
     const target = e.target as HTMLGridElement;
-    const sourceCoordinates = source.gridCellCoordinates;
+    const targetYGrid = getGridElementYGrid(target);
+    const targetXGrid = getGridElementXGrid(target);
+    const newCoordinates = getGridCellCoordinates({
+        yGrid: resized.value!.yGrid,
+        xGrid: resized.value!.xGrid,
+        height: getGridSizeAxis(resized.value!.yGrid, targetYGrid),
+        width: getGridSizeAxis(resized.value!.xGrid, targetXGrid),
+    });
 
-    const sourceWidth = source.width;
-    const sourceHeight = source.height;
-    source.width = getGridElementXGrid(target) - source.xGrid + 1;
-    source.height = getGridElementYGrid(target) - source.yGrid + 1;
+    console.log(targetYGrid, targetXGrid);
+
+    console.log(newCoordinates);
+
 
     // Enforcements
-    (
-        enforceNoOverlapSize(source, sourceCoordinates),
-        enforceNoNegativeSize(source, sourceWidth, sourceHeight)
-    );
+    const wasEnforced = enforceNoOverlapSize(resized.value!.id, newCoordinates) || enforceNoNegativeSize(resized.value!);
+    if (!wasEnforced) {
+        resized.value!.height = targetYGrid - resized.value!.yGrid + 1;
+        resized.value!.width = targetXGrid - resized.value!.xGrid + 1;
+    }
 
     const clearFutureGridCellsInterval = setInterval(() => {
         clearFutureGridCells();
     }, 1)
     setTimeout(() => {
         clearInterval(clearFutureGridCellsInterval)
-        resized.value = null;
+        resized.value = undefined;
     }, 250);
 }
 watch(() => gridCellElements.value, () => {
     gridCellElements.value!.forEach((gridCellElement) => gridCellResizeObs.observe(gridCellElement))
 }, { deep: true });
-const addFutureGridCellResize = (target: HTMLGridElement, gridCell: GridCell) => {
-    const sourceWidth = gridCell.width;
-    const sourceHeight = gridCell.height;
-
-    gridCell.width = getGridElementXGrid(target) - gridCell.xGrid + 1;
-    gridCell.height = getGridElementYGrid(target) - gridCell.yGrid + 1;
+const addFutureGridCellResize = (gridCell: GridCell, target: HTMLGridElement) => {
+    const targetYGrid = getGridElementYGrid(target);
+    const targetXGrid = getGridElementXGrid(target);
+    const targetHeight = targetYGrid - gridCell.yGrid + 1;
+    const targetWidth = targetXGrid - gridCell.xGrid + 1;
+    const newCoordinates = getGridCellCoordinates({
+        yGrid: targetYGrid,
+        xGrid: targetXGrid,
+        height: resized.value!.height,
+        width: resized.value!.width,
+    });
 
     const futureGridCellElement = document.createElement('div');
-    futureGridCellElement.style.width = `${calcGridCellWidthPx(gridCell)}px`;
-    futureGridCellElement.style.height = `${calcGridCellHeightPx(gridCell)}px`;
+    futureGridCellElement.style.height = `${calcGridCellHeightPx(targetHeight)}px`;
+    futureGridCellElement.style.width = `${calcGridCellWidthPx(targetWidth)}px`;
     futureGridCellElement.classList.add('future-grid-cell');
-    if (!isGridCellInBounds(gridCell) || isTargetZoneOccupied(gridCell)) futureGridCellElement.classList.add('error');
+
+    // Enforcements
+    const wasEnforced = !isGridCellInBounds(resized.value!.yGridEnd, resized.value!.xGridEnd) || isTargetZoneOccupied(resized.value!.id, newCoordinates);
+    if (wasEnforced) futureGridCellElement.classList.add('error');
+
     clearFutureGridCells();
     getGridXFromXY(gridCell.xGrid, gridCell.yGrid).appendChild(futureGridCellElement);
-
-    gridCell.width = sourceWidth;
-    gridCell.height = sourceHeight;
 }
 
 
@@ -277,7 +284,7 @@ const calcGridCellWidthPx = (gridCellWidth: number) => gridCellWidth * cellWidth
 </script>
 
 <template>
-    <div class="grid-elements" ref="gridElements" :class="{ edit: modelEdit }" @mouseenter="resized = null">
+    <div class="grid-elements" ref="gridElements" :class="{ edit: modelEdit }" @mouseenter="resized = undefined">
         <!-- GRID Y -->
         <div v-for="y in yGridBoundary" class="y-grid" :style="{ height: `${cellHeight}dvh` }" :key="y">
             <!-- GRID X -->

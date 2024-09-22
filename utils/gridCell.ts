@@ -52,3 +52,7 @@ export const getGridCellCoordinates = ({
 		endX: xGrid + width - 1,
 	};
 };
+
+export const getGridSizeAxis = (startAxis: number, endAxis: number) => {
+	return startAxis - endAxis + 1;
+};

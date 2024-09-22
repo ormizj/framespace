@@ -2,7 +2,6 @@ import { acceptHMRUpdate, defineStore } from 'pinia';
 import GridCell from '~/classes/GridCell';
 import IframeCell from '~/components/cells/iframe-cell.vue';
 import OpenCorsSites from '~/enums/OpenCorsSites';
-import { getFreeGridXY } from '~/utils/gridCell';
 
 export const useFrameSpaceStore = defineStore({
 	id: 'frameSpaceStore',
