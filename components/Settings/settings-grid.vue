@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import GridElements from './grid-elements.vue';
-import SettingLabelInputCell from './cell-components/setting-label-input-cell.vue';
-import SettingLabelCell from './cell-components/setting-label-cell.vue';
-import SettingInputCell from './cell-components/setting-input-cell.vue';
-import SettingSelectCell from './cell-components/setting-select-cell.vue';
-import SettingButtonCell from './cell-components/setting-button-cell.vue';
-import type IframeCell from './cell-components/iframe-cell.vue';
+import GridElements from '../grid-elements.vue';
+import type IframeCell from '../cell-components/iframe-cell.vue';
+import SettingLabelInputCell from './cells/setting-label-input-cell.vue';
+import SettingLabelCell from './cells/setting-label-cell.vue';
+import SettingInputCell from './cells/setting-input-cell.vue';
+import SettingSelectCell from './cells/setting-select-cell.vue';
+import SettingButtonCell from './cells/setting-button-cell.vue';
 import type GridCell from '~/classes/GridCell';
 
 const frameSpaceStore = useFrameSpaceStore();
@@ -58,55 +58,7 @@ type SettingCells = Component & (
     typeof SettingButtonCell
 );
 const gridCells = ref<GridCell<SettingCells>[]>([
-    { /* GRID ATTRIBUTES */
-        cellX: 7,
-        cellY: 4,
-        cellWidth: 3,
-        cellHeight: 1,
-        classes: new Set(),
-        component: {
-            is: shallowRef(SettingLabelInputCell),
-            props: {
-                'modelValue': xGridBoundary,
-                'onUpdate:modelValue': (value: string) => xGridBoundary.value = +value,
-                'title': '# X-Grid:',
-                'id': 'x-grid',
-                'type': 'number',
-            }
-        }
-    }, {
-        cellX: 7,
-        cellY: 5,
-        cellWidth: 3,
-        cellHeight: 1,
-        classes: new Set(),
-        component: {
-            is: shallowRef(SettingLabelInputCell),
-            props: {
-                'modelValue': yGridBoundary,
-                'onUpdate:modelValue': (value: string) => yGridBoundary.value = +value,
-                'title': '# Y-Grid:',
-                'id': 'y-grid',
-                'type': 'number',
-            }
-        }
-    }, {
-        cellX: 7,
-        cellY: 6,
-        cellWidth: 3,
-        cellHeight: 1,
-        classes: new Set(),
-        component: {
-            is: shallowRef(SettingLabelInputCell),
-            props: {
-                'modelValue': cellHeight,
-                'onUpdate:modelValue': (value: string) => cellHeight.value = +value,
-                'title': '% Cell-Height:',
-                'id': 'cell-height',
-                'type': 'number',
-            }
-        }
-    }, { /* ADD IFRAME */
+    { /* ADD IFRAME */
         cellX: 5,
         cellY: 1,
         cellWidth: 2,
@@ -224,7 +176,7 @@ const gridCells = ref<GridCell<SettingCells>[]>([
         cellHeight: 1,
         classes: new Set(),
         component: {
-            is: shallowRef(SettingLabelInputCell),
+            is: SettingLabelInputCell,
             props: {
                 'modelValue': email,
                 'onUpdate:modelValue': (value: string) => email.value = value,
