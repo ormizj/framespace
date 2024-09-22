@@ -29,24 +29,6 @@ watch(modelEdit, () => {
 const getGridCellFromElement = (element: HTMLGridElement | HTMLCellElement) => modelGridCells.value.find(
     gridCell => gridCell.xGrid === getGridElementXGrid(element) && gridCell.yGrid === getGridElementYGrid(element)
 );
-const isTargetZoneOccupied = (gridCellId: string, gridCellCoordinates: GridCellCoordinates): GridCell | undefined => {
-    const occupyingGridCell = modelGridCells.value.find((otherGridCell) => {
-        const otherCoordinates = otherGridCell.gridCellCoordinates;
-        return (
-            gridCellCoordinates.strX <= otherCoordinates.endX &&
-            gridCellCoordinates.endX >= otherCoordinates.strX &&
-            gridCellCoordinates.strY <= otherCoordinates.endY &&
-            gridCellCoordinates.endY >= otherCoordinates.strY
-        ) && gridCellId !== otherGridCell.id;
-    })
-    return occupyingGridCell;
-}
-const isGridCellInBounds = (gridCellYGridEnd: number, gridCellXGridEnd: number): boolean => {
-    return props.yGridBoundary >= gridCellYGridEnd && props.xGridBoundary >= gridCellXGridEnd;
-}
-const isGridCellSizeValid = (gridCellHeight: number, gridCellWidth: number) => {
-    return gridCellHeight > 0 && gridCellWidth > 0;
-}
 const gridCellsAnimationTimeouts = new Map();
 const addGridCellAnimation = (gridCell: GridCell) => {
     const className = 'error-animation';
@@ -85,6 +67,27 @@ const enforceNoInvalidSize = (gridCell: GridCell, newHeight: number, newWidth: n
     if (isValidSize) return false;
     addGridCellAnimation(gridCell);
     return true;
+}
+
+
+// GridCell Validations
+const isTargetZoneOccupied = (gridCellId: string, gridCellCoordinates: GridCellCoordinates): GridCell | undefined => {
+    const occupyingGridCell = modelGridCells.value.find((otherGridCell) => {
+        const otherCoordinates = otherGridCell.gridCellCoordinates;
+        return (
+            gridCellCoordinates.strX <= otherCoordinates.endX &&
+            gridCellCoordinates.endX >= otherCoordinates.strX &&
+            gridCellCoordinates.strY <= otherCoordinates.endY &&
+            gridCellCoordinates.endY >= otherCoordinates.strY
+        ) && gridCellId !== otherGridCell.id;
+    })
+    return occupyingGridCell;
+}
+const isGridCellInBounds = (gridCellYGridEnd: number, gridCellXGridEnd: number): boolean => {
+    return props.yGridBoundary >= gridCellYGridEnd && props.xGridBoundary >= gridCellXGridEnd;
+}
+const isGridCellSizeValid = (gridCellHeight: number, gridCellWidth: number) => {
+    return gridCellHeight > 0 && gridCellWidth > 0;
 }
 
 
@@ -207,17 +210,12 @@ const handleMouseUp = (e: MouseEvent) => {
         resized.value = undefined;
     }, 250);
 }
-watch(() => gridCellElements.value, () => {
-    gridCellElements.value!.forEach((gridCellElement) => gridCellResizeObs.observe(gridCellElement))
-}, { deep: true });
 const addFutureGridCellResize = (gridCell: GridCell, target: HTMLGridElement) => {
-    const targetYGrid = getGridElementYGrid(target);
-    const targetXGrid = getGridElementXGrid(target);
-    const targetHeight = targetYGrid - gridCell.yGrid + 1;
-    const targetWidth = targetXGrid - gridCell.xGrid + 1;
+    const targetHeight = getGridElementYGrid(target) - gridCell.yGrid + 1;
+    const targetWidth = getGridElementXGrid(target) - gridCell.xGrid + 1;
     const newCoordinates = getGridCellCoordinates({
-        yGrid: targetYGrid,
-        xGrid: targetXGrid,
+        yGrid: resized.value!.yGrid,
+        xGrid: resized.value!.xGrid,
         height: targetHeight,
         width: targetWidth,
     });
@@ -237,6 +235,9 @@ const addFutureGridCellResize = (gridCell: GridCell, target: HTMLGridElement) =>
 
 
 // GridElements Observer
+watch(() => gridCellElements.value, () => {
+    gridCellElements.value!.forEach((gridCellElement) => gridCellResizeObs.observe(gridCellElement))
+}, { deep: true });
 const gridXResizeObs = new ResizeObserver((entries) => {
     const target = entries[0].target as HTMLGridElement;
     const rect = target.getBoundingClientRect();
@@ -247,6 +248,7 @@ onMounted(() => {
     const gridX = gridElements.value!.children[0].children[0] as HTMLGridElement;
     gridXResizeObs.observe(gridX);
 })
+
 
 // GridElements Helper Functions
 let gridElementsAnimationTimeout: ReturnType<typeof setTimeout>;
