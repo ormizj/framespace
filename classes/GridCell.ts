@@ -19,13 +19,13 @@ export default class GridCell<T extends Component = Component> {
 		initialClasses,
 		id,
 	}: {
-		id?: string;
 		component: VueComponent<T>;
 		yGrid: number;
 		xGrid: number;
 		width?: number;
 		height?: number;
 		initialClasses?: Set<string>;
+		id?: string;
 	}) {
 		this.component = component;
 		this.component.is = shallowRef(this.component.is);
