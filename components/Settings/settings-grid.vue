@@ -9,7 +9,7 @@ import SettingButtonCell from './cells/setting-button-cell.vue';
 import type GridCell from '~/classes/GridCell';
 
 const frameSpaceStore = useFrameSpaceStore();
-const { xGridBoundary, yGridBoundary, cellHeight, iframesSrcOptions, outOfBoundIframes, iframeGridCells } = storeToRefs(frameSpaceStore);
+const { outOfBoundIframes, iframeGridCells } = storeToRefs(frameSpaceStore);
 
 const emailRef = ref<HTMLInputElement | null>(null);
 const email = ref('');
@@ -34,19 +34,12 @@ const validateEmailInput = (emailRef: HTMLInputElement) => {
     return isValid;
 }
 
-const handleAddIframe = () => {
-    if (!addIframeSrc.value) {
-        alert('Iframe url is missing!');
-        return;
-    }
-    frameSpaceStore.addIframeInFreeCell(addIframeSrc.value, new Set(['golden-animation']));
-}
+
 const handleRemoveIframe = () => {
     if (removeIframe.value === '') return;
     frameSpaceStore.removeIframe(removeIframe.value)
 }
 
-const addIframeSrc = ref('');
 const removeIframe = ref<GridCell<typeof IframeCell> | ''>('');
 const editMode = ref(true);
 
@@ -58,63 +51,7 @@ type SettingCells = Component & (
     typeof SettingButtonCell
 );
 const gridCells = ref<GridCell<SettingCells>[]>([
-    { /* ADD IFRAME */
-        cellX: 5,
-        cellY: 1,
-        cellWidth: 2,
-        cellHeight: 2,
-        classes: new Set(),
-        component: {
-            is: shallowRef(SettingLabelCell),
-            props: {
-                'title': 'Add Iframe',
-                'id': 'add-iframe',
-            }
-        }
-    }, {
-        cellX: 7,
-        cellY: 1,
-        cellWidth: 3,
-        cellHeight: 1,
-        classes: new Set(),
-        component: {
-            is: shallowRef(SettingSelectCell),
-            props: {
-                'modelValue': addIframeSrc,
-                'onUpdate:modelValue': (value: string) => addIframeSrc.value = value,
-                'id': 'add-iframe-select',
-                'options': iframesSrcOptions,
-            }
-        }
-    }, {
-        cellX: 7,
-        cellY: 2,
-        cellWidth: 3,
-        cellHeight: 1,
-        classes: new Set(),
-        component: {
-            is: shallowRef(SettingInputCell),
-            props: {
-                'modelValue': addIframeSrc,
-                'onUpdate:modelValue': (value: string) => addIframeSrc.value = value,
-                'id': 'add-iframe',
-                'type': 'text',
-            }
-        }
-    }, {
-        cellX: 10,
-        cellY: 1,
-        cellWidth: 2,
-        cellHeight: 2,
-        classes: new Set(),
-        component: {
-            is: shallowRef(SettingButtonCell),
-            props: {
-                'title': 'Add Iframe',
-                'onClick': handleAddIframe
-            }
-        }
-    }, { /* REMOVE IFRAME */
+    { /* REMOVE IFRAME */
         cellX: 5,
         cellY: 3,
         cellWidth: 2,
