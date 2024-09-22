@@ -1,8 +1,8 @@
-<script setup lang="ts" generic="T extends Component">
+<script setup lang="ts">
 import type GridCell from '~/classes/GridCell';
 import { ANIMATION_LONG_DURATION, ANIMATION_REPEAT_COUNT } from '~/constants/style';
 
-const modelGridCells = defineModel<GridCell<T>[]>({ required: true });
+const modelGridCells = defineModel<GridCell[]>({ required: true });
 const modelEdit = defineModel('edit', { default: false });
 
 const props = withDefaults(defineProps<{
@@ -299,10 +299,10 @@ const calcGridCellHeightPx = (gridCell: GridCell) => gridCell.height * cellHeigh
                                     ...gridCell.component.emits,
                                     ...gridCell.component.exposed,
                                     ...gridCell.component.props,
-                                }">
-                                <!-- TODO gridCell slots -->
-                                <!-- {{ gridCell.component.slots }} -->
-                            </component>
+                                }" />
+                            <!-- TODO gridCell slots -->
+                            <!-- {{ gridCell.component.slots }} -->
+                            <!-- </component> -->
                         </div>
                     </template>
                 </template>

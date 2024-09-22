@@ -1,9 +1,9 @@
-import type { Component, ShallowRef } from 'vue';
+import type { Component, ShallowRef, ShallowUnwrapRef } from 'vue';
 import type { VueComponent } from '~/types/VueComponent';
 
 export default class GridCell<T extends Component = Component> {
 	id: string;
-	component: ShallowRef<VueComponent<T>>;
+	component: ShallowUnwrapRef<VueComponent<T>>;
 	yGrid: number;
 	xGrid: number;
 	width: number;
@@ -28,7 +28,10 @@ export default class GridCell<T extends Component = Component> {
 		initialClasses?: Set<string>;
 	}) {
 		this.id = id;
-		this.component = shallowRef(component);
+		/* TODO temporary "as" */
+		this.component = shallowRef(component) as unknown as ShallowUnwrapRef<
+			typeof component
+		>;
 		this.yGrid = yGrid;
 		this.xGrid = xGrid;
 		this.width = width ?? 1;

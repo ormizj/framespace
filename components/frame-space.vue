@@ -2,7 +2,7 @@
 import { ANIMATION_SHORT_DURATION, TAB_HEIGHT } from '~/constants/style';
 
 const frameSpaceStore = useFrameSpaceStore();
-const { yGrid, xGrid, cellHeight, iframeGridCells } = storeToRefs(frameSpaceStore);
+const { yGridBoundary, xGridBoundary, cellHeight, iframeGridCells } = storeToRefs(frameSpaceStore);
 
 const isOpen = ref(false);
 const isOpened = ref(false);
@@ -45,8 +45,8 @@ watch(isOpen, (newValue) => {
       </div>
       <div class="content" ref="content">
         <ClientOnly>
-          <GridElements class="grid-elements" v-model="iframeGridCells" v-model:edit="editMode" :x-grid="xGrid"
-            :y-grid="yGrid" :cell-height="cellHeight" />
+          <GridElements class="grid-elements" v-model="iframeGridCells" v-model:edit="editMode" :y-grid="yGridBoundary"
+            :x-grid="xGridBoundary" :cell-height="cellHeight" />
         </ClientOnly>
       </div>
     </div>

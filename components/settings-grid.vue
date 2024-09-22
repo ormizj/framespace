@@ -1,24 +1,21 @@
 <script setup lang="ts">
 import type GridCell from '~/classes/GridCell';
 import GridElements from '~/components/grid-elements.vue';
-import gridAttributes from './grid-attributes';
-import addIframe from './add-iframe';
-import removeIframe from './remove-iframe';
-import loginRegister from './login-register';
+import gridAttributes from '../composables/settingsGrid/gridAttributes';
+import addIframe from '~/composables/settingsGrid/addIframe';
+import removeIframe from '~/composables/settingsGrid/removeIframe';
+import auth from '~/composables/settingsGrid/auth';
 
 const frameSpaceStore = useFrameSpaceStore();
 const { outOfBoundIframes } = storeToRefs(frameSpaceStore);
 
 const editMode = ref(true);
 const gridCells = ref<GridCell[]>([
-    ...gridAttributes,
-    ...addIframe,
-    ...removeIframe,
-    ...loginRegister,
+    ...gridAttributes(),
+    ...addIframe(),
+    ...removeIframe(),
+    ...auth(),
 ]);
-
-console.log(gridCells.value);
-
 </script>
 
 <template>
