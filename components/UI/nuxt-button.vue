@@ -17,7 +17,7 @@ const isHydrating = useIsHydrating();
 <style scoped>
 .nuxt-button {
     background-color: color-mix(in srgb, var(--background), transparent 50%);
-    padding: 0.5rem;
+    padding: 0.25rem 0.5rem;
     color: var(--secondary);
     border-radius: calc(var(--border-glow-radius)/ 4);
     border: unset;
