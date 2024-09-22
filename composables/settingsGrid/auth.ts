@@ -4,9 +4,10 @@ import SettingLabelInputCell from '~/components/cells/setting-label-input-cell.v
 import SettingButtonCell from '~/components/cells/setting-button-cell.vue';
 
 export default () => {
-	const emailRef = ref<HTMLInputElement | null>(null);
 	const email = ref('');
 	const password = ref('');
+	const emailRef = ref<HTMLInputElement | null>(null);
+
 	const handleLogin = () => {
 		if (!validateEmailInput(emailRef.value!)) return;
 		console.log(email.value);
@@ -28,7 +29,11 @@ export default () => {
 	};
 
 	return [
-		new GridCell({
+		new GridCell<
+			| typeof SettingLabelInputCell
+			| typeof SettingLabelCell
+			| typeof SettingButtonCell
+		>({
 			id: 'auth',
 			yGrid: 1,
 			xGrid: 1,
@@ -51,7 +56,7 @@ export default () => {
 			component: {
 				is: SettingLabelInputCell,
 				props: {
-					'modelValue': email.value,
+					'v-model': email,
 					'onUpdate:modelValue': (value: string) => (email.value = value),
 					'title': 'Email',
 					'id': 'email',
@@ -71,7 +76,7 @@ export default () => {
 			component: {
 				is: SettingLabelInputCell,
 				props: {
-					'modelValue': password.value,
+					'v-model': password,
 					'onUpdate:modelValue': (value: string) => (password.value = value),
 					'title': 'Password',
 					'id': 'password',

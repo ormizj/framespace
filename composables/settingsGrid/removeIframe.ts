@@ -39,7 +39,7 @@ export default () => {
 			component: {
 				is: SettingSelectCell,
 				props: {
-					'modelValue': removeIframe,
+					'v-model': removeIframe,
 					'onUpdate:modelValue': (value: GridCell<typeof IframeCell>) =>
 						(removeIframe.value = value),
 					'id': 'remove-iframe-select',

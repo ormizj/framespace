@@ -45,7 +45,7 @@ export default () => {
 			component: {
 				is: SettingSelectCell,
 				props: {
-					'modelValue': addIframeSrc.value,
+					'v-model': addIframeSrc,
 					'onUpdate:modelValue': (value: string) =>
 						(addIframeSrc.value = value),
 					'id': 'add-iframe-select',
@@ -62,7 +62,7 @@ export default () => {
 			component: {
 				is: SettingInputCell,
 				props: {
-					'modelValue': addIframeSrc.value,
+					'v-model': addIframeSrc,
 					'onUpdate:modelValue': (value: string) =>
 						(addIframeSrc.value = value),
 					'id': 'add-iframe',
