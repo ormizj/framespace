@@ -1,9 +1,9 @@
-import type { Component } from 'vue';
+import type { Component, ShallowRef } from 'vue';
 import type { VueComponent } from '~/types/VueComponent';
 
 export default class GridCell<T extends Component = Component> {
 	id: string;
-	component: VueComponent<T>;
+	component: ShallowRef<VueComponent<T>>;
 	yGrid: number;
 	xGrid: number;
 	width: number;
@@ -28,7 +28,7 @@ export default class GridCell<T extends Component = Component> {
 		initialClasses?: Set<string>;
 	}) {
 		this.id = id;
-		this.component = component;
+		this.component = shallowRef(component);
 		this.yGrid = yGrid;
 		this.xGrid = xGrid;
 		this.width = width ?? 1;

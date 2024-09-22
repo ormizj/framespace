@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { GridCell } from '~/types/GridCell';
 import GridElements from './grid-elements.vue';
 import SettingLabelInputCell from './cell-components/setting-label-input-cell.vue';
 import SettingLabelCell from './cell-components/setting-label-cell.vue';
@@ -7,9 +6,10 @@ import SettingInputCell from './cell-components/setting-input-cell.vue';
 import SettingSelectCell from './cell-components/setting-select-cell.vue';
 import SettingButtonCell from './cell-components/setting-button-cell.vue';
 import type IframeCell from './cell-components/iframe-cell.vue';
+import type GridCell from '~/classes/GridCell';
 
 const frameSpaceStore = useFrameSpaceStore();
-const { xGrid, yGrid, cellHeight, iframesSrcOptions, outOfBoundIframes, iframeGridCells } = storeToRefs(frameSpaceStore);
+const { xGridBoundary, yGridBoundary, cellHeight, iframesSrcOptions, outOfBoundIframes, iframeGridCells } = storeToRefs(frameSpaceStore);
 
 const emailRef = ref<HTMLInputElement | null>(null);
 const email = ref('');
@@ -39,10 +39,7 @@ const handleAddIframe = () => {
         alert('Iframe url is missing!');
         return;
     }
-    frameSpaceStore.addIframeInFreeCell({
-        src: addIframeSrc.value,
-        classes: new Set(['golden-animation'])
-    });
+    frameSpaceStore.addIframeInFreeCell(addIframeSrc.value, new Set(['golden-animation']));
 }
 const handleRemoveIframe = () => {
     if (removeIframe.value === '') return;
@@ -51,8 +48,15 @@ const handleRemoveIframe = () => {
 
 const addIframeSrc = ref('');
 const removeIframe = ref<GridCell<typeof IframeCell> | ''>('');
-type SettingCells = typeof SettingLabelInputCell | typeof SettingLabelCell | typeof SettingInputCell | typeof SettingSelectCell | typeof SettingButtonCell;
 const editMode = ref(true);
+
+type SettingCells = Component & (
+    typeof SettingLabelInputCell |
+    typeof SettingLabelCell |
+    typeof SettingInputCell |
+    typeof SettingSelectCell |
+    typeof SettingButtonCell
+);
 const gridCells = ref<GridCell<SettingCells>[]>([
     { /* GRID ATTRIBUTES */
         cellX: 7,
@@ -63,8 +67,8 @@ const gridCells = ref<GridCell<SettingCells>[]>([
         component: {
             is: shallowRef(SettingLabelInputCell),
             props: {
-                'modelValue': xGrid,
-                'onUpdate:modelValue': (value: string) => xGrid.value = +value,
+                'modelValue': xGridBoundary,
+                'onUpdate:modelValue': (value: string) => xGridBoundary.value = +value,
                 'title': '# X-Grid:',
                 'id': 'x-grid',
                 'type': 'number',
@@ -79,8 +83,8 @@ const gridCells = ref<GridCell<SettingCells>[]>([
         component: {
             is: shallowRef(SettingLabelInputCell),
             props: {
-                'modelValue': yGrid,
-                'onUpdate:modelValue': (value: string) => yGrid.value = +value,
+                'modelValue': yGridBoundary,
+                'onUpdate:modelValue': (value: string) => yGridBoundary.value = +value,
                 'title': '# Y-Grid:',
                 'id': 'y-grid',
                 'type': 'number',
