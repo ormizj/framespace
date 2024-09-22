@@ -1,3 +1,3 @@
 # Framespace
 
-Dynamic grid system, that support manipulation of elements, and dynamic properties
+Grid system that supports a flexible layout with customizable elements and properties that can be adjusted on the fly.
