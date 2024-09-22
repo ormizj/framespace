@@ -29,11 +29,7 @@ export default () => {
 	};
 
 	return [
-		new GridCell<
-			| typeof SettingLabelInputCell
-			| typeof SettingLabelCell
-			| typeof SettingButtonCell
-		>({
+		new GridCell({
 			id: 'auth',
 			yGrid: 1,
 			xGrid: 1,
