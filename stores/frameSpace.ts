@@ -53,7 +53,6 @@ export const useFrameSpaceStore = defineStore({
 				this.iframesSrcOptions.unshift(src);
 			}
 			const cellGrid = new GridCell<typeof IframeCell>({
-				id: crypto.randomUUID(),
 				yGrid,
 				xGrid,
 				height,

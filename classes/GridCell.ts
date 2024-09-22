@@ -2,24 +2,24 @@ import type { Component } from 'vue';
 import type { VueComponent } from '~/types/VueComponent';
 
 export default class GridCell<T extends Component = Component> {
-	id: string;
 	component: VueComponent<T>;
 	yGrid: number;
 	xGrid: number;
 	width: number;
 	height: number;
 	initialClasses: Set<string>;
+	id: string;
 
 	constructor({
-		id,
 		component,
 		yGrid,
 		xGrid,
 		width,
 		height,
 		initialClasses,
+		id,
 	}: {
-		id: string;
+		id?: string;
 		component: VueComponent<T>;
 		yGrid: number;
 		xGrid: number;
@@ -27,7 +27,6 @@ export default class GridCell<T extends Component = Component> {
 		height?: number;
 		initialClasses?: Set<string>;
 	}) {
-		this.id = id;
 		this.component = component;
 		this.component.is = shallowRef(this.component.is);
 		this.yGrid = yGrid;
@@ -35,6 +34,7 @@ export default class GridCell<T extends Component = Component> {
 		this.width = width ?? 1;
 		this.height = height ?? 1;
 		this.initialClasses = initialClasses ?? new Set();
+		this.id = id ?? crypto.randomUUID();
 	}
 
 	get gridCellCoordinates() {
