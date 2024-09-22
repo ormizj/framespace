@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-const props = defineProps<{
+defineProps<{
     title: string;
     id: string;
 }>()
@@ -33,6 +33,5 @@ const props = defineProps<{
             width: 100%;
             justify-content: center;
         }
-    }
-}
+    }}
 </style>

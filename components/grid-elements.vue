@@ -299,10 +299,10 @@ const calcGridCellHeightPx = (gridCell: GridCell) => gridCell.height * cellHeigh
                                     ...gridCell.component.emits,
                                     ...gridCell.component.exposed,
                                     ...gridCell.component.props,
-                                }" />
-                            <!-- TODO gridCell slots -->
-                            <!-- {{ gridCell.component.slots }} -->
-                            <!-- </component> -->
+                                }">
+                                <!-- TODO gridCell slots -->
+                                <!-- {{ gridCell.component.slots }} -->
+                            </component>
                         </div>
                     </template>
                 </template>
