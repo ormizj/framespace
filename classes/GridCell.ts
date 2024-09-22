@@ -1,7 +1,8 @@
 import type { Component } from 'vue';
 import type { VueComponent } from '~/types/VueComponent';
 
-export default class GridCell<T extends Component> {
+export default class GridCell<T extends Component = Component> {
+	id: number;
 	component: VueComponent<T>;
 	yGrid: number;
 	xGrid: number;
@@ -10,6 +11,7 @@ export default class GridCell<T extends Component> {
 	initialClasses: Set<string>;
 
 	constructor({
+		id,
 		component,
 		yGrid,
 		xGrid,
@@ -17,6 +19,7 @@ export default class GridCell<T extends Component> {
 		height,
 		initialClasses,
 	}: {
+		id: number;
 		component: VueComponent<T>;
 		yGrid: number;
 		xGrid: number;
@@ -24,6 +27,7 @@ export default class GridCell<T extends Component> {
 		height?: number;
 		initialClasses?: Set<string>;
 	}) {
+		this.id = id;
 		this.component = component;
 		this.yGrid = yGrid;
 		this.xGrid = xGrid;
