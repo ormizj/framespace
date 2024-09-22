@@ -80,9 +80,9 @@ const enforceBoundsAxis = (gridCellYGridEnd: number, gridCellXGridEnd: number): 
     addGridElementsAnimation();
     return true;
 }
-const enforceNoInvalidSize = (gridCell: GridCell): boolean => {
-    const isInvalidSize = isGridCellSizeValid(gridCell.height, gridCell.width);
-    if (!isInvalidSize) false;
+const enforceNoInvalidSize = (gridCell: GridCell, newHeight: number, newWidth: number): boolean => {
+    const isValidSize = isGridCellSizeValid(newHeight, newWidth);
+    if (isValidSize) return false;
     addGridCellAnimation(gridCell);
     return true;
 }
@@ -183,20 +183,20 @@ const handleMouseUp = (e: MouseEvent) => {
     if (!resized.value) return;
 
     const target = e.target as HTMLGridElement;
-    const targetYGrid = getGridElementYGrid(target);
-    const targetXGrid = getGridElementXGrid(target);
+    const newHeight = getGridElementYGrid(target) - resized.value!.yGrid + 1;
+    const newWidth = getGridElementXGrid(target) - resized.value!.xGrid + 1;
     const newCoordinates = getGridCellCoordinates({
         yGrid: resized.value!.yGrid,
         xGrid: resized.value!.xGrid,
-        height: getGridSizeAxis(resized.value!.yGrid, targetYGrid),
-        width: getGridSizeAxis(resized.value!.xGrid, targetXGrid),
+        height: newHeight,
+        width: newWidth,
     });
 
     // Enforcements
-    const wasEnforced = enforceNoOverlap(resized.value!.id, newCoordinates) || enforceNoInvalidSize(resized.value!);
+    const wasEnforced = enforceNoOverlap(resized.value!.id, newCoordinates) || enforceNoInvalidSize(resized.value!, newHeight, newWidth);
     if (!wasEnforced) {
-        resized.value!.height = targetYGrid - resized.value!.yGrid + 1;
-        resized.value!.width = targetXGrid - resized.value!.xGrid + 1;
+        resized.value!.height = newHeight;
+        resized.value!.width = newWidth;
     }
 
     const clearFutureGridCellsInterval = setInterval(() => {
@@ -218,8 +218,8 @@ const addFutureGridCellResize = (gridCell: GridCell, target: HTMLGridElement) =>
     const newCoordinates = getGridCellCoordinates({
         yGrid: targetYGrid,
         xGrid: targetXGrid,
-        height: resized.value!.height,
-        width: resized.value!.width,
+        height: targetHeight,
+        width: targetWidth,
     });
 
     const futureGridCellElement = document.createElement('div');
@@ -228,7 +228,7 @@ const addFutureGridCellResize = (gridCell: GridCell, target: HTMLGridElement) =>
     futureGridCellElement.classList.add('future-grid-cell');
 
     // Enforcements
-    const invalidZone = isTargetZoneOccupied(resized.value!.id, newCoordinates) || addGridCellAnimation(resized.value!);
+    const invalidZone = isTargetZoneOccupied(resized.value!.id, newCoordinates) || !isGridCellSizeValid(targetHeight, targetWidth);
     if (invalidZone) futureGridCellElement.classList.add('error');
 
     clearFutureGridCells();
