@@ -30,16 +30,16 @@ watch(isOpen, (newValue) => {
   ]">
     <div class="frame-space">
       <div class="top-tab">
-        <NuxtButton @click="isOpen = !isOpen">
+        <NuxtButton class="start" location="start" @click="isOpen = !isOpen">
           {{ isOpen ? 'Close' : 'Open' }}
         </NuxtButton>
-        <NuxtButton @click="editMode = !editMode" :disabled="!isOpened">
+        <NuxtButton location="center" @click="editMode = !editMode" :disabled="!isOpened">
           {{ editMode ? 'View' : 'Edit' }}
         </NuxtButton>
-        <NuxtButton @click="handleHideClick" :disabled="!isOpened">
+        <NuxtButton location="center" @click="handleHideClick" :disabled="!isOpened">
           Hide Tab
         </NuxtButton>
-        <NuxtButton @click="hideScroll = !hideScroll" :disabled="!isOpened">
+        <NuxtButton class="end" location="end" @click="hideScroll = !hideScroll" :disabled="!isOpened">
           {{ hideScroll ? 'Show Scroll' : 'Hide Scroll' }}
         </NuxtButton>
       </div>
@@ -87,6 +87,14 @@ watch(isOpen, (newValue) => {
       height: var(--tab-height);
       background-color: rgba(var(--background-values), 0.5);
       width: 100%;
+
+      .start {
+        border-end-start-radius: unset;
+      }
+
+      .end {
+        border-end-end-radius: unset;
+      }
     }
 
     .content {
