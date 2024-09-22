@@ -145,9 +145,13 @@ const addFutureGridCellDrag = (target: HTMLGridElement) => {
         width: dragged!.width,
     });
 
+    const gridXElement = getGridXElementFromXY(dragged!.xGrid, dragged!.yGrid);
+    const gridCellElement = getGridCellElementFromGridXElement(gridXElement);
+
     const futureGridCellElement = document.createElement('div');
     futureGridCellElement.style.width = `${calcGridCellWidthPx(dragged!.width)}px`;
     futureGridCellElement.style.height = `${calcGridCellHeightPx(dragged!.height)}px`;
+    futureGridCellElement.style.borderRadius = getComputedProperty(gridCellElement, 'border-radius');
     futureGridCellElement.classList.add('future-grid-cell');
 
     // Enforcements
@@ -218,9 +222,13 @@ const addFutureGridCellResize = (gridCell: GridCell, target: HTMLGridElement) =>
         width: targetWidth,
     });
 
+    const gridXElement = getGridXElementFromXY(gridCell.xGrid, gridCell.yGrid);
+    const gridCellElement = getGridCellElementFromGridXElement(gridXElement);
+
     const futureGridCellElement = document.createElement('div');
     futureGridCellElement.style.height = `${calcGridCellHeightPx(targetHeight)}px`;
     futureGridCellElement.style.width = `${calcGridCellWidthPx(targetWidth)}px`;
+    futureGridCellElement.style.borderRadius = getComputedProperty(gridCellElement, 'border-radius');
     futureGridCellElement.classList.add('future-grid-cell');
 
     // Enforcements
@@ -228,7 +236,7 @@ const addFutureGridCellResize = (gridCell: GridCell, target: HTMLGridElement) =>
     if (invalidZone) futureGridCellElement.classList.add('error');
 
     clearFutureGridCells();
-    getGridXFromXY(gridCell.xGrid, gridCell.yGrid).appendChild(futureGridCellElement);
+    gridXElement.appendChild(futureGridCellElement);
 }
 
 
@@ -266,8 +274,11 @@ const clearGridElementsAnimation = () => {
     const className = 'error-animation-inset';
     gridElements.value!.classList.remove(className);
 }
-const getGridXFromXY = (x: number, y: number) => {
-    return gridElements.value!.children[y - 1].children[x - 1] as HTMLGridElement
+const getGridXElementFromXY = (x: number, y: number): HTMLGridElement => {
+    return gridElements.value!.children[y - 1].children[x - 1] as HTMLGridElement;
+}
+const getGridCellElementFromGridXElement = (element: HTMLGridElement): HTMLCellElement => {
+    return element.children[0].children[0] as HTMLCellElement;
 }
 
 
