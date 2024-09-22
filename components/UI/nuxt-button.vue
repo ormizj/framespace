@@ -21,6 +21,14 @@ const isHydrating = useIsHydrating();
     color: var(--secondary);
     border-radius: calc(var(--border-glow-radius)/ 4);
     border: unset;
+    cursor: pointer;
+
+    &:disabled {
+        pointer-events: none;
+        background-color: color-mix(in srgb, var(--secondary), transparent 50%);
+        color: var(--secondary);
+        animation: unset;
+    }
 
     &:active {
         background-color: var(--secondary);
