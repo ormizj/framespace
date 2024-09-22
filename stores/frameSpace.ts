@@ -60,7 +60,7 @@ export const useFrameSpaceStore = defineStore({
 				width,
 				initialClasses,
 				component: {
-					is: shallowRef(IframeCell),
+					is: IframeCell,
 					bind: {
 						src,
 					},

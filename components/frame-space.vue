@@ -19,7 +19,7 @@ watch(isOpen, (newValue) => {
   setTimeout(() => {
     isOpened.value = newValue
   }, ANIMATION_SHORT_DURATION);
-})
+});
 </script>
 
 <template>

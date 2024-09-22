@@ -4,7 +4,7 @@
 
 <template>
     <FrameSpace />
-    <Settings />
+    <SettingsGrid />
 </template>
 
 <style scoped></style>
