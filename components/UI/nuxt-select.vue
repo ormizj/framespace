@@ -1,27 +1,21 @@
 <script setup lang="ts">
-withDefaults(defineProps<{
-    location?: 'none' | 'start' | 'center' | 'end'
-}>(), {
-    location: 'none',
-})
-
+const model = defineModel();
 const isHydrating = useIsHydrating();
 </script>
 
 <template>
-    <button class="nuxt-button" :class="[location]" :disabled="isHydrating">
+    <select class="nuxt-select" v-model="model" :disabled="isHydrating">
         <slot />
-    </button>
+    </select>
 </template>
 
 <style scoped>
-.nuxt-button {
+.nuxt-select {
     background-color: color-mix(in srgb, var(--background), white 7.5%);
-    padding: 0.25rem 0.5rem;
+    padding: calc(0.25rem - 1px) 0 calc(0.25rem - 1px) calc(0.5rem - 4px);
     color: var(--secondary);
     border-radius: calc(var(--border-glow-radius) / 4);
     border: unset;
-    cursor: pointer;
 
     &:disabled {
         pointer-events: none;
@@ -30,23 +24,8 @@ const isHydrating = useIsHydrating();
         animation: unset;
     }
 
-    &:active {
-        background-color: var(--secondary);
-        color: var(--background);
-    }
-
-    &.start {
-        border-start-end-radius: unset;
-        border-end-end-radius: unset;
-    }
-
-    &.center {
-        border-radius: unset;
-    }
-
-    &.end {
-        border-end-start-radius: unset;
-        border-start-start-radius: unset;
+    &:focus {
+        outline: none;
     }
 }
 
@@ -60,7 +39,7 @@ const isHydrating = useIsHydrating();
     }
 }
 
-.nuxt-button {
+.nuxt-select {
     animation: very-subtle-glow var(--animation-longer-duration) infinite alternate;
 }
 </style>

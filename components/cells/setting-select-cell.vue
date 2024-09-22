@@ -13,11 +13,11 @@ const modelOptions = defineModel('options');
     <div class="setting-cell">
         <div class="select-block">
             <div class="select-container">
-                <select v-model="model" :name="id" :id="id" class="select">
+                <NuxtSelect v-model="model" :name="id" :id="id" class="select">
                     <option v-for="option in modelOptions" :key="option" :value="option">
                         {{ formatter(option) }}
                     </option>
-                </select>
+                </NuxtSelect>
             </div>
         </div>
     </div>
