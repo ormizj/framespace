@@ -93,12 +93,14 @@ const isGridCellSizeValid = (gridCellHeight: number, gridCellWidth: number) => {
 
 // GridCell Drag
 let dragged: GridCell | undefined;
+const isDragging = ref<boolean>(false);
 const stopResizeMouseUp = ref(false);
 const handleDragStart = (e: DragEvent) => {
     stopResizeMouseUp.value = true;
     const target = e.target as HTMLGridElement;
     dragged = getGridCellFromElement(target);
     setTimeout(() => {
+        isDragging.value = true;
         target.style.pointerEvents = 'none';
     });
 }
@@ -108,6 +110,7 @@ const handleDragEnd = (e: DragEvent) => {
 }
 const handleDragDrop = (e: DragEvent) => {
     isMouseDown.value = false;
+    isDragging.value = false;
     const target = e.target as HTMLGridElement;
     const targetYGrid = getGridElementYGrid(target);
     const targetXGrid = getGridElementXGrid(target);
@@ -163,7 +166,7 @@ const addFutureGridCellDrag = (target: HTMLGridElement) => {
 
 // GridCell Resize
 let resized = ref<GridCell | undefined>(undefined);
-let isMouseDown = ref<boolean>(false);
+const isMouseDown = ref<boolean>(false);
 const gridCellResizeObs = new ResizeObserver((obs) => {
     if (stopResizeMouseUp.value) {
         stopResizeMouseUp.value = false;
@@ -290,8 +293,9 @@ const calcGridCellWidthPx = (gridCellWidth: number) => gridCellWidth * cellWidth
                 <template v-for="gridCell of modelGridCells" :key="gridCell.id">
                     <template v-if="gridCell.xGrid === x && gridCell.yGrid === y">
                         <div class="grid-cell" ref="gridCellElements"
-                            :class="[{ resizing: resized }, ...gridCell.initialClasses]" :draggable="modelEdit"
-                            @dragstart="handleDragStart" @dragend="handleDragEnd" :y="y" :x="x" :style="{
+                            :class="[{ resizing: resized, dragging: isDragging }, ...gridCell.initialClasses]"
+                            :draggable="modelEdit" @dragstart="handleDragStart" @dragend="handleDragEnd" :y="y" :x="x"
+                            :style="{
                                 height: `${calcGridCellHeightPx(gridCell.height)}px`,
                                 width: `${calcGridCellWidthPx(gridCell.width)}px`,
                             }">
@@ -361,7 +365,8 @@ const calcGridCellWidthPx = (gridCellWidth: number) => gridCellWidth * cellWidth
         overflow: hidden;
         cursor: grab;
 
-        &.resizing {
+        &.resizing,
+        &.dragging {
             pointer-events: none;
         }
 
