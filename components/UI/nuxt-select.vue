@@ -1,10 +1,13 @@
 <script setup lang="ts">
 const model = defineModel();
 const isHydrating = useIsHydrating();
+
+const selectRef = ref<HTMLSelectElement | null>(null);
+defineExpose({ selectRef: selectRef });
 </script>
 
 <template>
-    <select class="nuxt-select" v-model="model" :disabled="isHydrating">
+    <select class="nuxt-select" v-model="model" ref="selectRef" :disabled="isHydrating">
         <slot />
     </select>
 </template>
@@ -16,6 +19,7 @@ const isHydrating = useIsHydrating();
     color: var(--secondary);
     border-radius: calc(var(--border-glow-radius) / 4);
     border: unset;
+    cursor: pointer;
 
     &:disabled {
         pointer-events: none;

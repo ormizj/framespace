@@ -1,9 +1,24 @@
 <script lang="ts" setup>
-const props = defineProps<{
+import type { ComponentExposed } from 'vue-component-type-helpers';
+import type NuxtInput from '../UI/nuxt-input.vue';
+
+const props = withDefaults(defineProps<{
     id: string;
     type: 'text' | 'number' | 'email';
-}>()
+    required?: boolean;
+    min?: number;
+    max?: number;
+    setRef?(toSet: HTMLInputElement): void;
+}>(), {
+    required: false,
+    setRef: () => { },
+})
 const model = defineModel();
+
+const nuxtInputRef = ref<ComponentExposed<typeof NuxtInput>>();
+onMounted(() => {
+    props.setRef(nuxtInputRef.value!.inputRef!);
+});
 
 const handleInput = (event: KeyboardEvent) => {
     if (
@@ -19,7 +34,8 @@ const handleInput = (event: KeyboardEvent) => {
     <div class="setting-cell">
         <div class="input-block">
             <div class="input-container">
-                <NuxtInput v-model="model" @keypress="handleInput" :name="id" :id="id" :type="type" class="input" />
+                <NuxtInput v-model="model" :required="required" :min="min" :max="max" ref="nuxtInputRef"
+                    @keypress="handleInput" :name="id" :id="id" :type="type" class="input" />
             </div>
         </div>
     </div>

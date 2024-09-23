@@ -1,19 +1,29 @@
 <script lang="ts" generic="T" setup>
-withDefaults(defineProps<{
+import type { ComponentExposed } from 'vue-component-type-helpers';
+import type NuxtSelect from '../UI/nuxt-select.vue';
+
+const props = withDefaults(defineProps<{
     id: string;
     formatter?(option: T): string;
+    setRef?(toSet: HTMLSelectElement): void;
 }>(), {
     formatter: (option: T) => option as string,
+    setRef: () => { },
 });
 const model = defineModel();
 const modelOptions = defineModel('options');
+
+const nuxtSelectRef = ref<ComponentExposed<typeof NuxtSelect>>();
+onMounted(() => {
+    props.setRef(nuxtSelectRef.value!.selectRef!);
+});
 </script>
 
 <template>
     <div class="setting-cell">
         <div class="select-block">
             <div class="select-container">
-                <NuxtSelect v-model="model" :name="id" :id="id" class="select">
+                <NuxtSelect v-model="model" :name="id" ref="nuxtSelectRef" :id="id" class="select">
                     <option v-for="option in modelOptions" :key="option" :value="option">
                         {{ formatter(option) }}
                     </option>

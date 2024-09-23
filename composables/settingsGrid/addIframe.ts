@@ -7,14 +7,11 @@ import SettingButtonCell from '~/components/cells/setting-button-cell.vue';
 export default () => {
 	const frameSpaceStore = useFrameSpaceStore();
 	const { iframesSrcOptions } = storeToRefs(frameSpaceStore);
-
 	const addIframeSrc = ref('');
+	const iframeInputRef = ref<HTMLInputElement | null>(null);
 
 	const handleAddIframe = () => {
-		if (!addIframeSrc.value) {
-			alert('Iframe url is missing!');
-			return;
-		}
+		if (!validateElement(iframeInputRef.value!)) return;
 		frameSpaceStore.addIframeInFreeCell(
 			addIframeSrc.value,
 			new Set(['golden-animation'])
@@ -69,6 +66,10 @@ export default () => {
 						(addIframeSrc.value = value),
 					'id': 'add-iframe',
 					'type': 'text',
+					'required': true,
+					'setRef': (componentRef: HTMLInputElement) => {
+						iframeInputRef.value = componentRef;
+					},
 				},
 			},
 		}),

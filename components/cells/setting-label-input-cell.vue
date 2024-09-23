@@ -7,6 +7,8 @@ const props = withDefaults(defineProps<{
   id: string;
   type: 'text' | 'number' | 'email';
   required?: boolean;
+  min?: number;
+  max?: number;
   setRef?(toSet: HTMLInputElement): void;
 }>(), {
   required: false,
@@ -42,8 +44,8 @@ const handleInput = (event: KeyboardEvent) => {
         <label :for="id">{{ title }}</label>
       </div>
       <div class="input-container">
-        <NuxtInput :required="required" v-model="model" ref="nuxtInputRef" @keypress="handleInput" :name="id" :id="id"
-          :type="type" class="input" />
+        <NuxtInput :required="required" :min="min" :max="max" v-model="model" ref="nuxtInputRef" @keypress="handleInput"
+          :name="id" :id="id" :type="type" class="input" />
       </div>
     </div>
   </div>
