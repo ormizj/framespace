@@ -311,10 +311,10 @@ const calcGridCellWidthPx = (gridCellWidth: number) => gridCellWidth * cellWidth
                                     ...gridCell.component.bind,
                                     ...gridCell.component.emits,
                                     ...gridCell.component.exposed,
-                                }" />
-                            <!-- TODO gridCell slots -->
-                            <!-- {{ gridCell.component.slots }} -->
-                            <!-- </component> -->
+                                }">
+                                <!-- TODO gridCell slots -->
+                                <!-- {{ gridCell.component.slots }} -->
+                            </component>
                         </div>
                     </template>
                 </template>
