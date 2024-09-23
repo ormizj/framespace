@@ -28,6 +28,18 @@ defineExpose({ inputRef });
   &:focus {
     outline: none;
   }
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    appearance: none;
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  &[type=number] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+  }
 }
 
 @keyframes very-subtle-glow {
