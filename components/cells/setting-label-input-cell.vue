@@ -1,33 +1,38 @@
 <script lang="ts" setup>
+import type { ComponentExposed } from 'vue-component-type-helpers';
+import type NuxtInput from '../UI/nuxt-input.vue';
+
 const props = withDefaults(defineProps<{
   title: string;
   id: string;
   type: 'text' | 'number' | 'email';
   required?: boolean;
-  setRef?(toSet: typeof inputRef): void;
+  setRef?(toSet: HTMLInputElement): void;
 }>(), {
   required: false,
   setRef: () => { },
 })
 const model = defineModel();
 
-const inputRef = ref<HTMLInputElement | null>(null);
+const nuxtInputRef = ref<ComponentExposed<typeof NuxtInput>>();
+onMounted(() => {
+  props.setRef(nuxtInputRef.value!.inputRef!);
+});
+
 const handleInput = (event: KeyboardEvent) => {
+  const inputElement = nuxtInputRef.value?.inputRef;
   if (
     props.type === 'number' &&
     !(/\d/).test(event.key) &&
     event.key !== 'Backspace' &&
-    event.key !== 'Delete'
+    event.key !== 'Delete' &&
+    inputElement
   ) {
-    inputRef.value!.setCustomValidity('Invalid value');
-    inputRef.value!.reportValidity();
+    inputElement.setCustomValidity('Invalid value');
+    inputElement.reportValidity();
     event.preventDefault();
   }
 };
-
-onMounted(() => {
-  props.setRef(inputRef);
-});
 </script>
 
 <template>
@@ -37,7 +42,7 @@ onMounted(() => {
         <label :for="id">{{ title }}</label>
       </div>
       <div class="input-container">
-        <NuxtInput :required="required" v-model="model" ref="inputRef" @keypress="handleInput" :name="id" :id="id"
+        <NuxtInput :required="required" v-model="model" ref="nuxtInputRef" @keypress="handleInput" :name="id" :id="id"
           :type="type" class="input" />
       </div>
     </div>

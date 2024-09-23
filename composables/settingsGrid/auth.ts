@@ -9,23 +9,14 @@ export default () => {
 	const emailRef = ref<HTMLInputElement | null>(null);
 
 	const handleLogin = () => {
-		if (!validateEmailInput(emailRef.value!)) return;
+		if (!validateElement(emailRef.value!)) return;
 		console.log(email.value);
 		console.log(password.value);
 	};
 	const handleRegister = () => {
-		if (!validateEmailInput(emailRef.value!)) return;
+		if (!validateElement(emailRef.value!)) return;
 		console.log(email.value);
 		console.log(password.value);
-	};
-	const validateEmailInput = (emailRef: HTMLInputElement) => {
-		const isValid = emailRef.checkValidity();
-		if (!isValid) {
-			setTimeout(() => {
-				emailRef.reportValidity();
-			});
-		}
-		return isValid;
 	};
 
 	return [
@@ -59,8 +50,9 @@ export default () => {
 					'id': 'email',
 					'type': 'email',
 					'required': true,
-					'setRef': (componentRef: Ref<HTMLInputElement>) =>
-						(emailRef.value = componentRef.value),
+					'setRef': (componentRef: HTMLInputElement) => {
+						emailRef.value = componentRef;
+					},
 				},
 			},
 		}),

@@ -1,10 +1,13 @@
 <script setup lang="ts">
 const model = defineModel();
 const isHydrating = useIsHydrating();
+
+const inputRef = ref<HTMLInputElement | null>(null);
+defineExpose({ inputRef });
 </script>
 
 <template>
-  <input class="nuxt-input" v-model="model" :disabled="isHydrating" />
+  <input class="nuxt-input" v-model="model" ref="inputRef" :disabled="isHydrating" />
 </template>
 
 <style scoped>
