@@ -21,12 +21,20 @@ onMounted(() => {
 });
 
 const handleInput = (event: KeyboardEvent) => {
+    const inputElement = nuxtInputRef.value?.inputRef;
+    inputElement!.setCustomValidity('');
+
     if (
         props.type === 'number' &&
-        !/[0-9]/.test(event.key) &&
+        !(/\d/).test(event.key) &&
         event.key !== 'Backspace' &&
-        event.key !== 'Delete'
-    ) event.preventDefault();
+        event.key !== 'Delete' &&
+        inputElement
+    ) {
+        inputElement.setCustomValidity('Please enter a number.');
+        inputElement.reportValidity();
+        event.preventDefault();
+    }
 };
 </script>
 

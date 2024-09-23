@@ -13,10 +13,10 @@ defineExpose({ inputRef });
 <style scoped>
 .nuxt-input {
   background-color: color-mix(in srgb, var(--background), white 7.5%);
-  padding: 0.25rem 0.5rem;
+  padding: 0 0.5rem;
   color: var(--secondary);
   border-radius: calc(var(--border-glow-radius) / 4);
-  border: unset;
+  min-height: var(--input-height);
 
   &:disabled {
     pointer-events: none;
@@ -24,6 +24,9 @@ defineExpose({ inputRef });
     color: var(--secondary);
     animation: unset;
   }
+
+  /* remove defaults */
+  border: unset;
 
   &:focus {
     outline: none;

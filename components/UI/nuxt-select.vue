@@ -15,11 +15,11 @@ defineExpose({ selectRef: selectRef });
 <style scoped>
 .nuxt-select {
     background-color: color-mix(in srgb, var(--background), white 7.5%);
-    padding: calc(0.25rem - 1px) 0 calc(0.25rem - 1px) calc(0.5rem - 4px);
+    padding-inline-start: calc(0.5rem - 4px);
     color: var(--secondary);
     border-radius: calc(var(--border-glow-radius) / 4);
-    border: unset;
     cursor: pointer;
+    min-height: var(--input-height);
 
     &:disabled {
         pointer-events: none;
@@ -28,9 +28,12 @@ defineExpose({ selectRef: selectRef });
         animation: unset;
     }
 
+    /* remove defaults */
     &:focus {
         outline: none;
     }
+
+    border: unset;
 }
 
 @keyframes very-subtle-glow {
