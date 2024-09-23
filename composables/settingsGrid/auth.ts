@@ -2,8 +2,11 @@ import GridCell from '~/classes/GridCell';
 import SettingLabelCell from '~/components/cells/setting-label-cell.vue';
 import SettingLabelInputCell from '~/components/cells/setting-label-input-cell.vue';
 import SettingButtonCell from '~/components/cells/setting-button-cell.vue';
+import { useAuthStore } from '~/stores/auth';
 
 export default () => {
+	const authStore = useAuthStore();
+
 	const email = ref('');
 	const password = ref('');
 	const emailRef = ref<HTMLInputElement | null>(null);
@@ -16,9 +19,7 @@ export default () => {
 		) {
 			return;
 		}
-
-		console.log(email.value);
-		console.log(password.value);
+		authStore.login(email.value, password.value);
 	};
 	const handleRegister = () => {
 		if (
@@ -27,9 +28,7 @@ export default () => {
 		) {
 			return;
 		}
-
-		console.log(email.value);
-		console.log(password.value);
+		authStore.register(email.value, password.value);
 	};
 
 	return [

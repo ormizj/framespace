@@ -1,5 +1,10 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+	runtimeConfig: {
+		saltRounds: 10,
+		public: {},
+	},
+
 	components: [
 		{
 			path: '~/components',
