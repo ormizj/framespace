@@ -1,4 +1,4 @@
-import { and, eq, tables, useDrizzle } from '~/server/composables/drizzle';
+import { eq, tables, useDrizzle } from '~/server/composables/drizzle';
 
 const db = useDrizzle;
 const table = tables.users;

@@ -1,5 +1,8 @@
 import bcrypt from 'bcrypt';
-import { addUser, isUserExistsByEmail } from '~/server/database/queries/users';
+import {
+	addUser,
+	isUserExistsByEmail,
+} from '~/server/database/repositories/users';
 
 export default defineEventHandler(async (event) => {
 	const { email, password } = await readBody(event);

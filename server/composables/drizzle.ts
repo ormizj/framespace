@@ -5,6 +5,7 @@ import * as schema from '../database/schemas/index';
 
 export const tables = schema;
 
+// Drizzle Database (https://hub.nuxt.com/docs/recipes/drizzle)
 export function useDrizzle() {
 	return drizzle(hubDatabase(), { schema });
 }

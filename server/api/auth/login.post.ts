@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import { getUserByEmail } from '~/server/database/queries/users';
+import { getUserByEmail } from '~/server/database/repositories/users';
 
 export default defineEventHandler(async (event) => {
 	const { email, password } = await readBody(event);
