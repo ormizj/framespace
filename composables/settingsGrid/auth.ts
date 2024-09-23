@@ -7,14 +7,17 @@ export default () => {
 	const email = ref('');
 	const password = ref('');
 	const emailRef = ref<HTMLInputElement | null>(null);
+	const passwordRef = ref<HTMLInputElement | null>(null);
 
 	const handleLogin = () => {
 		if (!validateElement(emailRef.value!)) return;
+		if (!validateElement(passwordRef.value!)) return;
 		console.log(email.value);
 		console.log(password.value);
 	};
 	const handleRegister = () => {
 		if (!validateElement(emailRef.value!)) return;
+		if (!validateElement(passwordRef.value!)) return;
 		console.log(email.value);
 		console.log(password.value);
 	};
@@ -72,6 +75,9 @@ export default () => {
 					'id': 'password',
 					'type': 'text',
 					'required': true,
+					'setRef': (componentRef: HTMLInputElement) => {
+						passwordRef.value = componentRef;
+					},
 				},
 			},
 		}),
