@@ -2,6 +2,8 @@ import bcrypt from 'bcrypt';
 import { getUserByEmail } from '~/server/database/repositories/users';
 
 export default defineEventHandler(async (event) => {
+	console.log(process.env.JWT_SECRET);
+
 	const { email, password } = await readBody(event);
 	if (password === '' || !/^[^@]+@[^@]/.test(email)) {
 		throw createError({
