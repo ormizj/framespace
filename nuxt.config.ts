@@ -12,6 +12,14 @@ export default defineNuxtConfig({
 		},
 	],
 
+	// alias: {
+	// 	string_decoder: 'string_decoder/',
+	// },
+
+	nitro: {
+		preset: 'cloudflare-pages',
+	},
+
 	modules: ['@nuxthub/core', '@pinia/nuxt'],
 
 	hub: {
