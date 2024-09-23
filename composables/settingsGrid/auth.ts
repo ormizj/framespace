@@ -10,14 +10,24 @@ export default () => {
 	const passwordRef = ref<HTMLInputElement | null>(null);
 
 	const handleLogin = () => {
-		if (!validateElement(emailRef.value!)) return;
-		if (!validateElement(passwordRef.value!)) return;
+		if (
+			!validateElement(emailRef.value!) ||
+			!validateElement(passwordRef.value!)
+		) {
+			return;
+		}
+
 		console.log(email.value);
 		console.log(password.value);
 	};
 	const handleRegister = () => {
-		if (!validateElement(emailRef.value!)) return;
-		if (!validateElement(passwordRef.value!)) return;
+		if (
+			!validateElement(emailRef.value!) ||
+			!validateElement(passwordRef.value!)
+		) {
+			return;
+		}
+
 		console.log(email.value);
 		console.log(password.value);
 	};
