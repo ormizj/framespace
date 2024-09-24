@@ -13,21 +13,18 @@
 	"dependencies": {
 		"@nuxthub/core": "^0.7.19",
 		"@pinia/nuxt": "^0.5.4",
-		"aws-sdk": "^2.1691.0",
 		"axios": "^1.7.7",
 		"drizzle-orm": "^0.33.0",
 		"jsonwebtoken": "^9.0.2",
-		"mock-aws-s3": "^4.0.2",
-		"nock": "^13.5.5",
 		"nuxt": "^3.13.0",
 		"pinia": "^2.2.2",
 		"vue": "latest",
-		"vue-component-type-helpers": "^2.1.6",
 		"vue-router": "latest"
 	},
 	"devDependencies": {
 		"consola": "^3.2.3",
 		"drizzle-kit": "^0.24.2",
+		"vue-component-type-helpers": "^2.1.6",
 		"prettier": "^3.3.3",
 		"wrangler": "^3.78.7"
 	}
