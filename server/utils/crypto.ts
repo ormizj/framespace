@@ -7,8 +7,6 @@ export const hashPassword = (
 	const { pbkdf2Salt, pbkdf2Iterations, pbkdf2Length, pbkdf2Digest } =
 		useRuntimeConfig(event);
 
-	console.log(pbkdf2Salt, pbkdf2Iterations, pbkdf2Length, pbkdf2Digest);
-
 	return pbkdf2Sync(
 		password,
 		pbkdf2Salt,
