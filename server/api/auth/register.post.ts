@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
 		});
 	}
 
-	const hashedPassword = await hashPassword(event, password);
+	const hashedPassword = hashPassword(event, password);
 	await addUser(email, hashedPassword);
 
 	return 'User created successfully.';

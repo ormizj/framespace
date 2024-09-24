@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
 		});
 	}
 
-	if (!(await compareHashedPassword(event, password, user.password))) {
+	if (!compareHashedPassword(event, password, user.password)) {
 		throw createError({
 			statusCode: 409,
 			statusMessage: 'User password is incorrect.',

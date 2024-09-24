@@ -1,36 +1,27 @@
-import crypto from 'crypto';
+import { pbkdf2Sync } from 'node:crypto';
 
-export const hashPassword = async (
+export const hashPassword = (
 	event: Parameters<typeof useRuntimeConfig>[0],
 	password: string
-): Promise<string> => {
+): string => {
 	const { pbkdf2Salt, pbkdf2Iterations, pbkdf2Length, pbkdf2Digest } =
 		useRuntimeConfig(event);
 
-	const hashedPassword = await new Promise<string>((resolve, reject) => {
-		crypto.pbkdf2(
-			password,
-			pbkdf2Salt,
-			+pbkdf2Iterations,
-			+pbkdf2Length,
-			pbkdf2Digest,
-			(err, derivedKey) => {
-				if (err) {
-					reject(err);
-				} else {
-					resolve(derivedKey.toString('hex'));
-				}
-			}
-		);
-	});
+	console.log(pbkdf2Salt, pbkdf2Iterations, pbkdf2Length, pbkdf2Digest);
 
-	return hashedPassword;
+	return pbkdf2Sync(
+		password,
+		pbkdf2Salt,
+		+pbkdf2Iterations,
+		+pbkdf2Length,
+		pbkdf2Digest
+	).toString('hex');
 };
 
-export const compareHashedPassword = async (
+export const compareHashedPassword = (
 	event: Parameters<typeof useRuntimeConfig>[0],
 	password: string,
 	hashedPassword: string
 ) => {
-	return (await hashPassword(event, password)) === hashedPassword;
+	return hashPassword(event, password) === hashedPassword;
 };
