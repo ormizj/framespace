@@ -1,7 +1,15 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
 	runtimeConfig: {
-		saltRounds: 10,
+		// JWT
+		jwtSecret: process.env.JWT_SECRET,
+
+		// PBKDF2
+		pbkdf2Salt: process.env.PBKDF2_SALT,
+		pbkdf2Iterations: process.env.PBKDF2_ITERATIONS,
+		pbkdf2Length: process.env.PBKDF2_LENGTH,
+		pbkdf2Digest: process.env.PBKDF2_DIGEST,
+
 		public: {},
 	},
 
@@ -11,10 +19,6 @@ export default defineNuxtConfig({
 			pathPrefix: false,
 		},
 	],
-
-	// alias: {
-	// 	string_decoder: 'string_decoder/',
-	// },
 
 	nitro: {
 		preset: 'cloudflare-pages',

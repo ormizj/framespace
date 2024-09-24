@@ -1,8 +1,8 @@
-import bcrypt from 'bcrypt';
 import {
 	addUser,
 	isUserExistsByEmail,
 } from '~/server/database/repositories/users';
+import { hashPassword } from '~/server/utils/crypto';
 
 export default defineEventHandler(async (event) => {
 	const { email, password } = await readBody(event);
@@ -20,10 +20,7 @@ export default defineEventHandler(async (event) => {
 		});
 	}
 
-	const hashedPassword = await bcrypt.hash(
-		password,
-		useRuntimeConfig(event).saltRounds
-	);
+	const hashedPassword = await hashPassword(event, password);
 	await addUser(email, hashedPassword);
 
 	return 'User created successfully.';
