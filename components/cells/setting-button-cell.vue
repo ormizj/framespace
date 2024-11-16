@@ -39,7 +39,12 @@ onMounted(() => {
 			</div>
 		</div>
 
-		<form class="form" v-if="form && type === 'submit'" :id="form" />
+		<form
+			class="form"
+			@submit.prevent="onClick"
+			v-if="form && type === 'submit'"
+			:id="form"
+		/>
 	</div>
 </template>
 
