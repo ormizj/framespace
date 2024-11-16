@@ -11,6 +11,8 @@ export default () => {
 	const password = ref('');
 	const emailRef = ref<HTMLInputElement | null>(null);
 	const passwordRef = ref<HTMLInputElement | null>(null);
+	const registerRef = ref<HTMLButtonElement | null>(null);
+	const loginRef = ref<HTMLButtonElement | null>(null);
 
 	const handleLogin = () => {
 		if (
@@ -65,6 +67,12 @@ export default () => {
 					'setRef': (componentRef: HTMLInputElement) => {
 						emailRef.value = componentRef;
 					},
+					'onKeydown': (event: KeyboardEvent) => {
+						if (event.key !== 'Tab') return;
+						setTimeout(() => {
+							passwordRef.value!.focus();
+						});
+					},
 				},
 			},
 		}),
@@ -87,6 +95,12 @@ export default () => {
 					'setRef': (componentRef: HTMLInputElement) => {
 						passwordRef.value = componentRef;
 					},
+					'onKeydown': (event: KeyboardEvent) => {
+						if (event.key !== 'Tab') return;
+						setTimeout(() => {
+							registerRef.value!.focus();
+						});
+					},
 				},
 			},
 		}),
@@ -101,6 +115,15 @@ export default () => {
 				props: {
 					title: 'Register',
 					onClick: handleRegister,
+					setRef: (componentRef: HTMLButtonElement) => {
+						registerRef.value = componentRef;
+					},
+					onKeydown: (event: KeyboardEvent) => {
+						if (event.key !== 'Tab') return;
+						setTimeout(() => {
+							loginRef.value!.focus();
+						});
+					},
 				},
 			},
 		}),
@@ -115,6 +138,15 @@ export default () => {
 				props: {
 					title: 'Login',
 					onClick: handleLogin,
+					setRef: (componentRef: HTMLButtonElement) => {
+						loginRef.value = componentRef;
+					},
+					onKeydown: (event: KeyboardEvent) => {
+						if (event.key !== 'Tab') return;
+						setTimeout(() => {
+							emailRef.value!.focus();
+						});
+					},
 				},
 			},
 		}),
