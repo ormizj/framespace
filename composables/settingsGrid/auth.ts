@@ -3,6 +3,7 @@ import SettingLabelCell from '~/components/cells/setting-label-cell.vue';
 import SettingLabelInputCell from '~/components/cells/setting-label-input-cell.vue';
 import SettingButtonCell from '~/components/cells/setting-button-cell.vue';
 import { useAuthStore } from '~/stores/auth';
+import { focusElement } from '~/utils/gridCellElement';
 
 export default () => {
 	const authStore = useAuthStore();
@@ -64,14 +65,12 @@ export default () => {
 					'id': 'email',
 					'type': 'email',
 					'required': true,
+					'form': 'auth',
 					'setRef': (componentRef: HTMLInputElement) => {
 						emailRef.value = componentRef;
 					},
 					'onKeydown': (event: KeyboardEvent) => {
-						if (event.key !== 'Tab') return;
-						setTimeout(() => {
-							passwordRef.value!.focus();
-						});
+						focusElement(event, passwordRef.value!, loginRef.value!);
 					},
 				},
 			},
@@ -91,15 +90,13 @@ export default () => {
 					'title': 'Password',
 					'id': 'password',
 					'type': 'text',
+					'form': 'auth',
 					'required': true,
 					'setRef': (componentRef: HTMLInputElement) => {
 						passwordRef.value = componentRef;
 					},
 					'onKeydown': (event: KeyboardEvent) => {
-						if (event.key !== 'Tab') return;
-						setTimeout(() => {
-							registerRef.value!.focus();
-						});
+						focusElement(event, registerRef.value!, emailRef.value!);
 					},
 				},
 			},
@@ -114,15 +111,13 @@ export default () => {
 				is: SettingButtonCell,
 				props: {
 					title: 'Register',
+					form: 'auth',
 					onClick: handleRegister,
 					setRef: (componentRef: HTMLButtonElement) => {
 						registerRef.value = componentRef;
 					},
 					onKeydown: (event: KeyboardEvent) => {
-						if (event.key !== 'Tab') return;
-						setTimeout(() => {
-							loginRef.value!.focus();
-						});
+						focusElement(event, loginRef.value!, passwordRef.value!);
 					},
 				},
 			},
@@ -137,15 +132,14 @@ export default () => {
 				is: SettingButtonCell,
 				props: {
 					title: 'Login',
+					type: 'submit',
+					form: 'auth',
 					onClick: handleLogin,
 					setRef: (componentRef: HTMLButtonElement) => {
 						loginRef.value = componentRef;
 					},
 					onKeydown: (event: KeyboardEvent) => {
-						if (event.key !== 'Tab') return;
-						setTimeout(() => {
-							emailRef.value!.focus();
-						});
+						focusElement(event, emailRef.value!, registerRef.value!);
 					},
 				},
 			},

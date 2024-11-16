@@ -10,11 +10,15 @@ const props = withDefaults(
 		required?: boolean;
 		min?: number;
 		max?: number;
+		form?: string;
 		setRef?(toSet: HTMLInputElement): void;
 		onKeydown?: (event: KeyboardEvent) => void;
 	}>(),
 	{
 		required: false,
+		min: undefined,
+		max: undefined,
+		form: undefined,
 		setRef: () => {},
 		onKeydown: () => {},
 	}
@@ -53,6 +57,7 @@ const handleInput = (event: KeyboardEvent) => {
 			</div>
 			<div class="input-container">
 				<NuxtInput
+					:form="form"
 					:required="required"
 					:min="min"
 					:max="max"

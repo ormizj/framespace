@@ -6,9 +6,13 @@ const props = withDefaults(
 	defineProps<{
 		title: string;
 		onClick(): void;
+		type?: 'submit' | 'reset';
+		form?: string;
 		setRef?(toSet: HTMLInputElement): void;
 	}>(),
 	{
+		type: undefined,
+		form: undefined,
 		setRef: () => {},
 	}
 );
@@ -23,11 +27,19 @@ onMounted(() => {
 	<div class="setting-cell">
 		<div class="button-block">
 			<div class="button-container">
-				<NuxtButton class="button" ref="nuxtInputRef" @mousedown="onClick">
+				<NuxtButton
+					class="button"
+					ref="nuxtInputRef"
+					@mousedown="onClick"
+					:form="form"
+					:type="type"
+				>
 					{{ title }}
 				</NuxtButton>
 			</div>
 		</div>
+
+		<form class="form" v-if="form && type === 'submit'" :id="form" />
 	</div>
 </template>
 
@@ -48,6 +60,10 @@ onMounted(() => {
 			width: 100%;
 			justify-content: center;
 		}
+	}
+
+	.form {
+		display: none;
 	}
 }
 </style>
