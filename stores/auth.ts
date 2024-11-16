@@ -17,10 +17,10 @@ export const useAuthStore = defineStore({
 
 	actions: {
 		login(email: string, password: string) {
-			axios.post('api/auth/login', { email, password });
+			axios.post('api/auth/login', { email, password }).then();
 		},
 		register(email: string, password: string) {
-			axios.post('api/auth/register', { email, password });
+			axios.post('api/auth/register', { email, password }).then();
 		},
 	},
 });
