@@ -5,6 +5,7 @@ export const useAuthStore = defineStore({
 	id: 'auth',
 
 	state: () => ({
+		email: '',
 		jwt: '',
 	}),
 
@@ -15,16 +16,13 @@ export const useAuthStore = defineStore({
 	},
 
 	actions: {
-		init() {
-			this.jwt = localStorage.getItem('jwt') ?? '';
-		},
 		async login(email: string, password: string) {
 			try {
 				const res = await axios.post<string>('api/auth/login', {
 					email,
 					password,
 				});
-				this._clientLogin(res.data);
+				this._clientLogin(email, res.data);
 			} catch (error) {
 				const axiosError = error as AxiosError;
 				alert(axiosError.response!.statusText);
@@ -36,15 +34,27 @@ export const useAuthStore = defineStore({
 					email,
 					password,
 				});
-				this._clientLogin(res.data);
+				this._clientLogin(email, res.data);
 			} catch (error) {
 				const axiosError = error as AxiosError;
 				alert(axiosError.response!.statusText);
 			}
 		},
-		_clientLogin(jwt: string) {
+		init() {
+			this.jwt = localStorage.getItem('jwt') ?? '';
+			this.email = localStorage.getItem('email') ?? '';
+		},
+		logout() {
+			localStorage.removeItem('jwt');
+			localStorage.removeItem('email');
+			this.jwt = '';
+			this.email = '';
+		},
+		_clientLogin(email: string, jwt: string) {
 			localStorage.setItem('jwt', jwt);
+			localStorage.setItem('email', email);
 			this.jwt = jwt;
+			this.email = email;
 		},
 	},
 });
