@@ -3,10 +3,13 @@ import SettingLabelCell from '~/components/cells/setting-label-cell.vue';
 import SettingSelectCell from '~/components/cells/setting-select-cell.vue';
 import type IframeCell from '~/components/cells/iframe-cell.vue';
 import SettingButtonCell from '~/components/cells/setting-button-cell.vue';
+import { focusElement } from '~/utils/gridCellElement';
 
 export default () => {
 	const frameSpaceStore = useFrameSpaceStore();
 	const { iframeGridCells } = storeToRefs(frameSpaceStore);
+	const iframeSelectRef = ref<HTMLInputElement | null>(null);
+	const submitRef = ref<HTMLButtonElement | null>(null);
 
 	const removeIframe = ref<GridCell<typeof IframeCell> | ''>('');
 
@@ -45,8 +48,15 @@ export default () => {
 						(removeIframe.value = value),
 					'id': 'remove-iframe-select',
 					'options': iframeGridCells.value,
+					'for': 'remove-iframe',
 					'formatter': (option: GridCell<typeof IframeCell>) =>
 						`[${option.yGrid}-${option.xGrid}]: ${option.component.bind!.src}`,
+					'setRef': (componentRef: HTMLInputElement) => {
+						iframeSelectRef.value = componentRef;
+					},
+					'onKeydown': (event: KeyboardEvent) => {
+						focusElement(event, submitRef.value!, submitRef.value!);
+					},
 				},
 			},
 		}),
@@ -61,6 +71,14 @@ export default () => {
 				props: {
 					title: 'Remove Iframe',
 					onClick: handleRemoveIframe,
+					type: 'submit',
+					form: 'remove-iframe',
+					setRef: (componentRef: HTMLButtonElement) => {
+						submitRef.value = componentRef;
+					},
+					onKeydown: (event: KeyboardEvent) => {
+						focusElement(event, iframeSelectRef.value!, iframeSelectRef.value!);
+					},
 				},
 			},
 		}),

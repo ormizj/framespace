@@ -12,7 +12,6 @@ const props = withDefaults(
 		max?: number;
 		form?: string;
 		setRef?(toSet: HTMLInputElement): void;
-		onKeydown?: (event: KeyboardEvent) => void;
 	}>(),
 	{
 		required: false,
@@ -20,7 +19,6 @@ const props = withDefaults(
 		max: undefined,
 		form: undefined,
 		setRef: () => {},
-		onKeydown: () => {},
 	}
 );
 const model = defineModel();
@@ -35,8 +33,6 @@ const focus = () => {
 };
 
 const handleInput = (event: KeyboardEvent) => {
-	props.onKeydown?.(event);
-
 	const inputElement = nuxtInputRef.value!.inputRef;
 	inputElement!.setCustomValidity('');
 

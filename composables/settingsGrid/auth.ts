@@ -70,7 +70,7 @@ export default () => {
 						emailRef.value = componentRef;
 					},
 					'onKeydown': (event: KeyboardEvent) => {
-						focusElement(event, undefined, passwordRef.value!);
+						focusElement(event, loginRef.value!, passwordRef.value!);
 					},
 				},
 			},
@@ -139,7 +139,7 @@ export default () => {
 						loginRef.value = componentRef;
 					},
 					onKeydown: (event: KeyboardEvent) => {
-						focusElement(event, registerRef.value!);
+						focusElement(event, registerRef.value!, emailRef.value!);
 					},
 				},
 			},
