@@ -1,10 +1,9 @@
-import bcrypt from 'bcrypt';
 import { getUserByEmail } from '~/server/database/repositories/users';
+import { compareHashedPassword } from '~/server/utils/crypto';
 
 export default defineEventHandler(async (event) => {
-	console.log(process.env.JWT_SECRET);
-
 	const { email, password } = await readBody(event);
+
 	if (password === '' || !/^[^@]+@[^@]/.test(email)) {
 		throw createError({
 			statusCode: 422,
@@ -20,7 +19,7 @@ export default defineEventHandler(async (event) => {
 		});
 	}
 
-	if (!(await bcrypt.compare(password, user.password))) {
+	if (!compareHashedPassword(event, password, user.password)) {
 		throw createError({
 			statusCode: 409,
 			statusMessage: 'User password is incorrect.',
