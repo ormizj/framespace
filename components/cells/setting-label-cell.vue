@@ -1,15 +1,21 @@
 <script lang="ts" setup>
-defineProps<{
+const props = defineProps<{
 	title: string;
-	id: string;
+	forId: string;
 }>();
+
+const focus = () => {
+	const element = document.getElementById(props.forId);
+	if (!element) return;
+	setTimeout(() => element.focus());
+};
 </script>
 
 <template>
 	<div class="setting-cell">
 		<div class="input-block">
 			<div class="label-container">
-				<label :for="id">{{ title }}</label>
+				<label @mousedown="focus" :for="forId">{{ title }}</label>
 			</div>
 		</div>
 	</div>
@@ -32,6 +38,10 @@ defineProps<{
 			display: flex;
 			width: 100%;
 			justify-content: center;
+
+			label {
+				cursor: pointer;
+			}
 		}
 	}
 }

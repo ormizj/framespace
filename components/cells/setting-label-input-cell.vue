@@ -30,10 +30,14 @@ onMounted(() => {
 	props.setRef(nuxtInputRef.value!.inputRef!);
 });
 
+const focus = () => {
+	setTimeout(() => nuxtInputRef.value!.inputRef!.focus());
+};
+
 const handleInput = (event: KeyboardEvent) => {
 	props.onKeydown?.(event);
 
-	const inputElement = nuxtInputRef.value?.inputRef;
+	const inputElement = nuxtInputRef.value!.inputRef;
 	inputElement!.setCustomValidity('');
 
 	if (
@@ -53,7 +57,7 @@ const handleInput = (event: KeyboardEvent) => {
 	<div class="setting-cell">
 		<div class="input-block">
 			<div class="label-container">
-				<label :for="id">{{ title }}</label>
+				<label @mousedown="focus" :for="id">{{ title }}</label>
 			</div>
 			<div class="input-container">
 				<NuxtInput
@@ -92,6 +96,10 @@ const handleInput = (event: KeyboardEvent) => {
 			display: flex;
 			width: 100%;
 			justify-content: end;
+
+			label {
+				cursor: pointer;
+			}
 		}
 
 		.input-container {

@@ -26,7 +26,7 @@ export default () => {
 				is: SettingLabelCell,
 				props: {
 					title: 'Remove Iframe',
-					id: 'remove-iframe-select',
+					forId: 'remove-iframe-select',
 				},
 			},
 		}),

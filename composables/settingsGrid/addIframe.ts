@@ -29,7 +29,7 @@ export default () => {
 				is: SettingLabelCell,
 				props: {
 					title: 'Add Iframe',
-					id: 'add-iframe',
+					forId: 'add-iframe',
 				},
 			},
 		}),

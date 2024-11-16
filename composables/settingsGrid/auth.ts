@@ -45,7 +45,7 @@ export default () => {
 				is: SettingLabelCell,
 				props: {
 					title: 'Login',
-					id: 'login',
+					forId: 'email',
 				},
 			},
 		}),
