@@ -1,16 +1,12 @@
 export const focusElement = (
 	event: KeyboardEvent,
-	next: HTMLElement,
-	previous?: HTMLElement
+	previous?: HTMLElement,
+	next?: HTMLElement
 ) => {
 	if (event.key !== 'Tab') return;
 	if (event.shiftKey && previous) {
-		setTimeout(() => {
-			previous.focus();
-		});
-		return;
+		setTimeout(() => previous.focus());
+	} else if (!event.shiftKey && next) {
+		setTimeout(() => next.focus());
 	}
-	setTimeout(() => {
-		next.focus();
-	});
 };
