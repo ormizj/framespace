@@ -29,6 +29,6 @@ export default defineEventHandler(async (event) => {
 	}
 
 	const jwt = signJwt(email, event);
-	addJwtToken(jwt).then();
+	addJwtToken(email, jwt).then();
 	return jwt;
 });

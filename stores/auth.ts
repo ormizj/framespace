@@ -24,15 +24,27 @@ export const useAuthStore = defineStore({
 					email,
 					password,
 				});
-				localStorage.setItem('jwt', res.data);
-				this.jwt = res.data;
+				this._clientLogin(res.data);
 			} catch (error) {
 				const axiosError = error as AxiosError;
 				alert(axiosError.response!.statusText);
 			}
 		},
-		register(email: string, password: string) {
-			axios.post('api/auth/register', { email, password }).then();
+		async register(email: string, password: string) {
+			try {
+				const res = await axios.post<string>('api/auth/register', {
+					email,
+					password,
+				});
+				this._clientLogin(res.data);
+			} catch (error) {
+				const axiosError = error as AxiosError;
+				alert(axiosError.response!.statusText);
+			}
+		},
+		_clientLogin(jwt: string) {
+			localStorage.setItem('jwt', jwt);
+			this.jwt = jwt;
 		},
 	},
 });

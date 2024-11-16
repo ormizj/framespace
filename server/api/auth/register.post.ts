@@ -3,6 +3,8 @@ import {
 	isUserExistsByEmail,
 } from '~/server/database/repositories/users';
 import { hashPassword } from '~/server/utils/crypto';
+import { signJwt } from '~/server/utils/jwt';
+import { addJwtToken } from '~/server/database/repositories/jwt';
 
 export default defineEventHandler(async (event) => {
 	const { email, password } = await readBody(event);
@@ -23,5 +25,7 @@ export default defineEventHandler(async (event) => {
 	const hashedPassword = hashPassword(event, password);
 	await addUser(email, hashedPassword);
 
-	return 'User created successfully.';
+	const jwt = signJwt(email, event);
+	addJwtToken(email, jwt).then();
+	return jwt;
 });

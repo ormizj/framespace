@@ -12,7 +12,9 @@ export const getUserByEmail = async (email: string) => {
 			.limit(1);
 
 		return users[0];
-	} catch (e) {}
+	} catch (error) {
+		console.log(error);
+	}
 };
 
 export const isUserExistsByEmail = async (email: string) => {
@@ -24,7 +26,9 @@ export const isUserExistsByEmail = async (email: string) => {
 			.limit(1);
 
 		return users.length !== 0;
-	} catch (e) {}
+	} catch (error) {
+		console.log(error);
+	}
 };
 
 export const addUser = async (email: string, password: string) => {
@@ -33,5 +37,7 @@ export const addUser = async (email: string, password: string) => {
 			email,
 			password,
 		});
-	} catch (e) {}
+	} catch (error) {
+		console.log(error);
+	}
 };
