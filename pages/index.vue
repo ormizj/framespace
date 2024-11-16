@@ -1,10 +1,8 @@
-<script setup lang="ts">
-
-</script>
+<script setup lang="ts"></script>
 
 <template>
-    <FrameSpace />
-    <SettingsGrid />
+	<FrameSpace />
+	<SettingsGrid />
 </template>
 
 <style scoped></style>
