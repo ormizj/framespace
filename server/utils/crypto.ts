@@ -7,6 +7,10 @@ export const hashPassword = (
 	const { pbkdf2Salt, pbkdf2Iterations, pbkdf2Length, pbkdf2Digest } =
 		useRuntimeConfig(event);
 
+	/*
+	https://community.cloudflare.com/t/site-gets-internal-server-error-500-message/206526/4
+	"pbkdf2Sync" causes 500 error
+	*/
 	return pbkdf2Sync(
 		password,
 		pbkdf2Salt,

@@ -22,6 +22,11 @@ export default defineNuxtConfig({
 
 	nitro: {
 		preset: 'cloudflare-pages',
+		cloudflare: {
+			wrangler: {
+				compatibility_flags: ['nodejs_compat_v2'],
+			},
+		},
 	},
 
 	modules: ['@nuxthub/core', '@pinia/nuxt'],
@@ -32,5 +37,5 @@ export default defineNuxtConfig({
 	},
 
 	devtools: { enabled: true },
-	compatibilityDate: '2024-04-03',
+	compatibilityDate: '2024-09-24',
 });
