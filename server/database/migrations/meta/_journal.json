@@ -8,6 +8,13 @@
       "when": 1731720767381,
       "tag": "0000_lumpy_sentinels",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1731785176644,
+      "tag": "0001_left_tyrannus",
+      "breakpoints": true
     }
   ]
 }

@@ -1,23 +1,35 @@
 import { defineStore } from 'pinia';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
 export const useAuthStore = defineStore({
 	id: 'auth',
 
 	state: () => ({
-		email: '',
-		jwtToken: '',
+		jwt: '',
 	}),
 
 	getters: {
 		isLoggedIn(): boolean {
-			return this.jwtToken !== '';
+			return !!this.jwt;
 		},
 	},
 
 	actions: {
-		login(email: string, password: string) {
-			axios.post('api/auth/login', { email, password }).then();
+		init() {
+			this.jwt = localStorage.getItem('jwt') ?? '';
+		},
+		async login(email: string, password: string) {
+			try {
+				const res = await axios.post<string>('api/auth/login', {
+					email,
+					password,
+				});
+				localStorage.setItem('jwt', res.data);
+				this.jwt = res.data;
+			} catch (error) {
+				const axiosError = error as AxiosError;
+				alert(axiosError.response!.statusText);
+			}
 		},
 		register(email: string, password: string) {
 			axios.post('api/auth/register', { email, password }).then();

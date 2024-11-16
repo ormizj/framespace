@@ -1,5 +1,7 @@
 import { getUserByEmail } from '~/server/database/repositories/users';
 import { compareHashedPassword } from '~/server/utils/crypto';
+import { signJwt } from '~/server/utils/jwt';
+import { addJwtToken } from '~/server/database/repositories/jwt';
 
 export default defineEventHandler(async (event) => {
 	const { email, password } = await readBody(event);
@@ -26,5 +28,7 @@ export default defineEventHandler(async (event) => {
 		});
 	}
 
-	return 'User logged in.';
+	const jwt = signJwt(email, event);
+	addJwtToken(jwt).then();
+	return jwt;
 });
