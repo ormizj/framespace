@@ -34,10 +34,6 @@ defineExpose({ selectRef: selectRef });
 	}
 
 	/* remove defaults */
-	&:focus {
-		outline: none;
-	}
-
 	border: unset;
 }
 

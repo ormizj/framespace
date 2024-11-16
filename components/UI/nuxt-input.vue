@@ -33,10 +33,6 @@ defineExpose({ inputRef });
 	/* remove defaults */
 	border: unset;
 
-	&:focus {
-		outline: none;
-	}
-
 	&::-webkit-outer-spin-button,
 	&::-webkit-inner-spin-button {
 		appearance: none;
