@@ -1,10 +1,14 @@
 import GridCell from '~/classes/GridCell';
 import SettingLabelInputCell from '~/components/cells/setting-label-input-cell.vue';
+import { focusElement } from '~/utils/gridCellElement';
 
 export default () => {
 	const frameSpaceStore = useFrameSpaceStore();
 	const { xGridBoundary, yGridBoundary, cellHeight } =
 		storeToRefs(frameSpaceStore);
+	const xInputRef = ref<HTMLInputElement | null>(null);
+	const yInputRef = ref<HTMLInputElement | null>(null);
+	const cellInputRef = ref<HTMLInputElement | null>(null);
 
 	return [
 		new GridCell({
@@ -24,6 +28,12 @@ export default () => {
 					'id': 'x-grid',
 					'type': 'number',
 					'min': 1,
+					'setRef': (componentRef: HTMLInputElement) => {
+						xInputRef.value = componentRef;
+					},
+					'onKeydown': (event: KeyboardEvent) => {
+						focusElement(event, cellInputRef.value!, yInputRef.value!);
+					},
 				},
 			},
 		}),
@@ -44,6 +54,12 @@ export default () => {
 					'id': 'y-grid',
 					'type': 'number',
 					'min': 1,
+					'setRef': (componentRef: HTMLInputElement) => {
+						yInputRef.value = componentRef;
+					},
+					'onKeydown': (event: KeyboardEvent) => {
+						focusElement(event, xInputRef.value!, cellInputRef.value!);
+					},
 				},
 			},
 		}),
@@ -63,6 +79,12 @@ export default () => {
 					'id': 'cell-height',
 					'type': 'number',
 					'min': 1,
+					'setRef': (componentRef: HTMLInputElement) => {
+						cellInputRef.value = componentRef;
+					},
+					'onKeydown': (event: KeyboardEvent) => {
+						focusElement(event, yInputRef.value!, xInputRef.value!);
+					},
 				},
 			},
 		}),
