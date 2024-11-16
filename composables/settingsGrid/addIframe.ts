@@ -75,7 +75,7 @@ export default () => {
 					'onUpdate:modelValue': (value: string) =>
 						(addIframeSrc.value = value),
 					'id': 'add-iframe-input',
-					'for': 'add-iframe',
+					'form': 'add-iframe',
 					'type': 'text',
 					'required': true,
 					'setRef': (componentRef: HTMLInputElement) => {
