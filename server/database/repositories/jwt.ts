@@ -1,4 +1,5 @@
-import { and, eq, tables, useDrizzle } from '~/server/composables/drizzle';
+import { tables, useDrizzle } from '~/server/composables/drizzle';
+import { and, eq } from 'drizzle-orm';
 
 const db = useDrizzle;
 const table = tables.jwt;

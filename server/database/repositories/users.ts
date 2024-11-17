@@ -1,4 +1,5 @@
-import { eq, tables, useDrizzle } from '~/server/composables/drizzle';
+import { tables, useDrizzle } from '~/server/composables/drizzle';
+import { eq } from 'drizzle-orm';
 
 const db = useDrizzle;
 const table = tables.users;

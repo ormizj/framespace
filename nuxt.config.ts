@@ -13,28 +13,14 @@ export default defineNuxtConfig({
 		public: {},
 	},
 
+	modules: ['@pinia/nuxt'],
+
 	components: [
 		{
 			path: '~/components',
 			pathPrefix: false,
 		},
 	],
-
-	nitro: {
-		preset: 'cloudflare-pages',
-		cloudflare: {
-			wrangler: {
-				compatibility_flags: ['nodejs_compat_v2'],
-			},
-		},
-	},
-
-	modules: ['@nuxthub/core', '@pinia/nuxt'],
-
-	hub: {
-		// https://hub.nuxt.com/docs/features/database, https://hub.nuxt.com/docs/recipes/drizzle
-		database: true,
-	},
 
 	devtools: { enabled: true },
 	compatibilityDate: '2024-09-24',
