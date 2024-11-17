@@ -1,8 +1,7 @@
-import { getEnv } from '~/server/composables/env';
 import bcrypt from 'bcrypt';
 
 export const hashPassword = (password: string): string => {
-	return bcrypt.hashSync(password, +getEnv('BCRYPT_SALT_ROUNDS'));
+	return bcrypt.hashSync(password, +useRuntimeConfig().bcryptSaltRounds);
 };
 
 export const compareHashedPassword = (
