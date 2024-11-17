@@ -18,6 +18,7 @@
 		"@pinia/nuxt": "^0.5.4",
 		"@vueuse/core": "^11.2.0",
 		"axios": "^1.7.7",
+		"bcrypt": "^5.1.1",
 		"drizzle-orm": "^0.36.3",
 		"jsonwebtoken": "^9.0.2",
 		"nuxt": "^3.14.159",
@@ -26,6 +27,7 @@
 		"vue-router": "latest"
 	},
 	"devDependencies": {
+		"@types/bcrypt": "^5.0.2",
 		"@types/jsonwebtoken": "^9.0.7",
 		"drizzle-kit": "^0.24.2",
 		"prettier": "^3.3.3",

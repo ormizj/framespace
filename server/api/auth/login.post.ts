@@ -1,5 +1,5 @@
 import { getUserByEmail } from '~/server/database/repositories/users';
-import { compareHashedPassword } from '~/server/utils/crypto';
+import { compareHashedPassword } from '~/server/utils/bcrypt';
 import { signJwt } from '~/server/utils/jwt';
 import { addJwtToken } from '~/server/database/repositories/jwt';
 

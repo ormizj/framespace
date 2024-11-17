@@ -2,7 +2,7 @@ import {
 	addUser,
 	isUserExistsByEmail,
 } from '~/server/database/repositories/users';
-import { hashPassword } from '~/server/utils/crypto';
+import { hashPassword } from '~/server/utils/bcrypt';
 import { signJwt } from '~/server/utils/jwt';
 import { addJwtToken } from '~/server/database/repositories/jwt';
 
