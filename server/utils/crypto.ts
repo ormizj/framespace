@@ -1,16 +1,14 @@
 import { pbkdf2Sync } from 'node:crypto';
+import { getEnv } from '~/server/composables/env';
 
-export const hashPassword = (
-	event: Parameters<typeof useRuntimeConfig>[0],
-	password: string
-): string => {
-	const { pbkdf2Salt, pbkdf2Iterations, pbkdf2Length, pbkdf2Digest } =
-		useRuntimeConfig(event);
+// todo change to bcrypt
 
-	/*
-	https://community.cloudflare.com/t/site-gets-internal-server-error-500-message/206526/4
-	"pbkdf2Sync" causes 500 error
-	*/
+export const hashPassword = (password: string): string => {
+	const pbkdf2Salt = getEnv('PBKDF2_SALT');
+	const pbkdf2Iterations = getEnv('PBKDF2_ITERATIONS');
+	const pbkdf2Length = getEnv('PBKDF2_LENGTH');
+	const pbkdf2Digest = getEnv('PBKDF2_DIGEST');
+
 	return pbkdf2Sync(
 		password,
 		pbkdf2Salt,
@@ -21,9 +19,8 @@ export const hashPassword = (
 };
 
 export const compareHashedPassword = (
-	event: Parameters<typeof useRuntimeConfig>[0],
 	password: string,
 	hashedPassword: string
 ) => {
-	return hashPassword(event, password) === hashedPassword;
+	return hashPassword(password) === hashedPassword;
 };

@@ -1,13 +1,11 @@
 import jwt from 'jsonwebtoken';
-import { H3Event } from 'h3';
+import { getEnv } from '~/server/composables/env';
 
-export const signJwt = (email: string, event: H3Event) => {
-	const { jwtSecret } = useRuntimeConfig(event);
-
+export const signJwt = (email: string) => {
 	return jwt.sign(
 		{
 			email,
 		},
-		jwtSecret
+		getEnv('JWT_SECRET')
 	);
 };

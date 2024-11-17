@@ -21,14 +21,14 @@ export default defineEventHandler(async (event) => {
 		});
 	}
 
-	if (!compareHashedPassword(event, password, user.password)) {
+	if (!compareHashedPassword(password, user.password)) {
 		throw createError({
 			statusCode: 409,
 			statusMessage: 'User password is incorrect.',
 		});
 	}
 
-	const jwt = signJwt(email, event);
+	const jwt = signJwt(email);
 	addJwtToken(email, jwt).then();
 	return jwt;
 });

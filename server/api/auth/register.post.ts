@@ -22,10 +22,10 @@ export default defineEventHandler(async (event) => {
 		});
 	}
 
-	const hashedPassword = hashPassword(event, password);
+	const hashedPassword = hashPassword(password);
 	await addUser(email, hashedPassword);
 
-	const jwt = signJwt(email, event);
+	const jwt = signJwt(email);
 	addJwtToken(email, jwt).then();
 	return jwt;
 });
