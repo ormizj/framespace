@@ -1,10 +1,11 @@
 import { migrate } from 'drizzle-orm/d1/migrator';
 import { useDrizzle } from '../composables/drizzle';
 
-export default defineNitroPlugin(async () => {
+export default defineNitroPlugin(async (nitroApp) => {
 	if (!import.meta.dev) return;
 
-	await migrate(useNitroApp().$drizzle, {
+	// @ts-ignore: type not inherited
+	await migrate(nitroApp.$drizzle, {
 		migrationsFolder: 'server/database/migrations',
 	})
 		.then(() => {
