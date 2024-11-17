@@ -5,6 +5,7 @@
 .nitro
 .cache
 dist
+/server/local.db
 
 # Node dependencies
 node_modules
@@ -23,5 +24,3 @@ nuxt.run.xml
 .env
 .env.*
 !.env.example
-
-.wrangler
