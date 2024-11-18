@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
 	if (!authHeader || !authHeader.startsWith('Bearer ')) {
 		throw createError({
 			statusCode: 401,
-			message: 'Missing or invalid authorization header',
+			statusMessage: 'Invalid authorization header',
 		});
 	}
 

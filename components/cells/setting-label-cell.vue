@@ -1,10 +1,16 @@
 <script lang="ts" setup>
-const props = defineProps<{
-	title: string;
-	forId: string;
-}>();
+const props = withDefaults(
+	defineProps<{
+		title: string;
+		forId?: string;
+	}>(),
+	{
+		forId: undefined,
+	}
+);
 
 const focus = () => {
+	if (!props.forId) return;
 	const element = document.getElementById(props.forId);
 	if (!element) return;
 	setTimeout(() => element.focus());
