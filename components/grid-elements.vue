@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type GridCell from '~/classes/GridCell';
+import GridCell from '~/classes/GridCell';
 import {
 	ANIMATION_LONG_DURATION,
 	ANIMATION_REPEAT_COUNT,
@@ -19,6 +19,28 @@ const props = withDefaults(
 		alwaysInteractive: false,
 	}
 );
+
+// Slot handling
+useSlots()
+	.default?.()
+	.forEach((slot) => {
+		modelGridCells.value.push(
+			new GridCell({
+				component: {
+					is: slot.type,
+					props: slot.props,
+					slots: {
+						default: () => slot.children,
+					},
+				},
+				yGrid: slot.props?.y ?? 1,
+				xGrid: slot.props?.x ?? 1,
+				width: slot.props?.width ?? 1,
+				height: slot.props?.height ?? 1,
+				initialClasses: new Set(),
+			})
+		);
+	});
 
 const gridElements = ref<HTMLDivElement | null>(null);
 const gridCellElements = ref<null | HTMLGridElement[]>(null);
@@ -423,15 +445,13 @@ modelGridCells.value.forEach((gridCell) => {
 									{ 'always-interactive': alwaysInteractive && !isMouseDown },
 								]"
 								:is="gridCell.component.is"
-								v-bind="{
-									...gridCell.component.props,
-									...gridCell.component.bind,
-									...gridCell.component.emits,
-									...gridCell.component.exposed,
-								}"
+								v-bind="gridCell.component.props"
 							>
-								<!-- TODO gridCell slots -->
-								<!-- {{ gridCell.component.slots }} -->
+								<component
+									v-for="(child, index) in gridCell.component.slots"
+									:key="index"
+									:is="child"
+								/>
 							</component>
 						</div>
 					</template>
