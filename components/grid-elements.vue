@@ -24,6 +24,7 @@ const gridElements = ref<HTMLDivElement | null>(null);
 const gridCellElements = ref<null | HTMLGridElement[]>(null);
 const cellHeightPx = ref<number>(0);
 const cellWidthPx = ref<number>(0);
+const overlappingGridCells: GridCell[] = [];
 
 watch(modelEdit, () => {
 	clearAllGridCellAnimations();
@@ -158,6 +159,13 @@ const handleDragDrop = (e: DragEvent) => {
 		dragged!.yGrid = targetYGrid;
 		dragged!.xGrid = targetXGrid;
 	}
+
+	// Remove overlapping
+	overlappingGridCells.forEach((gridCell) => {
+		if (!isTargetZoneOccupied(gridCell.id, gridCell.gridCellCoordinates)) {
+			gridCell.initialClasses.delete('overlap');
+		}
+	});
 
 	clearFutureGridCells();
 	dragged = undefined;
@@ -357,6 +365,7 @@ const calcGridCellWidthPx = (gridCellWidth: number) =>
 modelGridCells.value.forEach((gridCell) => {
 	if (isTargetZoneOccupied(gridCell.id, gridCell.gridCellCoordinates)) {
 		gridCell.initialClasses.add('overlap');
+		overlappingGridCells.push(gridCell);
 	}
 });
 </script>
