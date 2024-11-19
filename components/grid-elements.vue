@@ -352,6 +352,13 @@ const calcGridCellHeightPx = (gridCellHeight: number) =>
 	gridCellHeight * cellHeightPx.value;
 const calcGridCellWidthPx = (gridCellWidth: number) =>
 	gridCellWidth * cellWidthPx.value;
+
+// Additional initializations
+modelGridCells.value.forEach((gridCell) => {
+	if (isTargetZoneOccupied(gridCell.id, gridCell.gridCellCoordinates)) {
+		gridCell.initialClasses.add('overlap');
+	}
+});
 </script>
 
 <template>
@@ -450,6 +457,22 @@ const calcGridCellWidthPx = (gridCellWidth: number) =>
 	.grid-cell {
 		position: absolute;
 		max-width: 100%;
+
+		&.overlap::after {
+			content: '!';
+			--size: 1rem;
+			position: absolute;
+			top: 0;
+			left: 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: var(--size);
+			width: var(--size);
+			height: var(--size);
+			border-radius: 50%;
+			animation: overlap var(--animation-longer-duration) alternate infinite;
+		}
 	}
 
 	.cell-component {
@@ -503,7 +526,7 @@ const calcGridCellWidthPx = (gridCellWidth: number) =>
 /* animations */
 @keyframes subtle-glow {
 	from {
-		box-shadow: 0 0 0px transparent;
+		box-shadow: 0 0 0 transparent;
 	}
 
 	to {
@@ -518,7 +541,7 @@ const calcGridCellWidthPx = (gridCellWidth: number) =>
 
 @keyframes subtle-glow-inset {
 	from {
-		box-shadow: 0 0 0px inset transparent;
+		box-shadow: 0 0 0 inset transparent;
 	}
 
 	to {
@@ -533,7 +556,7 @@ const calcGridCellWidthPx = (gridCellWidth: number) =>
 
 @keyframes subtle-gold {
 	from {
-		box-shadow: 0 0 0px inset transparent;
+		box-shadow: 0 0 0 inset transparent;
 	}
 
 	to {
@@ -543,6 +566,19 @@ const calcGridCellWidthPx = (gridCellWidth: number) =>
 
 .golden-animation {
 	animation: subtle-glow var(--animation-long-duration) infinite alternate;
+}
+
+@keyframes overlap {
+	from {
+		opacity: 1;
+		box-shadow: 0 0 0.5rem inset rgba(var(--gold-values), 1);
+		color: rgba(var(--warning-values), 1);
+	}
+
+	to {
+		box-shadow: 0 0 0.1rem inset rgba(var(--gold-values), 0.5);
+		color: rgba(var(--warning-values), 0.5);
+	}
 }
 </style>
 
