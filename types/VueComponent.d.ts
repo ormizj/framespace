@@ -8,10 +8,11 @@ import type {
 
 interface VueComponent<T extends Component> {
 	is: ShallowRef<T>;
-	props?: ComponentProps<T>;
-	emits?: ComponentEmit<T>;
-	exposed?: ComponentExposed<T>;
 	slots?: ComponentSlots<T>;
-	type?: ComponentType<T>;
-	bind?: { [key: string]: string };
+	props?:
+		| ComponentProps<T>
+		| ComponentType<T>
+		| ComponentEmit<T>
+		| ComponentExposed<T>
+		| { [key: string]: string };
 }

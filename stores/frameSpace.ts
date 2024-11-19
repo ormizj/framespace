@@ -59,7 +59,7 @@ export const useFrameSpaceStore = defineStore({
 				initialClasses,
 				component: {
 					is: IframeCell,
-					bind: {
+					props: {
 						src,
 					},
 				},

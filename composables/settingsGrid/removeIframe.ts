@@ -50,7 +50,7 @@ export default () => {
 					'options': iframeGridCells.value,
 					'for': 'remove-iframe',
 					'formatter': (option: GridCell<typeof IframeCell>) =>
-						`[${option.yGrid}-${option.xGrid}]: ${option.component.bind!.src}`,
+						`[${option.yGrid}-${option.xGrid}]: ${option.component.props!.src}`,
 					'setRef': (componentRef: HTMLInputElement) => {
 						iframeSelectRef.value = componentRef;
 					},

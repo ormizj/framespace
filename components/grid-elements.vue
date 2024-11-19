@@ -20,7 +20,7 @@ const props = withDefaults(
 	}
 );
 
-// Slot handling
+// Slot Initialize
 useSlots()
 	.default?.()
 	.forEach((slot) => {
@@ -37,7 +37,6 @@ useSlots()
 				xGrid: slot.props?.x ?? 1,
 				width: slot.props?.width ?? 1,
 				height: slot.props?.height ?? 1,
-				initialClasses: new Set(),
 			})
 		);
 	});
@@ -383,7 +382,7 @@ const calcGridCellHeightPx = (gridCellHeight: number) =>
 const calcGridCellWidthPx = (gridCellWidth: number) =>
 	gridCellWidth * cellWidthPx.value;
 
-// Additional initializations
+// Additional Initializations
 modelGridCells.value.forEach((gridCell) => {
 	if (isTargetZoneOccupied(gridCell.id, gridCell.gridCellCoordinates)) {
 		gridCell.initialClasses.add('overlap');
