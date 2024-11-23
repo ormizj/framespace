@@ -49,6 +49,7 @@ const gridCells = ref<GridCell[]>([
 					:yGridBoundary="15"
 					:cell-height="10"
 					:always-interactive="true"
+					:allow-overlap="true"
 				/>
 			</ClientOnly>
 		</div>

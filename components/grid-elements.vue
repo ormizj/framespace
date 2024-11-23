@@ -14,9 +14,11 @@ const props = withDefaults(
 		yGridBoundary: number;
 		cellHeight: number;
 		alwaysInteractive?: boolean;
+		allowOverlap?: boolean;
 	}>(),
 	{
 		alwaysInteractive: false,
+		allowOverlap: false,
 	}
 );
 
@@ -45,7 +47,7 @@ const gridElements = ref<HTMLDivElement | null>(null);
 const gridCellElements = ref<null | HTMLGridElement[]>(null);
 const cellHeightPx = ref<number>(0);
 const cellWidthPx = ref<number>(0);
-const overlappingGridCells: GridCell[] = [];
+const overlappingGridCells = reactive<Record<string, GridCell>>({});
 
 watch(modelEdit, () => {
 	clearAllGridCellAnimations();
@@ -85,17 +87,29 @@ const clearAllGridCellAnimations = () => {
 };
 
 // GridCell Enforcements
+/**
+ * @param gridCellId
+ * @param gridCellCoordinates
+ * @returns {(GridCell[]|[GridCell]|null)}
+ */
 const enforceNoOverlap = (
 	gridCellId: string,
 	gridCellCoordinates: GridCellCoordinates
-): boolean => {
-	const occupyingGridCell = isTargetZoneOccupied(
-		gridCellId,
-		gridCellCoordinates
-	);
-	if (!occupyingGridCell) return false;
-	addGridCellAnimation(occupyingGridCell);
-	return true;
+): GridCell[] | [GridCell] | null => {
+	let occupyingGridCells: (GridCell | undefined)[] = [];
+	if (props.allowOverlap) {
+		occupyingGridCells = isTargetZoneOccupiedAll(
+			gridCellId,
+			gridCellCoordinates
+		);
+	} else {
+		occupyingGridCells = [
+			isTargetZoneOccupied(gridCellId, gridCellCoordinates),
+		];
+	}
+	if (!occupyingGridCells[0]) return null;
+	if (!props.allowOverlap) addGridCellAnimation(occupyingGridCells[0]);
+	return occupyingGridCells as GridCell[];
 };
 const enforceBoundsAxis = (
 	gridCellYGridEnd: number,
@@ -122,17 +136,17 @@ const isTargetZoneOccupied = (
 	gridCellId: string,
 	gridCellCoordinates: GridCellCoordinates
 ): GridCell | undefined => {
-	const occupyingGridCell = modelGridCells.value.find((otherGridCell) => {
-		const otherCoordinates = otherGridCell.gridCellCoordinates;
-		return (
-			gridCellCoordinates.strX <= otherCoordinates.endX &&
-			gridCellCoordinates.endX >= otherCoordinates.strX &&
-			gridCellCoordinates.strY <= otherCoordinates.endY &&
-			gridCellCoordinates.endY >= otherCoordinates.strY &&
-			gridCellId !== otherGridCell.id
-		);
+	return modelGridCells.value.find((otherGridCell) => {
+		return otherGridCell.isCoordinatesOverlap(gridCellId, gridCellCoordinates);
 	});
-	return occupyingGridCell;
+};
+const isTargetZoneOccupiedAll = (
+	gridCellId: string,
+	gridCellCoordinates: GridCellCoordinates
+): GridCell[] => {
+	return modelGridCells.value.filter((otherGridCell) =>
+		otherGridCell.isCoordinatesOverlap(gridCellId, gridCellCoordinates)
+	);
 };
 const isGridCellInBounds = (
 	gridCellYGridEnd: number,
@@ -173,20 +187,35 @@ const handleDragDrop = (e: DragEvent) => {
 	});
 
 	// Enforcements
+	const overlappedElements = enforceNoOverlap(dragged!.id, newCoordinates);
 	const wasEnforced =
-		enforceNoOverlap(dragged!.id, newCoordinates) ||
+		(!props.allowOverlap && overlappedElements) ||
 		enforceBoundsAxis(newCoordinates.endY, newCoordinates.endX);
 	if (!wasEnforced) {
 		dragged!.yGrid = targetYGrid;
 		dragged!.xGrid = targetXGrid;
 	}
 
-	// Remove overlapping
-	overlappingGridCells.forEach((gridCell) => {
-		if (!isTargetZoneOccupied(gridCell.id, gridCell.gridCellCoordinates)) {
-			gridCell.initialClasses.delete('overlap');
+	// remove overlapping
+	for (let key in overlappingGridCells) {
+		if (!Object.hasOwn(overlappingGridCells, key)) continue;
+		const gridCell = overlappingGridCells[key];
+		if (isTargetZoneOccupied(gridCell.id, gridCell.gridCellCoordinates)) {
+			continue;
 		}
-	});
+		gridCell.initialClasses.delete('overlap');
+		delete overlappingGridCells[key];
+	}
+
+	// add overlapping
+	if (overlappedElements) {
+		dragged!.initialClasses.add('overlap');
+		overlappingGridCells[dragged!.id] = dragged!;
+		overlappedElements.forEach((gridCell) => {
+			gridCell.initialClasses.add('overlap');
+			overlappingGridCells[gridCell.id] = gridCell;
+		});
+	}
 
 	clearFutureGridCells();
 	dragged = undefined;

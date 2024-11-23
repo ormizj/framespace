@@ -37,6 +37,20 @@ export default class GridCell<T extends Component = Component> {
 		this.id = id ?? crypto.randomUUID();
 	}
 
+	isCoordinatesOverlap(
+		otherId: string,
+		otherCoordinates: GridCellCoordinates
+	): boolean {
+		const coordinates = this.gridCellCoordinates;
+		return (
+			coordinates.strX <= otherCoordinates.endX &&
+			coordinates.endX >= otherCoordinates.strX &&
+			coordinates.strY <= otherCoordinates.endY &&
+			coordinates.endY >= otherCoordinates.strY &&
+			this.id !== otherId
+		);
+	}
+
 	get gridCellCoordinates(): GridCellCoordinates {
 		return {
 			strY: this.yGrid,
