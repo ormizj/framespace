@@ -256,10 +256,19 @@ const addFutureGridCellDrag = (target: HTMLGridElement) => {
 	futureGridCellElement.classList.add('future-grid-cell');
 
 	// Enforcements
+	const boundError = !isGridCellInBounds(
+		newCoordinates.endY,
+		newCoordinates.endX
+	);
 	const invalidZone =
-		isTargetZoneOccupied(dragged!.id, newCoordinates) ||
-		!isGridCellInBounds(newCoordinates.endY, newCoordinates.endX);
-	if (invalidZone) futureGridCellElement.classList.add('error');
+		isTargetZoneOccupied(dragged!.id, newCoordinates) || boundError;
+	if (invalidZone) {
+		if (!boundError && props.allowOverlap) {
+			futureGridCellElement.classList.add('warning');
+		} else {
+			futureGridCellElement.classList.add('error');
+		}
+	}
 
 	clearFutureGridCells();
 	target.appendChild(futureGridCellElement);
@@ -650,6 +659,10 @@ modelGridCells.value.forEach((gridCell) => {
 
 	&.error {
 		color: var(--error);
+	}
+
+	&.warning {
+		color: var(--warning);
 	}
 }
 </style>
