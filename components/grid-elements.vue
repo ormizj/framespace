@@ -249,8 +249,8 @@ const addFutureGridCellDrag = (target: HTMLGridElement) => {
 	const gridCellElement = getGridCellElementFromGridXElement(gridXElement);
 
 	const futureGridCellElement = document.createElement('div');
-	futureGridCellElement.style.width = `${calcGridCellWidthPx(dragged!.width)}px`;
 	futureGridCellElement.style.height = `${calcGridCellHeightPx(dragged!.height)}px`;
+	futureGridCellElement.style.width = `${calcGridCellWidthPx(dragged!.width)}px`;
 	futureGridCellElement.style.borderRadius = getComputedProperty(
 		gridCellElement,
 		'border-radius'
@@ -358,10 +358,16 @@ const addFutureGridCellResize = (
 	futureGridCellElement.classList.add('future-grid-cell');
 
 	// Enforcements
+	const sizeError = !isGridCellSizeValid(targetHeight, targetWidth);
 	const invalidZone =
-		isTargetZoneOccupied(resized.value!.id, newCoordinates) ||
-		!isGridCellSizeValid(targetHeight, targetWidth);
-	if (invalidZone) futureGridCellElement.classList.add('error');
+		isTargetZoneOccupied(resized.value!.id, newCoordinates) || sizeError;
+	if (invalidZone) {
+		if (!sizeError && props.allowOverlap) {
+			futureGridCellElement.classList.add('warning');
+		} else {
+			futureGridCellElement.classList.add('error');
+		}
+	}
 
 	clearFutureGridCells();
 	gridXElement.appendChild(futureGridCellElement);
