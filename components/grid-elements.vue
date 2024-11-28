@@ -130,6 +130,25 @@ const enforceNoInvalidSize = (
 	addGridCellAnimation(gridCell);
 	return true;
 };
+const removeOverlapping = () => {
+	for (let key in overlappingGridCells) {
+		if (!Object.hasOwn(overlappingGridCells, key)) continue;
+		const gridCell = overlappingGridCells[key];
+		if (isTargetZoneOccupied(gridCell.id, gridCell.gridCellCoordinates)) {
+			continue;
+		}
+		gridCell.initialClasses.delete('overlap');
+		delete overlappingGridCells[key];
+	}
+};
+const addOverlapping = (gridCell: GridCell, otherGridCells: GridCell[]) => {
+	gridCell.initialClasses.add('overlap');
+	overlappingGridCells[gridCell.id] = gridCell;
+	otherGridCells.forEach((gridCell) => {
+		gridCell.initialClasses.add('overlap');
+		overlappingGridCells[gridCell.id] = gridCell;
+	});
+};
 
 // GridCell Validations
 const isTargetZoneOccupied = (
@@ -196,26 +215,9 @@ const handleDragDrop = (e: DragEvent) => {
 		dragged!.xGrid = targetXGrid;
 	}
 
-	// remove overlapping
-	for (let key in overlappingGridCells) {
-		if (!Object.hasOwn(overlappingGridCells, key)) continue;
-		const gridCell = overlappingGridCells[key];
-		if (isTargetZoneOccupied(gridCell.id, gridCell.gridCellCoordinates)) {
-			continue;
-		}
-		gridCell.initialClasses.delete('overlap');
-		delete overlappingGridCells[key];
-	}
-
-	// add overlapping
-	if (overlappedElements) {
-		dragged!.initialClasses.add('overlap');
-		overlappingGridCells[dragged!.id] = dragged!;
-		overlappedElements.forEach((gridCell) => {
-			gridCell.initialClasses.add('overlap');
-			overlappingGridCells[gridCell.id] = gridCell;
-		});
-	}
+	// handle overlapping
+	removeOverlapping();
+	if (overlappedElements) addOverlapping(dragged!, overlappedElements);
 
 	clearFutureGridCells();
 	dragged = undefined;
@@ -299,23 +301,28 @@ const handleMouseUp = (e: MouseEvent) => {
 	if (!resized.value) return;
 
 	const target = e.target as HTMLGridElement;
-	const newHeight = getGridElementYGrid(target) - resized.value!.yGrid + 1;
-	const newWidth = getGridElementXGrid(target) - resized.value!.xGrid + 1;
+	const newHeight = getGridElementYGrid(target) - resized.value.yGrid + 1;
+	const newWidth = getGridElementXGrid(target) - resized.value.xGrid + 1;
 	const newCoordinates = getGridCellCoordinates({
-		yGrid: resized.value!.yGrid,
-		xGrid: resized.value!.xGrid,
+		yGrid: resized.value.yGrid,
+		xGrid: resized.value.xGrid,
 		height: newHeight,
 		width: newWidth,
 	});
 
 	// Enforcements
+	const overlappedElements = enforceNoOverlap(resized.value.id, newCoordinates);
 	const wasEnforced =
-		enforceNoOverlap(resized.value!.id, newCoordinates) ||
-		enforceNoInvalidSize(resized.value!, newHeight, newWidth);
+		(!props.allowOverlap && overlappedElements) ||
+		enforceNoInvalidSize(resized.value, newHeight, newWidth);
 	if (!wasEnforced) {
-		resized.value!.height = newHeight;
-		resized.value!.width = newWidth;
+		resized.value.height = newHeight;
+		resized.value.width = newWidth;
 	}
+
+	// handle overlapping
+	removeOverlapping();
+	if (overlappedElements) addOverlapping(resized.value, overlappedElements);
 
 	const clearFutureGridCellsInterval = setInterval(() => {
 		clearFutureGridCells();
