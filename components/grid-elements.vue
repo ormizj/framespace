@@ -440,10 +440,15 @@ modelGridCells.value.forEach((gridCell) => {
 		overlappingGridCells.push(gridCell);
 	}
 });
+
+const onScroll = () => {
+	console.log(21);
+};
 </script>
 
 <template>
 	<div
+		@scroll="onScroll"
 		class="grid-elements"
 		ref="gridElements"
 		:class="{ edit: modelEdit }"
@@ -523,7 +528,7 @@ modelGridCells.value.forEach((gridCell) => {
 .x-grid {
 	height: 100%;
 	width: 100%;
-	outline: 1px solid var(--secondary);
+	outline: 1px solid rgba(var(--secondary-values), 0.25);
 
 	&:hover:not(:has(:hover)):not(.resizing) {
 		background-color: color-mix(in srgb, var(--secondary), transparent 50%);

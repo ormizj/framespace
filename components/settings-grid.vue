@@ -39,15 +39,15 @@ const gridCells = ref<GridCell[]>([
 				</h3>
 			</div>
 		</div>
-		<div class="content">
+		<div class="content" @scroll="console.log(123)">
 			<ClientOnly>
 				<GridElements
 					class="grid-elements"
 					v-model="gridCells"
 					v-model:edit="editMode"
-					:xGridBoundary="15"
-					:yGridBoundary="15"
-					:cell-height="10"
+					:xGridBoundary="25"
+					:yGridBoundary="25"
+					:cell-height="7"
 					:always-interactive="true"
 					:allow-overlap="true"
 				/>
@@ -112,7 +112,11 @@ const gridCells = ref<GridCell[]>([
 }
 
 :deep(.grid-cell:not(.error-animation)) {
-	animation: subtle-glow var(--animation-longer-duration) infinite alternate;
+	/*
+animation: subtle-glow var(--animation-longer-duration) infinite alternate;
+
+	 */
+	border: 1px solid rgba(var(--secondary-values), 0.75);
 }
 
 @keyframes subtle-glow-warning {

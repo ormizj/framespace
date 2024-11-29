@@ -32,7 +32,8 @@ body {
 	/* color */
 	--background-values: 25, 25, 25;
 	--background: rgb(var(--background-values));
-	--secondary: rgb(230, 230, 230);
+	--secondary-values: 230, 230, 230;
+	--secondary: rgb(var(--secondary-values));
 	--success: rgb(25, 230, 25);
 	--error: rgb(230, 25, 25);
 	--gold-values: 255, 215, 0;
@@ -45,7 +46,10 @@ body {
 	--animation-longer-duration: 5s;
 	--animation-repeat-count: 3;
 	/* border */
+	/*
 	--border-glow-radius: 25px;
+
+	 */
 	/* layout */
 	--tab-height: 2rem;
 	--header-height: 4rem;

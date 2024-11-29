@@ -91,7 +91,8 @@ const handleInput = (event: KeyboardEvent) => {
 		.label-container {
 			display: flex;
 			width: 100%;
-			justify-content: end;
+			justify-content: space-between;
+			padding-inline-start: 1rem;
 
 			label {
 				cursor: pointer;

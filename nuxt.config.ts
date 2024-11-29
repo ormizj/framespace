@@ -20,6 +20,11 @@ export default defineNuxtConfig({
 		},
 	],
 
+	css: [
+		// Global CSS file
+		'~/assets/fonts/font.css',
+	],
+
 	devtools: { enabled: true },
 	compatibilityDate: '2024-09-24',
 });
