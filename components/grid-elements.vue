@@ -573,8 +573,6 @@ const handleScroll = () => {
 
 /* gridElements edit */
 .grid-elements.edit {
-	overflow: hidden;
-
 	.cell-component:not(.always-interactive) {
 		pointer-events: none;
 	}
