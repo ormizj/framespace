@@ -7,6 +7,7 @@ import {
 
 const modelGridCells = defineModel<GridCell[]>({ required: true });
 const modelEdit = defineModel('edit', { default: false });
+const modelScroll = defineModel('scroll', { default: true });
 
 const props = withDefaults(
 	defineProps<{
@@ -437,80 +438,86 @@ const calcGridCellWidthPx = (gridCellWidth: number) =>
 modelGridCells.value.forEach((gridCell) => {
 	if (isTargetZoneOccupied(gridCell.id, gridCell.gridCellCoordinates)) {
 		gridCell.initialClasses.add('overlap');
-		overlappingGridCells.push(gridCell);
+		overlappingGridCells[gridCell.id] = gridCell;
 	}
 });
+
+const handleScroll = () => {
+	console.log('WIP');
+};
 </script>
 
 <template>
 	<div
-		class="grid-elements"
-		ref="gridElements"
-		:class="{ edit: modelEdit }"
+		class="grid-elements-container"
+		:class="{ 'scroll-hidden': !modelScroll }"
+		@scroll.passive="handleScroll"
 		@mouseenter="resized = undefined"
 	>
-		<!-- GRID Y -->
-		<div
-			v-for="y in yGridBoundary"
-			class="y-grid"
-			:style="{ height: `${cellHeight}dvh` }"
-			:key="y"
-		>
-			<!-- GRID X -->
+		<div class="grid-elements" ref="gridElements" :class="{ edit: modelEdit }">
+			<!-- GRID Y -->
 			<div
-				v-for="x in xGridBoundary"
-				class="x-grid"
-				:class="{ resizing: resized }"
-				@drop="handleDragDrop"
-				@mouseup="handleMouseUp"
-				@mousedown="isMouseDown = true"
-				@mouseenter="handleMouseEnter"
-				@dragover.prevent="handleDragOn"
-				:x="x"
-				:y="y"
-				:key="x"
+				v-for="y in yGridBoundary"
+				class="y-grid"
+				:style="{ height: `${cellHeight}dvh` }"
+				:key="y"
 			>
-				<!-- GRID CELL -->
-				<template v-for="gridCell of modelGridCells" :key="gridCell.id">
-					<template v-if="gridCell.xGrid === x && gridCell.yGrid === y">
-						<div
-							class="grid-cell"
-							ref="gridCellElements"
-							:class="[
-								{ resizing: resized, dragging: isDragging },
-								...gridCell.initialClasses,
-							]"
-							:draggable="modelEdit"
-							@dragstart="handleDragStart"
-							:y="y"
-							:x="x"
-							:style="{
-								height: `${calcGridCellHeightPx(gridCell.height)}px`,
-								width: `${calcGridCellWidthPx(gridCell.width)}px`,
-							}"
-						>
-							<component
+				<!-- GRID X -->
+				<div
+					v-for="x in xGridBoundary"
+					class="x-grid"
+					:class="{ resizing: resized }"
+					@drop="handleDragDrop"
+					@mouseup="handleMouseUp"
+					@mousedown="isMouseDown = true"
+					@mouseenter="handleMouseEnter"
+					@dragover.prevent="handleDragOn"
+					:x="x"
+					:y="y"
+					:key="x"
+				>
+					<!-- GRID CELL -->
+					<template v-for="gridCell of modelGridCells" :key="gridCell.id">
+						<template v-if="gridCell.xGrid === x && gridCell.yGrid === y">
+							<div
+								class="grid-cell"
+								ref="gridCellElements"
 								:class="[
-									'cell-component',
-									{ 'always-interactive': alwaysInteractive && !isMouseDown },
+									{ resizing: resized, dragging: isDragging },
+									...gridCell.initialClasses,
 								]"
-								:is="gridCell.component.is"
-								v-bind="gridCell.component.props"
+								:draggable="modelEdit"
+								@dragstart="handleDragStart"
+								:y="y"
+								:x="x"
+								:style="{
+									height: `${calcGridCellHeightPx(gridCell.height)}px`,
+									width: `${calcGridCellWidthPx(gridCell.width)}px`,
+								}"
 							>
 								<component
-									v-for="(child, index) in gridCell.component.slots"
-									:key="index"
-									:is="child"
-								/>
-							</component>
-						</div>
+									:class="[
+										'cell-component',
+										{ 'always-interactive': alwaysInteractive && !isMouseDown },
+									]"
+									:is="gridCell.component.is"
+									v-bind="gridCell.component.props"
+								>
+									<component
+										v-for="(child, index) in gridCell.component.slots"
+										:key="index"
+										:is="child"
+									/>
+								</component>
+							</div>
+						</template>
 					</template>
-				</template>
-				<!-- GRID CELL -->
+					<!-- GRID CELL -->
+				</div>
+				<!-- GRID X -->
 			</div>
-			<!-- GRID X -->
+			<!-- GRID Y -->
 		</div>
-		<!-- GRID Y -->
 	</div>
 </template>
 
@@ -530,33 +537,41 @@ modelGridCells.value.forEach((gridCell) => {
 	}
 }
 
-.grid-elements {
-	position: relative;
+.grid-elements-container {
+	overflow-y: auto;
 
-	.grid-cell {
-		position: absolute;
-		max-width: 100%;
-
-		&.overlap::after {
-			content: '!';
-			--size: 1rem;
-			position: absolute;
-			top: 0;
-			left: 0;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			font-size: var(--size);
-			width: var(--size);
-			height: var(--size);
-			border-radius: 50%;
-			animation: overlap var(--animation-longer-duration) alternate infinite;
-		}
+	&.scroll-hidden::-webkit-scrollbar {
+		display: none;
 	}
 
-	.cell-component {
-		width: 100%;
-		height: 100%;
+	.grid-elements {
+		position: relative;
+
+		.grid-cell {
+			position: absolute;
+			max-width: 100%;
+
+			&.overlap::after {
+				content: '!';
+				--size: 1rem;
+				position: absolute;
+				top: 0;
+				left: 0;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: var(--size);
+				width: var(--size);
+				height: var(--size);
+				border-radius: 50%;
+				animation: overlap var(--animation-longer-duration) alternate infinite;
+			}
+		}
+
+		.cell-component {
+			width: 100%;
+			height: 100%;
+		}
 	}
 }
 
