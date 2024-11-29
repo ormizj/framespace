@@ -14,10 +14,12 @@ const props = withDefaults(
 		xGridBoundary: number;
 		yGridBoundary: number;
 		cellHeight: number;
+		scrollAmount?: number;
 		alwaysInteractive?: boolean;
 		allowOverlap?: boolean;
 	}>(),
 	{
+		scrollAmount: undefined,
 		alwaysInteractive: false,
 		allowOverlap: false,
 	}
@@ -442,8 +444,22 @@ modelGridCells.value.forEach((gridCell) => {
 	}
 });
 
-const handleScroll = () => {
-	console.log('WIP');
+const handleScroll = (e: WheelEvent) => {
+	if (!props.scrollAmount || e.deltaY === 0) return;
+	e.preventDefault();
+
+	// scroll amount
+	let scrollAmount = props.scrollAmount;
+	if (e.deltaY < 0) scrollAmount = -scrollAmount;
+
+	// current scroll
+	const cellHeight = cellHeightPx.value;
+	const currentScrollTop = gridElements.value!.scrollTop;
+	const currentCellPosition = Math.round(currentScrollTop / cellHeight);
+
+	// scroll
+	const newCoordinate = currentCellPosition + scrollAmount;
+	gridElements.value!.scrollTo({ top: newCoordinate * cellHeight });
 };
 </script>
 
@@ -452,7 +468,7 @@ const handleScroll = () => {
 		class="grid-elements"
 		ref="gridElements"
 		:class="{ 'edit': modelEdit, 'scroll-hidden': !modelScroll }"
-		@scroll="handleScroll"
+		@wheel="handleScroll"
 		@mouseenter="resized = undefined"
 	>
 		<!-- GRID Y -->
