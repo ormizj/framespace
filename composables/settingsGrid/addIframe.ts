@@ -23,7 +23,7 @@ export default () => {
 
 	return [
 		new GridCell({
-			id: 'add-iframe',
+			id: 'add_iframe',
 			yGrid: 1,
 			xGrid: 5,
 			height: 2,
@@ -32,12 +32,12 @@ export default () => {
 				is: SettingLabelCell,
 				props: {
 					title: 'Add Iframe',
-					forId: 'add-iframe-input',
+					forId: 'add_iframe_input',
 				},
 			},
 		}),
 		new GridCell({
-			id: 'add-iframe-select',
+			id: 'add_iframe_select',
 			yGrid: 1,
 			xGrid: 7,
 			height: 1,
@@ -49,8 +49,8 @@ export default () => {
 					'modelValue': addIframeSrc,
 					'onUpdate:modelValue': (value: string) =>
 						(addIframeSrc.value = value),
-					'id': 'add-iframe-select',
-					'for': 'add-iframe',
+					'id': 'add_iframe_select',
+					'for': 'add_iframe',
 					'options': iframesSrcOptions.value,
 					'setRef': (componentRef: HTMLInputElement) => {
 						iframeSelectRef.value = componentRef;
@@ -62,7 +62,7 @@ export default () => {
 			},
 		}),
 		new GridCell({
-			id: 'add-iframe-input',
+			id: 'add_iframe_input',
 			yGrid: 2,
 			xGrid: 7,
 			height: 1,
@@ -74,8 +74,8 @@ export default () => {
 					'modelValue': addIframeSrc,
 					'onUpdate:modelValue': (value: string) =>
 						(addIframeSrc.value = value),
-					'id': 'add-iframe-input',
-					'form': 'add-iframe',
+					'id': 'add_iframe_input',
+					'form': 'add_iframe',
 					'type': 'text',
 					'required': true,
 					'setRef': (componentRef: HTMLInputElement) => {
@@ -88,7 +88,7 @@ export default () => {
 			},
 		}),
 		new GridCell({
-			id: 'add-iframe-button',
+			id: 'add_iframe_button',
 			xGrid: 10,
 			yGrid: 1,
 			width: 2,

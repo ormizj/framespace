@@ -1,14 +1,20 @@
 <script setup lang="ts">
 import { ANIMATION_SHORT_DURATION, TAB_HEIGHT } from '~/constants/style';
+import GridElements from '~/components/grid-elements.vue';
 
 const frameSpaceStore = useFrameSpaceStore();
-const { yGridBoundary, xGridBoundary, cellHeight, iframeGridCells } =
-	storeToRefs(frameSpaceStore);
+const {
+	yGridBoundary,
+	xGridBoundary,
+	cellHeight,
+	scrollAmount,
+	iframeGridCells,
+} = storeToRefs(frameSpaceStore);
 
 const isOpen = ref(false);
 const isOpened = ref(false);
 const editMode = ref(false);
-const hideScroll = ref(false);
+const showScroll = ref(true);
 
 const frameSpaceContainer = ref<HTMLDivElement | null>(null);
 const handleHideClick = () => {
@@ -27,13 +33,9 @@ watch(isOpen, (newValue) => {
 
 <template>
 	<div
-		class="frame-space-container"
+		class="frame-space-container scroll-hidden"
 		ref="frameSpaceContainer"
-		:class="[
-			isOpen ? 'open' : 'close',
-			isOpened ? 'opened' : 'closed',
-			{ ['scroll-hidden']: hideScroll },
-		]"
+		:class="[isOpen ? 'open' : 'close', isOpened ? 'opened' : 'closed']"
 	>
 		<div class="frame-space">
 			<div class="top-tab">
@@ -57,24 +59,24 @@ watch(isOpen, (newValue) => {
 				<NuxtButton
 					class="end"
 					location="end"
-					@click="hideScroll = !hideScroll"
+					@click="showScroll = !showScroll"
 					:disabled="!isOpened"
 				>
-					{{ hideScroll ? 'Show Scroll' : 'Hide Scroll' }}
+					{{ showScroll ? 'Hide Scroll' : 'Show Scroll' }}
 				</NuxtButton>
 			</div>
-			<div class="content" ref="content">
-				<ClientOnly>
-					<GridElements
-						class="grid-elements"
-						v-model="iframeGridCells"
-						v-model:edit="editMode"
-						:yGridBoundary="yGridBoundary"
-						:xGridBoundary="xGridBoundary"
-						:cell-height="cellHeight"
-					/>
-				</ClientOnly>
-			</div>
+			<ClientOnly>
+				<GridElements
+					class="grid-elements"
+					v-model="iframeGridCells"
+					v-model:edit="editMode"
+					v-model:scroll="showScroll"
+					:yGridBoundary="yGridBoundary"
+					:xGridBoundary="xGridBoundary"
+					:cell-height="cellHeight"
+					:scroll-amount="scrollAmount"
+				/>
+			</ClientOnly>
 		</div>
 	</div>
 </template>
@@ -86,7 +88,7 @@ watch(isOpen, (newValue) => {
 	width: 100dvw;
 	position: fixed;
 	transition: top var(--animation-short-duration) ease;
-	overflow-y: auto;
+	overflow-y: scroll;
 
 	&.open {
 		top: 0;
@@ -100,10 +102,6 @@ watch(isOpen, (newValue) => {
 		visibility: hidden;
 	}
 
-	&.scroll-hidden::-webkit-scrollbar {
-		display: none;
-	}
-
 	.frame-space {
 		width: 100%;
 
@@ -112,6 +110,7 @@ watch(isOpen, (newValue) => {
 			justify-content: center;
 			height: var(--tab-height);
 			background-color: rgba(var(--background-values), 0.5);
+			border-bottom: 1px solid var(--secondary);
 			width: 100%;
 
 			.start {
@@ -123,15 +122,11 @@ watch(isOpen, (newValue) => {
 			}
 		}
 
-		.content {
-			border-top: 1px solid var(--secondary);
-			min-height: calc(100dvh - var(--tab-height));
-			background-color: var(--background);
-		}
-
 		.grid-elements {
-			min-height: 100dvh;
 			width: 100%;
+			min-height: 100dvh;
+			background-color: var(--background);
+			height: 0;
 		}
 	}
 }

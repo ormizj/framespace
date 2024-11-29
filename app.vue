@@ -50,5 +50,13 @@ body {
 	--tab-height: 2rem;
 	--header-height: 4rem;
 	--input-height: 1.5rem;
+
+	/* classes */
+
+	.scroll-hidden {
+		&::-webkit-scrollbar {
+			display: none;
+		}
+	}
 }
 </style>

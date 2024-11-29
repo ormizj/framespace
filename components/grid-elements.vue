@@ -7,16 +7,19 @@ import {
 
 const modelGridCells = defineModel<GridCell[]>({ required: true });
 const modelEdit = defineModel('edit', { default: false });
+const modelScroll = defineModel('scroll', { default: true });
 
 const props = withDefaults(
 	defineProps<{
 		xGridBoundary: number;
 		yGridBoundary: number;
 		cellHeight: number;
+		scrollAmount?: number;
 		alwaysInteractive?: boolean;
 		allowOverlap?: boolean;
 	}>(),
 	{
+		scrollAmount: undefined,
 		alwaysInteractive: false,
 		allowOverlap: false,
 	}
@@ -44,6 +47,7 @@ useSlots()
 	});
 
 const gridElements = ref<HTMLDivElement | null>(null);
+const gridElementsY = ref<HTMLDivElement[] | null>(null);
 const gridCellElements = ref<null | HTMLGridElement[]>(null);
 const cellHeightPx = ref<number>(0);
 const cellWidthPx = ref<number>(0);
@@ -433,11 +437,36 @@ const calcGridCellHeightPx = (gridCellHeight: number) =>
 const calcGridCellWidthPx = (gridCellWidth: number) =>
 	gridCellWidth * cellWidthPx.value;
 
+// Additional Events
+const handleScroll = (e: WheelEvent) => {
+	if (!props.scrollAmount || e.deltaY === 0) return;
+	e.preventDefault();
+
+	// scroll amount
+	let scrollAmount = props.scrollAmount;
+	if (e.deltaY < 0) scrollAmount = -scrollAmount;
+
+	// current scroll
+	const cellHeight = cellHeightPx.value;
+	const currentScrollTop = gridElements.value!.scrollTop;
+	const currentCellPosition = Math.round(currentScrollTop / cellHeight);
+
+	// scroll
+	const newCoordinate = currentCellPosition + scrollAmount;
+	const scrollTo = gridElementsY.value![newCoordinate];
+	if (scrollTo) {
+		scrollTo.scrollIntoView();
+	} else {
+		if (newCoordinate <= 0) gridElementsY.value![0].scrollIntoView();
+		else gridElementsY.value![gridElementsY.value!.length - 1].scrollIntoView();
+	}
+};
+
 // Additional Initializations
 modelGridCells.value.forEach((gridCell) => {
 	if (isTargetZoneOccupied(gridCell.id, gridCell.gridCellCoordinates)) {
 		gridCell.initialClasses.add('overlap');
-		overlappingGridCells.push(gridCell);
+		overlappingGridCells[gridCell.id] = gridCell;
 	}
 });
 </script>
@@ -446,12 +475,14 @@ modelGridCells.value.forEach((gridCell) => {
 	<div
 		class="grid-elements"
 		ref="gridElements"
-		:class="{ edit: modelEdit }"
+		:class="{ 'edit': modelEdit, 'scroll-hidden': !modelScroll }"
+		@wheel="handleScroll"
 		@mouseenter="resized = undefined"
 	>
 		<!-- GRID Y -->
 		<div
 			v-for="y in yGridBoundary"
+			ref="gridElementsY"
 			class="y-grid"
 			:style="{ height: `${cellHeight}dvh` }"
 			:key="y"
@@ -532,6 +563,11 @@ modelGridCells.value.forEach((gridCell) => {
 
 .grid-elements {
 	position: relative;
+	overflow-y: auto;
+
+	&.scroll-hidden::-webkit-scrollbar {
+		display: none;
+	}
 
 	.grid-cell {
 		position: absolute;
@@ -562,8 +598,6 @@ modelGridCells.value.forEach((gridCell) => {
 
 /* gridElements edit */
 .grid-elements.edit {
-	overflow: hidden;
-
 	.cell-component:not(.always-interactive) {
 		pointer-events: none;
 	}
