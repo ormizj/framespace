@@ -451,13 +451,13 @@ const handleScroll = (e: WheelEvent) => {
 	const currentScrollTop = gridElements.value!.scrollTop;
 	const currentCellPosition = Math.round(currentScrollTop / cellHeight);
 
-	// scroll
+	// scroll to element
 	const newCoordinate = currentCellPosition + scrollAmount;
-	const scrollTo = gridElementsY.value![newCoordinate];
-	if (scrollTo) {
-		scrollTo.scrollIntoView();
+	const elementScrollTo = gridElementsY.value![newCoordinate];
+	if (elementScrollTo) {
+		elementScrollTo.scrollIntoView();
 	} else {
-		if (newCoordinate <= 0) gridElementsY.value![0].scrollIntoView();
+		if (newCoordinate < 0) gridElementsY.value![0].scrollIntoView();
 		else gridElementsY.value![gridElementsY.value!.length - 1].scrollIntoView();
 	}
 };
