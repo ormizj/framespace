@@ -451,7 +451,7 @@ const handleScroll = () => {
 	<div
 		class="grid-elements-container"
 		:class="{ 'scroll-hidden': !modelScroll }"
-		@scroll.passive="handleScroll"
+		@scroll="handleScroll"
 		@mouseenter="resized = undefined"
 	>
 		<div class="grid-elements" ref="gridElements" :class="{ edit: modelEdit }">
