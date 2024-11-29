@@ -49,6 +49,7 @@ const gridCells = ref<GridCell[]>([
 				:cell-height="10"
 				:always-interactive="true"
 				:allow-overlap="true"
+				:scroll-amount="1"
 			/>
 		</ClientOnly>
 	</div>

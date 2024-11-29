@@ -9,6 +9,7 @@ export const useFrameSpaceStore = defineStore({
 		yGridBoundary: 10,
 		xGridBoundary: 10,
 		cellHeight: 10,
+		scrollAmount: 1,
 		iframeGridCells: [] as GridCell<typeof IframeCell>[],
 		iframesSrcOptions: [...Object.values(OpenCorsSites)] as string[],
 	}),

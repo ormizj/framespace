@@ -50,7 +50,7 @@ export default () => {
 			},
 		}),
 		new GridCell({
-			id: 'auth-email',
+			id: 'auth_email',
 			yGrid: 2,
 			xGrid: 1,
 			height: 1,
@@ -76,7 +76,7 @@ export default () => {
 			},
 		}),
 		new GridCell({
-			id: 'auth-password',
+			id: 'auth_password',
 			yGrid: 3,
 			xGrid: 1,
 			height: 1,
@@ -102,7 +102,7 @@ export default () => {
 			},
 		}),
 		new GridCell({
-			id: 'auth-register',
+			id: 'auth_register',
 			yGrid: 4,
 			xGrid: 1,
 			height: 1,
@@ -123,7 +123,7 @@ export default () => {
 			},
 		}),
 		new GridCell({
-			id: 'auth-login',
+			id: 'auth_login',
 			yGrid: 4,
 			xGrid: 2,
 			height: 1,

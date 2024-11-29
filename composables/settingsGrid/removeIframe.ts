@@ -20,7 +20,7 @@ export default () => {
 
 	return [
 		new GridCell({
-			id: 'remove-iframe',
+			id: 'remove_iframe',
 			yGrid: 3,
 			xGrid: 5,
 			height: 1,
@@ -29,12 +29,12 @@ export default () => {
 				is: SettingLabelCell,
 				props: {
 					title: 'Remove Iframe',
-					forId: 'remove-iframe-select',
+					forId: 'remove_iframe_select',
 				},
 			},
 		}),
 		new GridCell({
-			id: 'remove-iframe-select',
+			id: 'remove_iframe_select',
 			yGrid: 3,
 			xGrid: 7,
 			height: 1,
@@ -46,9 +46,9 @@ export default () => {
 					'modelValue': removeIframe,
 					'onUpdate:modelValue': (value: GridCell<typeof IframeCell>) =>
 						(removeIframe.value = value),
-					'id': 'remove-iframe-select',
+					'id': 'remove_iframe_select',
 					'options': iframeGridCells.value,
-					'for': 'remove-iframe',
+					'for': 'remove_iframe',
 					'formatter': (option: GridCell<typeof IframeCell>) =>
 						`[${option.yGrid}-${option.xGrid}]: ${option.component.props!.src}`,
 					'setRef': (componentRef: HTMLInputElement) => {
@@ -61,7 +61,7 @@ export default () => {
 			},
 		}),
 		new GridCell({
-			id: 'remove-iframe-button',
+			id: 'remove_iframe_button',
 			yGrid: 3,
 			xGrid: 10,
 			height: 1,

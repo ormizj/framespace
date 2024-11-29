@@ -3,8 +3,13 @@ import { ANIMATION_SHORT_DURATION, TAB_HEIGHT } from '~/constants/style';
 import GridElements from '~/components/grid-elements.vue';
 
 const frameSpaceStore = useFrameSpaceStore();
-const { yGridBoundary, xGridBoundary, cellHeight, iframeGridCells } =
-	storeToRefs(frameSpaceStore);
+const {
+	yGridBoundary,
+	xGridBoundary,
+	cellHeight,
+	scrollAmount,
+	iframeGridCells,
+} = storeToRefs(frameSpaceStore);
 
 const isOpen = ref(false);
 const isOpened = ref(false);
@@ -69,6 +74,7 @@ watch(isOpen, (newValue) => {
 					:yGridBoundary="yGridBoundary"
 					:xGridBoundary="xGridBoundary"
 					:cell-height="cellHeight"
+					:scroll-amount="scrollAmount"
 				/>
 			</ClientOnly>
 		</div>

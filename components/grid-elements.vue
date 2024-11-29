@@ -47,6 +47,7 @@ useSlots()
 	});
 
 const gridElements = ref<HTMLDivElement | null>(null);
+const gridElementsY = ref<HTMLDivElement[] | null>(null);
 const gridCellElements = ref<null | HTMLGridElement[]>(null);
 const cellHeightPx = ref<number>(0);
 const cellWidthPx = ref<number>(0);
@@ -436,14 +437,7 @@ const calcGridCellHeightPx = (gridCellHeight: number) =>
 const calcGridCellWidthPx = (gridCellWidth: number) =>
 	gridCellWidth * cellWidthPx.value;
 
-// Additional Initializations
-modelGridCells.value.forEach((gridCell) => {
-	if (isTargetZoneOccupied(gridCell.id, gridCell.gridCellCoordinates)) {
-		gridCell.initialClasses.add('overlap');
-		overlappingGridCells[gridCell.id] = gridCell;
-	}
-});
-
+// Additional Events
 const handleScroll = (e: WheelEvent) => {
 	if (!props.scrollAmount || e.deltaY === 0) return;
 	e.preventDefault();
@@ -459,8 +453,22 @@ const handleScroll = (e: WheelEvent) => {
 
 	// scroll
 	const newCoordinate = currentCellPosition + scrollAmount;
-	gridElements.value!.scrollTo({ top: newCoordinate * cellHeight });
+	const scrollTo = gridElementsY.value![newCoordinate];
+	if (scrollTo) {
+		scrollTo.scrollIntoView();
+	} else {
+		if (newCoordinate <= 0) gridElementsY.value![0].scrollIntoView();
+		else gridElementsY.value![gridElementsY.value!.length - 1].scrollIntoView();
+	}
 };
+
+// Additional Initializations
+modelGridCells.value.forEach((gridCell) => {
+	if (isTargetZoneOccupied(gridCell.id, gridCell.gridCellCoordinates)) {
+		gridCell.initialClasses.add('overlap');
+		overlappingGridCells[gridCell.id] = gridCell;
+	}
+});
 </script>
 
 <template>
@@ -474,6 +482,7 @@ const handleScroll = (e: WheelEvent) => {
 		<!-- GRID Y -->
 		<div
 			v-for="y in yGridBoundary"
+			ref="gridElementsY"
 			class="y-grid"
 			:style="{ height: `${cellHeight}dvh` }"
 			:key="y"
