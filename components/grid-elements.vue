@@ -449,75 +449,74 @@ const handleScroll = () => {
 
 <template>
 	<div
-		class="grid-elements-container"
-		:class="{ 'scroll-hidden': !modelScroll }"
+		class="grid-elements"
+		ref="gridElements"
+		:class="{ 'edit': modelEdit, 'scroll-hidden': !modelScroll }"
 		@scroll="handleScroll"
 		@mouseenter="resized = undefined"
 	>
-		<div class="grid-elements" ref="gridElements" :class="{ edit: modelEdit }">
-			<!-- GRID Y -->
+		<!-- GRID Y -->
+		<div
+			v-for="y in yGridBoundary"
+			class="y-grid"
+			:style="{ height: `${cellHeight}dvh` }"
+			:key="y"
+		>
+			<!-- GRID X -->
 			<div
-				v-for="y in yGridBoundary"
-				class="y-grid"
-				:style="{ height: `${cellHeight}dvh` }"
-				:key="y"
+				v-for="x in xGridBoundary"
+				class="x-grid"
+				:class="{ resizing: resized }"
+				@drop="handleDragDrop"
+				@mouseup="handleMouseUp"
+				@mousedown="isMouseDown = true"
+				@mouseenter="handleMouseEnter"
+				@dragover.prevent="handleDragOn"
+				:x="x"
+				:y="y"
+				:key="x"
 			>
-				<!-- GRID X -->
-				<div
-					v-for="x in xGridBoundary"
-					class="x-grid"
-					:class="{ resizing: resized }"
-					@drop="handleDragDrop"
-					@mouseup="handleMouseUp"
-					@mousedown="isMouseDown = true"
-					@mouseenter="handleMouseEnter"
-					@dragover.prevent="handleDragOn"
-					:x="x"
-					:y="y"
-					:key="x"
-				>
-					<!-- GRID CELL -->
-					<template v-for="gridCell of modelGridCells" :key="gridCell.id">
-						<template v-if="gridCell.xGrid === x && gridCell.yGrid === y">
-							<div
-								class="grid-cell"
-								ref="gridCellElements"
+				<!-- GRID CELL -->
+				<template v-for="gridCell of modelGridCells" :key="gridCell.id">
+					<template v-if="gridCell.xGrid === x && gridCell.yGrid === y">
+						<div
+							class="grid-cell"
+							ref="gridCellElements"
+							:class="[
+								{ resizing: resized, dragging: isDragging },
+								...gridCell.initialClasses,
+							]"
+							:draggable="modelEdit"
+							@dragstart="handleDragStart"
+							:y="y"
+							:x="x"
+							:style="{
+								height: `${calcGridCellHeightPx(gridCell.height)}px`,
+								width: `${calcGridCellWidthPx(gridCell.width)}px`,
+							}"
+						>
+							<component
 								:class="[
-									{ resizing: resized, dragging: isDragging },
-									...gridCell.initialClasses,
+									'cell-component',
+									{ 'always-interactive': alwaysInteractive && !isMouseDown },
 								]"
-								:draggable="modelEdit"
-								@dragstart="handleDragStart"
-								:y="y"
-								:x="x"
-								:style="{
-									height: `${calcGridCellHeightPx(gridCell.height)}px`,
-									width: `${calcGridCellWidthPx(gridCell.width)}px`,
-								}"
+								:is="gridCell.component.is"
+								v-bind="gridCell.component.props"
 							>
 								<component
-									:class="[
-										'cell-component',
-										{ 'always-interactive': alwaysInteractive && !isMouseDown },
-									]"
-									:is="gridCell.component.is"
-									v-bind="gridCell.component.props"
-								>
-									<component
-										v-for="(child, index) in gridCell.component.slots"
-										:key="index"
-										:is="child"
-									/>
-								</component>
-							</div>
-						</template>
+									v-for="(child, index) in gridCell.component.slots"
+									:key="index"
+									:is="child"
+								/>
+							</component>
+						</div>
 					</template>
-					<!-- GRID CELL -->
-				</div>
-				<!-- GRID X -->
+				</template>
+				<!-- GRID CELL -->
 			</div>
-			<!-- GRID Y -->
+			<!-- GRID X -->
 		</div>
+		<!-- GRID Y -->
 	</div>
 </template>
 
@@ -537,41 +536,38 @@ const handleScroll = () => {
 	}
 }
 
-.grid-elements-container {
+.grid-elements {
+	position: relative;
 	overflow-y: auto;
 
 	&.scroll-hidden::-webkit-scrollbar {
 		display: none;
 	}
 
-	.grid-elements {
-		position: relative;
+	.grid-cell {
+		position: absolute;
+		max-width: 100%;
 
-		.grid-cell {
+		&.overlap::after {
+			content: '!';
+			--size: 1rem;
 			position: absolute;
-			max-width: 100%;
-
-			&.overlap::after {
-				content: '!';
-				--size: 1rem;
-				position: absolute;
-				top: 0;
-				left: 0;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				font-size: var(--size);
-				width: var(--size);
-				height: var(--size);
-				border-radius: 50%;
-				animation: overlap var(--animation-longer-duration) alternate infinite;
-			}
+			top: 0;
+			left: 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: var(--size);
+			width: var(--size);
+			height: var(--size);
+			border-radius: 50%;
+			animation: overlap var(--animation-longer-duration) alternate infinite;
 		}
+	}
 
-		.cell-component {
-			width: 100%;
-			height: 100%;
-		}
+	.cell-component {
+		width: 100%;
+		height: 100%;
 	}
 }
 
