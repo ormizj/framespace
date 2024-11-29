@@ -39,20 +39,18 @@ const gridCells = ref<GridCell[]>([
 				</h3>
 			</div>
 		</div>
-		<div class="content">
-			<ClientOnly>
-				<GridElements
-					class="grid-elements"
-					v-model="gridCells"
-					v-model:edit="editMode"
-					:xGridBoundary="15"
-					:yGridBoundary="15"
-					:cell-height="10"
-					:always-interactive="true"
-					:allow-overlap="true"
-				/>
-			</ClientOnly>
-		</div>
+		<ClientOnly>
+			<GridElements
+				class="grid-elements"
+				v-model="gridCells"
+				v-model:edit="editMode"
+				:xGridBoundary="15"
+				:yGridBoundary="15"
+				:cell-height="10"
+				:always-interactive="true"
+				:allow-overlap="true"
+			/>
+		</ClientOnly>
 	</div>
 </template>
 
@@ -66,11 +64,10 @@ const gridCells = ref<GridCell[]>([
 		align-items: center;
 	}
 
-	.content {
-		overflow-y: auto;
-		height: calc(100% - var(--header-height) - var(--tab-height));
+	.grid-elements {
 		border-bottom: 1px solid var(--secondary);
 		border-top: 1px solid var(--secondary);
+		height: calc(100% - var(--header-height) - var(--tab-height));
 	}
 
 	.message-container {
