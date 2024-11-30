@@ -14,5 +14,5 @@ interface VueComponent<T extends Component> {
 		| ComponentType<T>
 		| ComponentEmit<T>
 		| ComponentExposed<T>
-		| { [key: string]: string };
+		| { [K: string]: string };
 }
