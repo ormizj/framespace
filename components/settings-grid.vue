@@ -10,12 +10,19 @@ const frameSpaceStore = useFrameSpaceStore();
 const { outOfBoundIframes } = storeToRefs(frameSpaceStore);
 
 const editMode = ref(true);
-const gridCells = ref<GridCell[]>([
-	...gridAttributes(),
-	...addIframe(),
-	...removeIframe(),
-	...auth(),
-]);
+const gridCells = ref<GridCell[]>();
+watch(
+	() => [auth()],
+	() => {
+		gridCells.value = [
+			...gridAttributes(),
+			...addIframe(),
+			...removeIframe(),
+			...auth(),
+		];
+	},
+	{ immediate: true }
+);
 </script>
 
 <template>

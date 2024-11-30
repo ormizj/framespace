@@ -7,6 +7,7 @@ import { focusElement } from '~/utils/gridCellElement';
 
 export default () => {
 	const authStore = useAuthStore();
+	if (authStore.isLoggedIn) return [];
 
 	const email = ref('');
 	const password = ref('');
