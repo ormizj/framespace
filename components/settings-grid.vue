@@ -10,7 +10,7 @@ const frameSpaceStore = useFrameSpaceStore();
 const { outOfBoundIframes } = storeToRefs(frameSpaceStore);
 
 const editMode = ref(true);
-const gridCells = ref<GridCell[]>();
+const gridCells = ref<GridCell[]>([]);
 watch(
 	() => [auth()],
 	() => {
