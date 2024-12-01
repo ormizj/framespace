@@ -5,8 +5,6 @@ export default defineNuxtConfig({
 		jwtSecret: process.env.JWT_SECRET,
 		// BCRYPT
 		bcryptSaltRounds: process.env.BCRYPT_SALT_ROUNDS,
-		// DRIZZLE
-		dbFileName: process.env.DB_FILE_NAME,
 
 		public: {},
 	},

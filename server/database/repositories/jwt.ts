@@ -1,34 +1,36 @@
-import { tables, useDrizzle } from '~/server/composables/drizzle';
-import { and, eq } from 'drizzle-orm';
+import { usePrisma } from '~/server/composables/prisma';
 
-const db = useDrizzle;
-const table = tables.jwt;
+const db = usePrisma();
 
 export const addJwtToken = async (email: string, token: string) => {
 	try {
-		await db().batch([
-			db().delete(table).where(eq(table.email, email)),
-
-			db().insert(table).values({
-				token,
-				email,
+		await db.$transaction([
+			db.jwt.deleteMany({
+				where: { email },
+			}),
+			db.jwt.create({
+				data: {
+					token,
+					email,
+				},
 			}),
 		]);
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 	}
 };
 
 export const isJwtTokenExistByToken = async (token: string, email: string) => {
 	try {
-		const tokens = await db()
-			.select()
-			.from(table)
-			.where(and(eq(table.email, email), eq(table.token, token)))
-			.limit(1);
+		const tokenExists = await db.jwt.findFirst({
+			where: {
+				email,
+				token,
+			},
+		});
 
-		return tokens.length !== 0;
+		return tokenExists !== null;
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 	}
 };
