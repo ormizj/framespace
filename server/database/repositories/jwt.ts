@@ -1,16 +1,14 @@
 import { usePrisma } from '~/server/composables/prisma';
 
-const prisma = usePrisma;
+const db = usePrisma();
 
 export const addJwtToken = async (email: string, token: string) => {
 	try {
-		await prisma().$transaction([
-			prisma.jwt.deleteMany({
+		await db.$transaction([
+			db.jwt.deleteMany({
 				where: { email },
 			}),
-
-			// Then insert new token
-			prisma.jwt.create({
+			db.jwt.create({
 				data: {
 					token,
 					email,
@@ -18,13 +16,13 @@ export const addJwtToken = async (email: string, token: string) => {
 			}),
 		]);
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 	}
 };
 
 export const isJwtTokenExistByToken = async (token: string, email: string) => {
 	try {
-		const tokenExists = await prisma().jwt.findFirst({
+		const tokenExists = await db.jwt.findFirst({
 			where: {
 				email,
 				token,
@@ -33,6 +31,6 @@ export const isJwtTokenExistByToken = async (token: string, email: string) => {
 
 		return tokenExists !== null;
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 	}
 };

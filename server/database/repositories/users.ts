@@ -1,44 +1,38 @@
-import { tables, usePrisma } from '~/server/composables/prisma';
-import { eq } from 'drizzle-orm';
+import { usePrisma } from '~/server/composables/prisma';
 
-const db = usePrisma;
-const table = tables.users;
+const db = usePrisma();
 
 export const getUserByEmail = async (email: string) => {
 	try {
-		const users = await db()
-			.select()
-			.from(table)
-			.where(eq(table.email, email))
-			.limit(1);
-
-		return users[0];
+		return await db.user.findFirst({
+			where: { email },
+		});
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 	}
 };
 
 export const isUserExistsByEmail = async (email: string) => {
 	try {
-		const users = await db()
-			.select()
-			.from(table)
-			.where(eq(table.email, email))
-			.limit(1);
+		const user = await db.user.findFirst({
+			where: { email },
+		});
 
-		return users.length !== 0;
+		return user !== null;
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 	}
 };
 
 export const addUser = async (email: string, password: string) => {
 	try {
-		await db().insert(table).values({
-			email,
-			password,
+		await db.user.create({
+			data: {
+				email,
+				password,
+			},
 		});
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 	}
 };
