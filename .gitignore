@@ -7,6 +7,11 @@
 dist
 /server/local.db
 
+# Database
+/server/database/migrations/
+/server/database/local.db
+/server/database/local.db-journal
+
 # Node dependencies
 node_modules
 

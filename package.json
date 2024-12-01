@@ -9,11 +9,14 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "db:generate": "prisma generate --schema=./server/database/schema/schema.prisma",
-    "db:migrate": "prisma migrate dev --name init --schema=./server/database/schema/schema.prisma",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev --name init",
     "format": "npx prettier --write .",
     "lint": "eslint",
     "lint-fix": "eslint --fix"
+  },
+  "prisma": {
+    "schema": "./server/database/schemas"
   },
   "dependencies": {
     "@libsql/client": "^0.14.0",
