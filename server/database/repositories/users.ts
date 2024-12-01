@@ -1,7 +1,7 @@
-import { tables, useDrizzle } from '~/server/composables/drizzle';
+import { tables, usePrisma } from '~/server/composables/prisma';
 import { eq } from 'drizzle-orm';
 
-const db = useDrizzle;
+const db = usePrisma;
 const table = tables.users;
 
 export const getUserByEmail = async (email: string) => {
