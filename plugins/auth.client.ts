@@ -1,3 +1,3 @@
 export default defineNuxtPlugin(() => {
-	useAuthStore().init();
+	useAuthStore()._init();
 });

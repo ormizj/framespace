@@ -5,6 +5,7 @@ const db = usePrisma();
 export const addJwtToken = async (email: string, token: string) => {
 	try {
 		await db.$transaction([
+			// TODO currently only support 1 login instance
 			db.jwt.deleteMany({
 				where: { email },
 			}),
@@ -15,6 +16,16 @@ export const addJwtToken = async (email: string, token: string) => {
 				},
 			}),
 		]);
+	} catch (error) {
+		console.error(error);
+	}
+};
+
+export const deleteJwtToken = async (token: string) => {
+	try {
+		await db.jwt.deleteMany({
+			where: { token },
+		});
 	} catch (error) {
 		console.error(error);
 	}

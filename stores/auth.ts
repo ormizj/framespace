@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import axios, { AxiosError } from 'axios';
+import type { IFetchError } from 'ofetch';
 
 export const useAuthStore = defineStore({
 	id: 'auth',
@@ -16,45 +16,59 @@ export const useAuthStore = defineStore({
 	},
 
 	actions: {
-		async login(email: string, password: string) {
-			try {
-				const res = await axios.post<string>('api/auth/login', {
-					email,
-					password,
-				});
-				this._clientLogin(email, res.data);
-			} catch (error) {
-				const axiosError = error as AxiosError;
-				alert(axiosError.response!.statusText);
-			}
-		},
-		async register(email: string, password: string) {
-			try {
-				const res = await axios.post<string>('api/auth/register', {
-					email,
-					password,
-				});
-				this._clientLogin(email, res.data);
-			} catch (error) {
-				const axiosError = error as AxiosError;
-				alert(axiosError.response!.statusText);
-			}
-		},
-		init() {
+		_init() {
 			this.jwt = localStorage.getItem('jwt') ?? '';
 			this.email = localStorage.getItem('email') ?? '';
 		},
+		async login(email: string, password: string) {
+			try {
+				const jwt = await $fetch<string>('api/auth/login', {
+					method: 'POST',
+					body: {
+						email,
+						password,
+					},
+				});
+				this._clientLogin(email, jwt);
+			} catch (error) {
+				const iFetchError = error as IFetchError;
+				alert(iFetchError.data.message);
+			}
+		},
 		logout() {
-			localStorage.removeItem('jwt');
-			localStorage.removeItem('email');
-			this.jwt = '';
-			this.email = '';
+			const jwt = this.jwt;
+			const email = this.email;
+			$fetch('api/auth/logout', { method: 'DELETE' }).catch(() => {
+				this._clientLogin(email, jwt);
+			});
+			this._clientLogout();
+		},
+		async register(email: string, password: string) {
+			try {
+				const jwt = await $fetch<string>('api/auth/register', {
+					method: 'POST',
+					body: {
+						email,
+						password,
+					},
+				});
+				this._clientLogin(email, jwt);
+			} catch (error) {
+				const iFetchError = error as IFetchError;
+				alert(iFetchError.data.message);
+			}
 		},
 		_clientLogin(email: string, jwt: string) {
 			localStorage.setItem('jwt', jwt);
 			localStorage.setItem('email', email);
 			this.jwt = jwt;
 			this.email = email;
+		},
+		_clientLogout() {
+			localStorage.removeItem('jwt');
+			localStorage.removeItem('email');
+			this.jwt = '';
+			this.email = '';
 		},
 	},
 });
