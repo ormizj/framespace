@@ -17,9 +17,15 @@ export const useAuthStore = defineStore({
 
 	actions: {
 		_init() {
-			// TODO login validation, then validate returned data (email) with current email
 			this.jwt = localStorage.getItem('jwt') ?? '';
 			this.email = localStorage.getItem('email') ?? '';
+			if (!this.jwt) return;
+
+			$fetch<JwtData>('api/auth/jwt-data', {
+				method: 'GET',
+			}).then((res) => {
+				if (res.email !== this.email) this._clientLogout();
+			});
 		},
 		async login(email: string, password: string) {
 			try {
