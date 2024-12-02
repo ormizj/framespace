@@ -33,6 +33,7 @@ export const deleteJwtToken = async (token: string) => {
 
 export const isJwtTokenExistByToken = async (token: string, email: string) => {
 	try {
+		email = email.toLowerCase();
 		const tokenExists = await db.jwt.findFirst({
 			where: {
 				email,

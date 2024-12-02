@@ -60,9 +60,9 @@ export const useAuthStore = defineStore({
 		},
 		_clientLogin(email: string, jwt: string) {
 			localStorage.setItem('jwt', jwt);
-			localStorage.setItem('email', email);
+			localStorage.setItem('email', email.toLowerCase());
 			this.jwt = jwt;
-			this.email = email;
+			this.email = email.toLowerCase();
 		},
 		_clientLogout() {
 			localStorage.removeItem('jwt');

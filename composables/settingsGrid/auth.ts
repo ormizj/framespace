@@ -23,7 +23,7 @@ export default () => {
 		) {
 			return;
 		}
-		authStore.login(email.value, password.value);
+		authStore.login(email.value, password.value).then();
 	};
 	const handleRegister = () => {
 		if (
@@ -90,7 +90,7 @@ export default () => {
 					'onUpdate:modelValue': (value: string) => (password.value = value),
 					'title': 'Password',
 					'id': 'password',
-					'type': 'text',
+					'type': 'password',
 					'form': 'auth',
 					'required': true,
 					'setRef': (componentRef: HTMLInputElement) => {

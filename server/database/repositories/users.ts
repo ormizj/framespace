@@ -4,6 +4,7 @@ const db = usePrisma();
 
 export const getUserByEmail = async (email: string) => {
 	try {
+		email = email.toLowerCase();
 		return await db.user.findFirst({
 			where: { email },
 		});
@@ -14,6 +15,7 @@ export const getUserByEmail = async (email: string) => {
 
 export const isUserExistsByEmail = async (email: string) => {
 	try {
+		email = email.toLowerCase();
 		const user = await db.user.findFirst({
 			where: { email },
 		});
@@ -26,6 +28,7 @@ export const isUserExistsByEmail = async (email: string) => {
 
 export const addUser = async (email: string, password: string) => {
 	try {
+		email = email.toLowerCase();
 		await db.user.create({
 			data: {
 				email,
