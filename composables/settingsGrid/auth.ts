@@ -32,7 +32,7 @@ export default () => {
 		) {
 			return;
 		}
-		authStore.register(email.value, password.value);
+		authStore.register(email.value, password.value).then();
 	};
 
 	return [

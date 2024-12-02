@@ -5,6 +5,7 @@ import gridAttributes from '../composables/settingsGrid/gridAttributes';
 import addIframe from '~/composables/settingsGrid/addIframe';
 import removeIframe from '~/composables/settingsGrid/removeIframe';
 import auth from '~/composables/settingsGrid/auth';
+import unAuth from '~/composables/settingsGrid/unAuth';
 
 const frameSpaceStore = useFrameSpaceStore();
 const { outOfBoundIframes } = storeToRefs(frameSpaceStore);
@@ -12,13 +13,14 @@ const { outOfBoundIframes } = storeToRefs(frameSpaceStore);
 const editMode = ref(true);
 const gridCells = ref<GridCell[]>([]);
 watch(
-	() => [auth()],
+	() => [auth(), unAuth()],
 	() => {
 		gridCells.value = [
 			...gridAttributes(),
 			...addIframe(),
 			...removeIframe(),
 			...auth(),
+			...unAuth(),
 		];
 	},
 	{ immediate: true }
