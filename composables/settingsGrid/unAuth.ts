@@ -15,7 +15,7 @@ export default () => {
 			id: 'auth_logout',
 			yGrid: 1,
 			xGrid: 1,
-			height: 1,
+			height: 4,
 			width: 2,
 			component: {
 				is: SettingButtonCell,
