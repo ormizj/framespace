@@ -17,6 +17,7 @@ export const useAuthStore = defineStore({
 
 	actions: {
 		_init() {
+			// TODO login validation, then validate returned data (email) with current email
 			this.jwt = localStorage.getItem('jwt') ?? '';
 			this.email = localStorage.getItem('email') ?? '';
 		},
