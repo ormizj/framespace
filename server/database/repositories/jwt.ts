@@ -21,17 +21,17 @@ export const addJwtToken = async (email: string, token: string) => {
 	}
 };
 
-export const deleteJwtToken = async (token: string) => {
+export const deleteJwtToken = async (email: string, token: string) => {
 	try {
-		await db.jwt.deleteMany({
-			where: { token },
+		await db.jwt.delete({
+			where: { email, token },
 		});
 	} catch (error) {
 		console.error(error);
 	}
 };
 
-export const isJwtTokenExistByToken = async (token: string, email: string) => {
+export const isJwtTokenExistByToken = async (email: string, token: string) => {
 	try {
 		email = email.toLowerCase();
 		const tokenExists = await db.jwt.findFirst({
