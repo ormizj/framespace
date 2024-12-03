@@ -52,6 +52,7 @@ const gridCellElements = ref<null | HTMLGridElement[]>(null);
 const cellHeightPx = ref<number>(0);
 const cellWidthPx = ref<number>(0);
 const overlappingGridCells = reactive<Record<string, GridCell>>({});
+const futureGridCell = ref<HTMLGridElement | null>(null);
 
 watch(modelEdit, () => {
 	clearAllGridCellAnimations();
@@ -199,7 +200,9 @@ const handleDragStart = (e: DragEvent) => {
 const handleDragDrop = (e: DragEvent) => {
 	isMouseDown.value = false;
 	isDragging.value = false;
-	const target = e.target as HTMLGridElement;
+	if (!futureGridCell.value) return;
+
+	const target = futureGridCell.value;
 	const targetYGrid = getGridElementYGrid(target);
 	const targetXGrid = getGridElementXGrid(target);
 	const newCoordinates = getGridCellCoordinates({
@@ -223,7 +226,7 @@ const handleDragDrop = (e: DragEvent) => {
 	removeOverlapping();
 	if (overlappedElements) addOverlapping(dragged!, overlappedElements);
 
-	clearFutureGridCells();
+	clearFutureGridCell();
 	dragged = undefined;
 };
 const handleDragOn = (e: DragEvent) => {
@@ -252,7 +255,11 @@ const addFutureGridCellDrag = (target: HTMLGridElement) => {
 	const gridXElement = getGridXElementFromXY(dragged!.xGrid, dragged!.yGrid);
 	const gridCellElement = getGridCellElementFromGridXElement(gridXElement);
 
-	const futureGridCellElement = document.createElement('div');
+	const futureGridCellElement = document.createElement(
+		'div'
+	) as HTMLGridElement;
+	futureGridCellElement.setAttribute('x', `${newCoordinates.strX}`);
+	futureGridCellElement.setAttribute('y', `${newCoordinates.strY}`);
 	futureGridCellElement.style.height = `${calcGridCellHeightPx(dragged!.height)}px`;
 	futureGridCellElement.style.width = `${calcGridCellWidthPx(dragged!.width)}px`;
 	futureGridCellElement.style.borderRadius = getComputedProperty(
@@ -276,8 +283,9 @@ const addFutureGridCellDrag = (target: HTMLGridElement) => {
 		}
 	}
 
-	clearFutureGridCells();
+	clearFutureGridCell();
 	target.appendChild(futureGridCellElement);
+	futureGridCell.value = futureGridCellElement;
 };
 
 // GridCell Resize
@@ -328,11 +336,11 @@ const handleMouseUp = (e: MouseEvent) => {
 	removeOverlapping();
 	if (overlappedElements) addOverlapping(resized.value, overlappedElements);
 
-	const clearFutureGridCellsInterval = setInterval(() => {
-		clearFutureGridCells();
+	const clearFutureGridCellInterval = setInterval(() => {
+		clearFutureGridCell();
 	}, 1);
 	setTimeout(() => {
-		clearInterval(clearFutureGridCellsInterval);
+		clearInterval(clearFutureGridCellInterval);
 		resized.value = undefined;
 	}, 250);
 };
@@ -352,7 +360,11 @@ const addFutureGridCellResize = (
 	const gridXElement = getGridXElementFromXY(gridCell.xGrid, gridCell.yGrid);
 	const gridCellElement = getGridCellElementFromGridXElement(gridXElement);
 
-	const futureGridCellElement = document.createElement('div');
+	const futureGridCellElement = document.createElement(
+		'div'
+	) as HTMLGridElement;
+	futureGridCellElement.setAttribute('x', `${newCoordinates.strX}`);
+	futureGridCellElement.setAttribute('y', `${newCoordinates.strY}`);
 	futureGridCellElement.style.height = `${calcGridCellHeightPx(targetHeight)}px`;
 	futureGridCellElement.style.width = `${calcGridCellWidthPx(targetWidth)}px`;
 	futureGridCellElement.style.borderRadius = getComputedProperty(
@@ -373,8 +385,9 @@ const addFutureGridCellResize = (
 		}
 	}
 
-	clearFutureGridCells();
+	clearFutureGridCell();
 	gridXElement.appendChild(futureGridCellElement);
+	futureGridCell.value = futureGridCellElement;
 };
 
 // GridElements Observer
@@ -428,10 +441,11 @@ const getGridCellElementFromGridXElement = (
 	return element.children[0].children[0] as HTMLCellElement;
 };
 
-const clearFutureGridCells = () =>
-	document
-		.querySelectorAll('.future-grid-cell')
-		.forEach((element) => element.remove());
+const clearFutureGridCell = () => {
+	if (!futureGridCell.value) return;
+	futureGridCell.value.remove();
+	futureGridCell.value = null;
+};
 const calcGridCellHeightPx = (gridCellHeight: number) =>
 	gridCellHeight * cellHeightPx.value;
 const calcGridCellWidthPx = (gridCellWidth: number) =>
@@ -493,6 +507,7 @@ modelGridCells.value.forEach((gridCell) => {
 				class="x-grid"
 				:class="{ resizing: resized }"
 				@drop="handleDragDrop"
+				@dragend="handleDragDrop"
 				@mouseup="handleMouseUp"
 				@mousedown="isMouseDown = true"
 				@mouseenter="handleMouseEnter"
