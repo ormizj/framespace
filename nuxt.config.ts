@@ -1,5 +1,9 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+	app: {
+		baseURL: '/framespace/',
+	},
+
 	runtimeConfig: {
 		// JWT
 		jwtSecret: process.env.JWT_SECRET,
@@ -8,12 +12,6 @@ export default defineNuxtConfig({
 
 		public: {},
 	},
-
-	// ... your existing config
-	app: {
-		baseURL: '/framespace/', // Matches your GitHub Pages URL
-	},
-	ssr: false, // For static site deployment
 
 	modules: ['@pinia/nuxt'],
 
