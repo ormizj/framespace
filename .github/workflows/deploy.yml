@@ -13,12 +13,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      
-      # Generate Prisma client
-      - run: npx prisma generate
-      
+
       # Install dependencies
       - run: npm install
+      # Generate Prisma client
+      - run: prisma generate
       
       # Build with environment variables
       - name: Build Nuxt App
