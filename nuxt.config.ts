@@ -9,6 +9,12 @@ export default defineNuxtConfig({
 		public: {},
 	},
 
+	// ... your existing config
+	app: {
+		baseURL: '/framespace/', // Matches your GitHub Pages URL
+	},
+	ssr: false, // For static site deployment
+
 	modules: ['@pinia/nuxt'],
 
 	components: [
