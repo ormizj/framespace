@@ -18,7 +18,7 @@ jobs:
       - run: npm ci
 
       # Generate Prisma client
-      - run: npx prisma generate
+      - run: npx prisma migrate dev --name init
 
       # Build with environment variables
       - name: Build Nuxt App
