@@ -4,9 +4,10 @@ export const focusElement = (
 	next?: HTMLElement
 ) => {
 	if (event.key !== 'Tab') return;
+	event.preventDefault();
 	if (event.shiftKey && previous) {
-		setTimeout(() => previous.focus());
+		previous.focus();
 	} else if (!event.shiftKey && next) {
-		setTimeout(() => next.focus());
+		next.focus();
 	}
 };
