@@ -14,7 +14,7 @@ jobs:
           node-version: "20"
           cache: 'npm'
 
-      # Install all dependencies, including Prisma
+      # Install all dependencies, including Prisma.
       - run: npm ci
 
       # Generate Prisma client
