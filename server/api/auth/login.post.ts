@@ -4,6 +4,10 @@ import { signJwt } from '~/server/utils/jwt';
 import { addJwtToken } from '~/server/database/repositories/jwt';
 
 export default defineEventHandler(async (event) => {
+	return {
+		bcryptSaltRounds: useRuntimeConfig().bcryptSaltRounds,
+		jwtSecret: useRuntimeConfig().jwtSecret,
+	};
 	const { email, password } = await readBody(event);
 
 	if (password === '' || !/^[^@]+@[^@]/.test(email)) {
