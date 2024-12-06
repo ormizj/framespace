@@ -5,7 +5,7 @@
   "scripts": {
     "build": "nuxt build",
     "build:start": "node .output/server/index.mjs",
-    "deploy": "npm ci && npm run build && npm run db:generate",
+    "deploy": "npm ci && npm run build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",

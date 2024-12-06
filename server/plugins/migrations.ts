@@ -1,7 +1,7 @@
 import { migrate } from 'drizzle-orm/d1/migrator';
 
 export default defineNitroPlugin(async (nitroApp) => {
-	// if (import.meta.dev) return;
+	if (import.meta.dev) return;
 
 	try {
 		// @ts-ignore: type not inherited
