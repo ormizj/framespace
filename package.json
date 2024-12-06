@@ -4,8 +4,8 @@
   "type": "module",
   "scripts": {
     "build": "nuxt build",
-    "build:run": "node .output/server/index.mjs",
-    "deploy": "npm ci && npm run build",
+    "build:start": "node .output/server/index.mjs",
+    "deploy": "npm ci && npm run build && npm run db:generate",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
