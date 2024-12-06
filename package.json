@@ -5,26 +5,22 @@
   "scripts": {
     "build": "nuxt build",
     "build:run": "node .output/server/index.mjs",
-    "deploy": "npm ci && npm run build && npm run db:migrate",
+    "deploy": "npm ci && npm run build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "db:generate": "prisma generate",
-    "db:migrate": "prisma migrate dev --name init",
+    "db:generate": "drizzle-kit generate",
     "format": "npx prettier --write .",
     "lint": "eslint",
     "lint-fix": "eslint --fix"
   },
-  "prisma": {
-    "schema": "./server/database/schemas"
-  },
   "dependencies": {
     "@libsql/client": "^0.14.0",
     "@pinia/nuxt": "^0.5.4",
-    "@prisma/client": "^6.0.0",
     "@vueuse/core": "^11.2.0",
     "bcrypt": "^5.1.1",
+    "drizzle-orm": "^0.37.0",
     "jsonwebtoken": "^9.0.2",
     "nuxt": "^3.14.159",
     "pinia": "^2.2.2",
@@ -34,8 +30,8 @@
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/jsonwebtoken": "^9.0.7",
+    "drizzle-kit": "^0.29.1",
     "prettier": "^3.3.3",
-    "prisma": "^6.0.0",
     "tsx": "^4.19.2",
     "vue-component-type-helpers": "^2.1.6"
   }
