@@ -4,6 +4,7 @@ import {
 	ANIMATION_LONG_DURATION,
 	ANIMATION_REPEAT_COUNT,
 } from '~/constants/style';
+import type { VNode } from 'vue';
 
 const modelGridCells = defineModel<GridCell[]>({ required: true });
 const modelEdit = defineModel('edit', { default: false });
@@ -17,33 +18,44 @@ const props = withDefaults(
 		scrollAmount?: number;
 		alwaysInteractive?: boolean;
 		allowOverlap?: boolean;
+		useNestedChildren?: boolean;
 	}>(),
 	{
 		scrollAmount: undefined,
 		alwaysInteractive: false,
 		allowOverlap: false,
+		useNestedChildren: false,
 	}
 );
 
 // Slot Initialize
+const addSlotToModelGridCells = (slot: VNode) => {
+	modelGridCells.value.push(
+		new GridCell({
+			component: {
+				is: slot.type,
+				props: slot.props,
+				slots: {
+					default: () => slot.children,
+				},
+			},
+			yGrid: slot.props?.y ?? 1,
+			xGrid: slot.props?.x ?? 1,
+			width: slot.props?.width ?? 1,
+			height: slot.props?.height ?? 1,
+		})
+	);
+};
 useSlots()
 	.default?.()
 	.forEach((slot) => {
-		modelGridCells.value.push(
-			new GridCell({
-				component: {
-					is: slot.type,
-					props: slot.props,
-					slots: {
-						default: () => slot.children,
-					},
-				},
-				yGrid: slot.props?.y ?? 1,
-				xGrid: slot.props?.x ?? 1,
-				width: slot.props?.width ?? 1,
-				height: slot.props?.height ?? 1,
-			})
-		);
+		if (props.useNestedChildren && Array.isArray(slot.children)) {
+			slot.children.forEach((child) => {
+				addSlotToModelGridCells(child as VNode);
+			});
+		} else {
+			addSlotToModelGridCells(slot);
+		}
 	});
 
 const gridElements = ref<HTMLDivElement | null>(null);
