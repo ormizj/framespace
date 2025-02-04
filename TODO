@@ -1,2 +1,5 @@
+TODO GridComponent - a component wrapper to handle GridCell templates (will have the required props correlating to the grid-elements)
+TODO deprecate the composable directory containing the grid elements to the new method mentioned above
+
 TODO fix drizzle jwt & user relationship
 TODO add email lower-case as COLLATION
