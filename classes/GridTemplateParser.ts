@@ -9,13 +9,14 @@ class GridTemplateParser {
 	private static readonly space = ' ';
 	private static readonly newLine = '\n';
 	private readonly templateMatrix: string[][];
-	private keysCoordinates: Record<string, keyCoordinates> = {};
-	private templateError = false;
+	private readonly keysCoordinates: Record<string, keyCoordinates> = {};
 
 	constructor(template: string) {
 		this.templateMatrix = this.initTemplateMatrix(template);
-		this.initKeysCoordinates();
-		this.validate();
+		this.keysCoordinates = this.initKeysCoordinates(this.templateMatrix);
+
+		// if template has errors, clean the data (don't use the template)
+		if (!this.isValid()) this.keysCoordinates = {};
 	}
 
 	/* TESTED V */
@@ -60,39 +61,26 @@ class GridTemplateParser {
 		return matrix;
 	};
 
-	private initKeysCoordinates = (): void => {
-		return;
-		let index = 0;
-		const currentSymbol = this.getNextKey(index);
+	private initKeysCoordinates = (
+		templateMatrix: string[][]
+	): Record<string, keyCoordinates> => {
+		const keysCoordinates: Record<string, keyCoordinates> = {};
 
-		do {
-			switch (currentSymbol) {
-				case this.parseSymbol: {
-					console.log('parsing');
-					break;
-				}
-				case this.newLine: {
-					console.log('newline');
-					break;
-				}
-				case ' ':
-				default:
-					break;
-			}
-			index++;
-		} while (currentSymbol);
+		for (let i = 0; i < templateMatrix.length; i++) {
+			for (let j = 0; j < templateMatrix[i].length; j++) {}
+		}
+
+		return keysCoordinates;
 	};
 
 	/* TESTED V */
-	private validate = (): void => {
+	private isValid = (): boolean => {
 		/*
-		 TODO check for errors: 
+		 TODO check for errors:
 		 1. "templateMatrix" all nested arrays don't share the same length
 		 2. ...
 		*/
-
-		// if template has errors, clean the data (don't use the template)
-		if (this.templateError) this.keysCoordinates = {};
+		return false;
 	};
 }
 
@@ -112,3 +100,7 @@ parser = new GridTemplateParser(str3);
 console.log('str4');
 const str4 = `        c             `;
 parser = new GridTemplateParser(str4);
+
+console.log('str5');
+const str5 = ` `;
+parser = new GridTemplateParser(str5);
