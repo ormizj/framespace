@@ -1,6 +1,6 @@
 class GridTemplateParser {
-	private readonly newLine = `
-`;
+	private readonly space = ' ';
+	private readonly newLine = '\n';
 	private readonly template: string;
 	private templateLength: number;
 	private templateError = false;
@@ -20,7 +20,7 @@ class GridTemplateParser {
 
 		let index = 0;
 		while (this.template[index] !== undefined) {
-			if (this.template[index] === ' ') {
+			if (this.template[index] === this.space) {
 				previousEmpty = true;
 			} else if (previousEmpty) {
 				previousEmpty = false;
@@ -54,7 +54,7 @@ class GridTemplateParser {
 		let key = '';
 		while (
 			this.template[index] &&
-			this.template[index] !== ' ' &&
+			this.template[index] !== this.space &&
 			this.template[index] !== this.newLine
 		) {
 			key += this.template[index];
