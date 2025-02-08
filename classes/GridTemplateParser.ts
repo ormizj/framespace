@@ -1,75 +1,66 @@
+interface keyCoordinates {
+	x: number;
+	y: number;
+	width: number;
+	height: number;
+}
+
 class GridTemplateParser {
-	private readonly space = ' ';
-	private readonly newLine = '\n';
-	private readonly template: string;
-	private templateLength: number;
+	private static readonly space = ' ';
+	private static readonly newLine = '\n';
+	private readonly templateMatrix: string[][];
+	private keysCoordinates: Record<string, keyCoordinates> = {};
 	private templateError = false;
-	private keysCoordinates = {};
 
 	constructor(template: string) {
-		this.template = template;
+		this.templateMatrix = this.initTemplateMatrix(template);
 		this.initKeysCoordinates();
-		this.initTemplateWidth();
 		this.validate();
 	}
 
-	public getCoordinates = (key: string): unknown => {
+	/* TESTED V */
+	public getCoordinates = (key: string): keyCoordinates => {
 		return this.keysCoordinates[key];
 	};
 
 	/* TESTED V */
-	private initTemplateWidth = (): void => {
-		let previousEmpty = true;
-		let previousLength: number | undefined;
-		let length = 0;
-
+	private initTemplateMatrix = (template: string): string[][] => {
+		const matrix: string[][] = [];
+		let height = 0;
 		let index = 0;
-		while (this.template[index] !== undefined) {
-			if (this.template[index] === this.space) {
-				previousEmpty = true;
-			} else if (previousEmpty) {
-				previousEmpty = false;
-				length++;
-			}
-			index++;
+		let currentKey = '';
 
-			/* new line */
-			if (
-				this.template[index] === this.newLine ||
-				this.template[index] === undefined
-			) {
-				if (previousLength && previousLength !== length) {
-					this.templateError = true;
+		const addCurrentKey = () => {
+			if (currentKey) {
+				if (!matrix[height]) matrix[height] = [currentKey];
+				else matrix[height].push(currentKey);
+			}
+			currentKey = '';
+		};
+
+		while (template[index] !== undefined) {
+			const char = template[index];
+			switch (char) {
+				case GridTemplateParser.space:
+					addCurrentKey();
 					break;
-				}
-				previousLength = length;
-				length = 0;
-				previousEmpty = true;
-				index++;
+				case GridTemplateParser.newLine:
+					addCurrentKey();
+					height++;
+					break;
+				default:
+					currentKey += char;
+					break;
 			}
-		}
-
-		this.templateLength = previousLength || 0;
-	};
-
-	/** TESTED V
-	 *  index must be starting position of the key!
-	 */
-	private getNextKey = (index: number): string => {
-		let key = '';
-		while (
-			this.template[index] &&
-			this.template[index] !== this.space &&
-			this.template[index] !== this.newLine
-		) {
-			key += this.template[index];
 			index++;
 		}
-		return key;
+		// add remaining key after processing all characters
+		addCurrentKey();
+
+		return matrix;
 	};
 
 	private initKeysCoordinates = (): void => {
-		console.log(this.getNextKey(3));
 		return;
 		let index = 0;
 		const currentSymbol = this.getNextKey(index);
@@ -94,6 +85,12 @@ class GridTemplateParser {
 
 	/* TESTED V */
 	private validate = (): void => {
+		/*
+		 TODO check for errors: 
+		 1. "templateMatrix" all nested arrays don't share the same length
+		 2. ...
+		*/
+
 		// if template has errors, clean the data (don't use the template)
 		if (this.templateError) this.keysCoordinates = {};
 	};
@@ -107,3 +104,11 @@ let parser = new GridTemplateParser(str1);
 console.log('str2');
 const str2 = ``;
 parser = new GridTemplateParser(str2);
+
+console.log('str3');
+const str3 = `a b c d e`;
+parser = new GridTemplateParser(str3);
+
+console.log('str4');
+const str4 = `        c             `;
+parser = new GridTemplateParser(str4);
