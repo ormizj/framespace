@@ -10,8 +10,11 @@ class GridTemplateParser {
 	private static readonly newLine = '\n';
 	private readonly templateMatrix: string[][];
 	private readonly keysCoordinates: Record<string, keyCoordinates> = {};
+	/* "keysCoordinates" -> x & y - starting positions */
+	private readonly base;
 
-	constructor(template: string) {
+	constructor(template: string, { base = 0 } = {}) {
+		this.base = base;
 		this.templateMatrix = this.initTemplateMatrix(template);
 		this.keysCoordinates = this.initKeysCoordinates(this.templateMatrix);
 
@@ -61,15 +64,29 @@ class GridTemplateParser {
 		return matrix;
 	};
 
+	/** WIP
+	 */
 	private initKeysCoordinates = (
 		templateMatrix: string[][]
 	): Record<string, keyCoordinates> => {
 		const keysCoordinates: Record<string, keyCoordinates> = {};
 
 		for (let i = 0; i < templateMatrix.length; i++) {
-			for (let j = 0; j < templateMatrix[i].length; j++) {}
+			for (let j = 0; j < templateMatrix[i].length; j++) {
+				const key = templateMatrix[i][j];
+				if (!keysCoordinates[key]) {
+					keysCoordinates[key] = {
+						x: j + this.base,
+						y: i + this.base,
+						width: 1,
+						height: 1,
+					};
+					continue;
+				}
+			}
 		}
 
+		console.log(keysCoordinates);
 		return keysCoordinates;
 	};
 
@@ -89,18 +106,18 @@ const str1 = ` ea re e   1
               ea  re  e 1  `;
 let parser = new GridTemplateParser(str1);
 
-console.log('str2');
-const str2 = ``;
-parser = new GridTemplateParser(str2);
+// console.log('str2');
+// const str2 = ``;
+// parser = new GridTemplateParser(str2);
 
-console.log('str3');
-const str3 = `a b c d e`;
-parser = new GridTemplateParser(str3);
+// console.log('str3');
+// const str3 = `a b c d e`;
+// parser = new GridTemplateParser(str3);
 
-console.log('str4');
-const str4 = `        c             `;
-parser = new GridTemplateParser(str4);
+// console.log('str4');
+// const str4 = `        c             `;
+// parser = new GridTemplateParser(str4);
 
-console.log('str5');
-const str5 = ` `;
-parser = new GridTemplateParser(str5);
+// console.log('str5');
+// const str5 = ` `;
+// parser = new GridTemplateParser(str5);
