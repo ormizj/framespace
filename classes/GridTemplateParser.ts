@@ -10,10 +10,15 @@ class GridTemplateParser {
 		this.template = template;
 		this.initKeysCoordinates();
 		this.initTemplateWidth();
+		this.validate();
 	}
 
+	public getCoordinates = (key: string): unknown => {
+		return this.keysCoordinates[key];
+	};
+
 	/* TESTED V */
-	private initTemplateWidth = () => {
+	private initTemplateWidth = (): void => {
 		let previousEmpty = true;
 		let previousLength: number | undefined;
 		let length = 0;
@@ -50,7 +55,7 @@ class GridTemplateParser {
 	/** TESTED V
 	 *  index must be starting position of the key!
 	 */
-	private getNextKey = (index: number) => {
+	private getNextKey = (index: number): string => {
 		let key = '';
 		while (
 			this.template[index] &&
@@ -63,7 +68,7 @@ class GridTemplateParser {
 		return key;
 	};
 
-	private initKeysCoordinates = () => {
+	private initKeysCoordinates = (): void => {
 		console.log(this.getNextKey(3));
 		return;
 		let index = 0;
@@ -85,6 +90,12 @@ class GridTemplateParser {
 			}
 			index++;
 		} while (currentSymbol);
+	};
+
+	/* TESTED V */
+	private validate = (): void => {
+		// if template has errors, clean the data (don't use the template)
+		if (this.templateError) this.keysCoordinates = {};
 	};
 }
 
