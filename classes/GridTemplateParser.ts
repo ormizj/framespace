@@ -101,10 +101,12 @@ class GridTemplateParser {
 	};
 }
 
+let parser;
+
 console.log('str1');
 const str1 = ` ea re e   1
               ea  re  e 1  `;
-let parser = new GridTemplateParser(str1);
+parser = new GridTemplateParser(str1);
 
 // console.log('str2');
 // const str2 = ``;
@@ -121,3 +123,8 @@ let parser = new GridTemplateParser(str1);
 // console.log('str5');
 // const str5 = ` `;
 // parser = new GridTemplateParser(str5);
+
+// console.log('str6');
+// const str6 = `a b c
+// d e f`;
+// parser = new GridTemplateParser(str6);
