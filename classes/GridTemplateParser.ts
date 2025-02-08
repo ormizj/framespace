@@ -1,5 +1,5 @@
 class GridTemplateParser {
-	private template: string;
+	private readonly template: string;
 	private templateLength: number;
 	private templateError = false;
 	private keysCoordinates = {};
