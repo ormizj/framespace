@@ -1,10 +1,10 @@
 class GridTemplateParser {
+	private readonly newLine = `
+`;
 	private readonly template: string;
 	private templateLength: number;
 	private templateError = false;
 	private keysCoordinates = {};
-	private newLine = `
-`;
 
 	constructor(template: string) {
 		this.template = template;
