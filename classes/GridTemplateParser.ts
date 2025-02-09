@@ -50,7 +50,7 @@ class GridTemplateParser {
 					break;
 				case GridTemplateParser.newLine:
 					addCurrentKey();
-					height++;
+					if (matrix[height]) height++;
 					break;
 				default:
 					currentKey += char;
@@ -70,6 +70,10 @@ class GridTemplateParser {
 		templateMatrix: string[][]
 	): Record<string, keyCoordinates> => {
 		const keysCoordinates: Record<string, keyCoordinates> = {};
+		const ignoredKey = '.';
+		/*
+		 * TODO ignore the ignored key (treat as whitespace)
+		 * */
 
 		for (let i = 0; i < templateMatrix.length; i++) {
 			for (let j = 0; j < templateMatrix[i].length; j++) {
@@ -105,6 +109,7 @@ let parser;
 
 console.log('str1');
 const str1 = ` ea re e   1
+
               ea  re  e 1  `;
 parser = new GridTemplateParser(str1);
 
