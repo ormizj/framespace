@@ -69,24 +69,39 @@ class GridTemplateParser {
 	private initKeysCoordinates = (
 		templateMatrix: string[][]
 	): Record<string, keyCoordinates> => {
-		const keysCoordinates: Record<string, keyCoordinates> = {};
-		const ignoredKey = '.';
 		/*
 		 * TODO ignore the ignored key (treat as whitespace)
 		 * */
+		const ignoredKey = '.';
+		const keysCoordinates: Record<string, keyCoordinates> = {};
+		const ignoredIndexes: Record<`${string},${string}`, true> = {};
+
+		const setKeyCoordinates = (key: string, i: number, j: number) => {
+			keysCoordinates[key] = {
+				x: j + this.base,
+				y: i + this.base,
+				width: 1,
+				height: 1,
+			};
+
+			let maxHeight = 0;
+			while (true) {
+				ignoredIndexes[`${i},${j}`] = true;
+				j++;
+				if (templateMatrix[i][j] !== key) break;
+				maxHeight++;
+			}
+
+			let curHeight = maxHeight;
+		};
 
 		for (let i = 0; i < templateMatrix.length; i++) {
 			for (let j = 0; j < templateMatrix[i].length; j++) {
+				if (ignoredIndexes[`${i},${j}`]) continue;
 				const key = templateMatrix[i][j];
-				if (!keysCoordinates[key]) {
-					keysCoordinates[key] = {
-						x: j + this.base,
-						y: i + this.base,
-						width: 1,
-						height: 1,
-					};
-					continue;
-				}
+				// if key already exists, can't parse coordinates
+				if (keysCoordinates[key]) return {};
+				setKeyCoordinates(key, i, j);
 			}
 		}
 
