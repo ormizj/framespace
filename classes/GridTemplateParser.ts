@@ -25,12 +25,10 @@ class GridTemplateParser {
 		if (!this.isValid()) this.keysCoordinates = {};
 	}
 
-	/* TESTED V */
 	public getCoordinates = (key: string): keyCoordinates => {
 		return this.keysCoordinates[key];
 	};
 
-	/* TESTED V */
 	private initTemplateMatrix = (template: string): string[][] => {
 		const matrix: string[][] = [];
 		let height = 0;
@@ -67,8 +65,6 @@ class GridTemplateParser {
 		return matrix;
 	};
 
-	/** WIP
-	 */
 	private initKeysCoordinates = (
 		templateMatrix: string[][]
 	): Record<string, keyCoordinates> => {
@@ -83,19 +79,24 @@ class GridTemplateParser {
 		};
 		const isIndexValid = (key: string, i: number, j: number): boolean =>
 			templateMatrix[i]?.[j] === key;
-
 		const setKeyCoordinates = (key: string, i: number, j: number): boolean => {
+			// variables
 			const initialI = i;
 			const initialJ = j;
-			while (true) {
-				if (isIndexValid(key, i, j)) {
-					markIndexes(i, j);
-					i++;
-				} else {
-					i--;
-					break;
+
+			// helper methods
+			const iterateI = () => {
+				while (true) {
+					if (isIndexValid(key, i, j)) {
+						markIndexes(i, j);
+						i++;
+					} else {
+						i--;
+						break;
+					}
 				}
-			}
+			};
+			iterateI();
 			const maxI = i;
 
 			while (true) {
@@ -106,14 +107,9 @@ class GridTemplateParser {
 					break;
 				}
 
-				while (true) {
-					if (isIndexValid(key, i, j)) {
-						markIndexes(i, j);
-						i++;
-					} else break;
-				}
+				iterateI();
 				if (i !== maxI) {
-					this.print(`Template key ${key} is not a rectangle`);
+					this.print(`Template key "${key}" is not a rectangle`);
 					return false;
 				}
 			}
@@ -133,8 +129,10 @@ class GridTemplateParser {
 				if (ignoredIndexes[`${i},${j}`] || templateMatrix[i][j] === ignoredKey)
 					continue;
 				const key = templateMatrix[i][j];
-				// if key already exists, can't parse coordinates
-				if (keysCoordinates[key]) return {};
+				if (keysCoordinates[key]) {
+					this.print(`Template key "${key}" has duplicates`);
+					return {};
+				}
 
 				const isValid = setKeyCoordinates(key, i, j);
 				if (!isValid) return {};
@@ -144,7 +142,7 @@ class GridTemplateParser {
 		return keysCoordinates;
 	};
 
-	/* TESTED V */
+	/* TODO WIP */
 	private isValid = (): boolean => {
 		/*
 		 TODO check for errors:
@@ -190,9 +188,9 @@ let parser;
 
 // console.log('str7');
 // const str7 = `a a a b a`;
-// parser = new GridTemplateParser(str7, { base: 1,debug:true });
+// parser = new GridTemplateParser(str7, { base: 1, debug: true });
 
-console.log('str8');
-const str8 = `a a a
-. b b`;
-parser = new GridTemplateParser(str8, { base: 1, debug: true });
+// console.log('str8');
+// const str8 = `a a a
+// . b b`;
+// parser = new GridTemplateParser(str8, { base: 1, debug: true });
