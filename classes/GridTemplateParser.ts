@@ -10,10 +10,12 @@ class GridTemplateParser {
 	private static readonly newLine = '\n';
 	private readonly templateMatrix: string[][];
 	private readonly keysCoordinates: Record<string, keyCoordinates> = {};
+	private readonly debug: boolean;
 	/* "keysCoordinates" -> x & y - starting positions */
 	private readonly base;
 
-	constructor(template: string, { base = 0 } = {}) {
+	constructor(template: string, { base = 0, debug = false } = {}) {
+		this.debug = debug;
 		this.base = base;
 		this.templateMatrix = this.initTemplateMatrix(template);
 		this.keysCoordinates = this.initKeysCoordinates(this.templateMatrix);
@@ -110,8 +112,10 @@ class GridTemplateParser {
 						i++;
 					} else break;
 				}
-				// key template is not square
-				if (i !== maxI) return false;
+				if (i !== maxI) {
+					this.print(`Template key ${key} is not a rectangle`);
+					return false;
+				}
 			}
 
 			keysCoordinates[key] = {
@@ -149,6 +153,10 @@ class GridTemplateParser {
 		*/
 		return false;
 	};
+
+	private print = (message: string): void => {
+		if (this.debug) console.warn(message);
+	};
 }
 
 let parser;
@@ -157,34 +165,34 @@ let parser;
 // const str1 = ` ea re e   1
 
 //               ea  re  e 1  `;
-// parser = new GridTemplateParser(str1, { base: 1 });
+// parser = new GridTemplateParser(str1, { base: 1,debug:true });
 
 // console.log('str2');
 // const str2 = ``;
-// parser = new GridTemplateParser(str2, { base: 1 });
+// parser = new GridTemplateParser(str2, { base: 1,debug:true });
 
 // console.log('str3');
 // const str3 = `a b c d e`;
-// parser = new GridTemplateParser(str3, { base: 1 });
+// parser = new GridTemplateParser(str3, { base: 1,debug:true });
 
 // console.log('str4');
 // const str4 = `        c             `;
-// parser = new GridTemplateParser(str4, { base: 1 });
+// parser = new GridTemplateParser(str4, { base: 1,debug:true });
 
 // console.log('str5');
 // const str5 = ` `;
-// parser = new GridTemplateParser(str5, { base: 1 });
+// parser = new GridTemplateParser(str5, { base: 1,debug:true });
 
 // console.log('str6');
 // const str6 = `a b c
 // d e f`;
-// parser = new GridTemplateParser(str6, { base: 1 });
+// parser = new GridTemplateParser(str6, { base: 1,debug:true });
 
 // console.log('str7');
 // const str7 = `a a a b a`;
-// parser = new GridTemplateParser(str7, { base: 1 });
+// parser = new GridTemplateParser(str7, { base: 1,debug:true });
 
 console.log('str8');
 const str8 = `a a a
 . b b`;
-parser = new GridTemplateParser(str8, { base: 1 });
+parser = new GridTemplateParser(str8, { base: 1, debug: true });
