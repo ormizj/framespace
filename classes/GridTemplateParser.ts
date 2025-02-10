@@ -8,6 +8,7 @@ interface keyCoordinates {
 class GridTemplateParser {
 	private static readonly space = ' ';
 	private static readonly newLine = '\n';
+	private static readonly emptyKey = '.';
 	private readonly templateMatrix: string[][];
 	private readonly keysCoordinates: Record<string, keyCoordinates> = {};
 	private readonly debug: boolean;
@@ -19,7 +20,6 @@ class GridTemplateParser {
 		this.base = base;
 		this.templateMatrix = this.initTemplateMatrix(template);
 		this.keysCoordinates = this.initKeysCoordinates(this.templateMatrix);
-		console.log(this.keysCoordinates);
 
 		// if template has errors, clean the data (don't use the template)
 		if (!this.isValid()) this.keysCoordinates = {};
@@ -69,7 +69,6 @@ class GridTemplateParser {
 		templateMatrix: string[][]
 	): Record<string, keyCoordinates> => {
 		// variables
-		const ignoredKey = '.';
 		const keysCoordinates: Record<string, keyCoordinates> = {};
 		const ignoredIndexes: Record<`${string},${string}`, true> = {};
 
@@ -126,7 +125,10 @@ class GridTemplateParser {
 		// main
 		for (let i = 0; i < templateMatrix.length; i++) {
 			for (let j = 0; j < templateMatrix[i].length; j++) {
-				if (ignoredIndexes[`${i},${j}`] || templateMatrix[i][j] === ignoredKey)
+				if (
+					ignoredIndexes[`${i},${j}`] ||
+					templateMatrix[i][j] === GridTemplateParser.emptyKey
+				)
 					continue;
 				const key = templateMatrix[i][j];
 				if (keysCoordinates[key]) {
@@ -142,14 +144,16 @@ class GridTemplateParser {
 		return keysCoordinates;
 	};
 
-	/* TODO WIP */
 	private isValid = (): boolean => {
-		/*
-		 TODO check for errors:
-		 1. "templateMatrix" all nested arrays don't share the same length
-		 2. ...
-		*/
-		return false;
+		for (let i = 0; i < this.templateMatrix.length - 1; i++) {
+			if (this.templateMatrix[i].length === this.templateMatrix[i + 1].length)
+				continue;
+			this.print(
+				`Template is not a rectangle (use "${GridTemplateParser.emptyKey}" key to indicate empty space)`
+			);
+			return false;
+		}
+		return true;
 	};
 
 	private print = (message: string): void => {
@@ -192,5 +196,10 @@ let parser;
 
 // console.log('str8');
 // const str8 = `a a a
+// . b b`;
+// parser = new GridTemplateParser(str8, { base: 1, debug: true });
+
+// console.log('str8');
+// const str8 = `a a a e
 // . b b`;
 // parser = new GridTemplateParser(str8, { base: 1, debug: true });
