@@ -70,9 +70,6 @@ class GridTemplateParser {
 	private initKeysCoordinates = (
 		templateMatrix: string[][]
 	): Record<string, keyCoordinates> => {
-		/*
-		 * TODO ignore the ignored key (treat as whitespace)
-		 * */
 		// variables
 		const ignoredKey = '.';
 		const keysCoordinates: Record<string, keyCoordinates> = {};
@@ -129,7 +126,8 @@ class GridTemplateParser {
 		// main
 		for (let i = 0; i < templateMatrix.length; i++) {
 			for (let j = 0; j < templateMatrix[i].length; j++) {
-				if (ignoredIndexes[`${i},${j}`]) continue;
+				if (ignoredIndexes[`${i},${j}`] || templateMatrix[i][j] === ignoredKey)
+					continue;
 				const key = templateMatrix[i][j];
 				// if key already exists, can't parse coordinates
 				if (keysCoordinates[key]) return {};
@@ -155,33 +153,38 @@ class GridTemplateParser {
 
 let parser;
 
-console.log('str1');
-const str1 = ` ea re e   1
+// console.log('str1');
+// const str1 = ` ea re e   1
 
-              ea  re  e 1  `;
-parser = new GridTemplateParser(str1, { base: 1 });
+//               ea  re  e 1  `;
+// parser = new GridTemplateParser(str1, { base: 1 });
 
 // console.log('str2');
 // const str2 = ``;
-// parser = new GridTemplateParser(str2);
+// parser = new GridTemplateParser(str2, { base: 1 });
 
 // console.log('str3');
 // const str3 = `a b c d e`;
-// parser = new GridTemplateParser(str3);
+// parser = new GridTemplateParser(str3, { base: 1 });
 
 // console.log('str4');
 // const str4 = `        c             `;
-// parser = new GridTemplateParser(str4);
+// parser = new GridTemplateParser(str4, { base: 1 });
 
 // console.log('str5');
 // const str5 = ` `;
-// parser = new GridTemplateParser(str5);
+// parser = new GridTemplateParser(str5, { base: 1 });
 
 // console.log('str6');
 // const str6 = `a b c
 // d e f`;
-// parser = new GridTemplateParser(str6);
+// parser = new GridTemplateParser(str6, { base: 1 });
 
 // console.log('str7');
 // const str7 = `a a a b a`;
-// parser = new GridTemplateParser(str7);
+// parser = new GridTemplateParser(str7, { base: 1 });
+
+console.log('str8');
+const str8 = `a a a
+. b b`;
+parser = new GridTemplateParser(str8, { base: 1 });
