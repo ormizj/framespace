@@ -17,6 +17,7 @@ class GridTemplateParser {
 		this.base = base;
 		this.templateMatrix = this.initTemplateMatrix(template);
 		this.keysCoordinates = this.initKeysCoordinates(this.templateMatrix);
+		console.log(this.keysCoordinates);
 
 		// if template has errors, clean the data (don't use the template)
 		if (!this.isValid()) this.keysCoordinates = {};
@@ -72,40 +73,72 @@ class GridTemplateParser {
 		/*
 		 * TODO ignore the ignored key (treat as whitespace)
 		 * */
+		// variables
 		const ignoredKey = '.';
 		const keysCoordinates: Record<string, keyCoordinates> = {};
 		const ignoredIndexes: Record<`${string},${string}`, true> = {};
 
-		const setKeyCoordinates = (key: string, i: number, j: number) => {
-			keysCoordinates[key] = {
-				x: j + this.base,
-				y: i + this.base,
-				width: 1,
-				height: 1,
-			};
+		// helper methods
+		const markIndexes = (i: number, j: number): void => {
+			ignoredIndexes[`${i},${j}`] = true;
+		};
+		const isIndexValid = (key: string, i: number, j: number): boolean =>
+			templateMatrix[i]?.[j] === key;
 
-			let maxHeight = 0;
+		const setKeyCoordinates = (key: string, i: number, j: number): boolean => {
+			const initialI = i;
+			const initialJ = j;
 			while (true) {
-				ignoredIndexes[`${i},${j}`] = true;
+				if (isIndexValid(key, i, j)) {
+					markIndexes(i, j);
+					i++;
+				} else {
+					i--;
+					break;
+				}
+			}
+			const maxI = i;
+
+			while (true) {
+				i = initialI;
 				j++;
-				if (templateMatrix[i][j] !== key) break;
-				maxHeight++;
+				if (!isIndexValid(key, i, j)) {
+					j--;
+					break;
+				}
+
+				while (true) {
+					if (isIndexValid(key, i, j)) {
+						markIndexes(i, j);
+						i++;
+					} else break;
+				}
+				// key template is not square
+				if (i !== maxI) return false;
 			}
 
-			let curHeight = maxHeight;
+			keysCoordinates[key] = {
+				x: initialJ + this.base,
+				y: initialI + this.base,
+				width: j - initialJ + 1,
+				height: maxI - i + 1,
+			};
+			return true;
 		};
 
+		// main
 		for (let i = 0; i < templateMatrix.length; i++) {
 			for (let j = 0; j < templateMatrix[i].length; j++) {
 				if (ignoredIndexes[`${i},${j}`]) continue;
 				const key = templateMatrix[i][j];
 				// if key already exists, can't parse coordinates
 				if (keysCoordinates[key]) return {};
-				setKeyCoordinates(key, i, j);
+
+				const isValid = setKeyCoordinates(key, i, j);
+				if (!isValid) return {};
 			}
 		}
 
-		console.log(keysCoordinates);
 		return keysCoordinates;
 	};
 
@@ -126,7 +159,7 @@ console.log('str1');
 const str1 = ` ea re e   1
 
               ea  re  e 1  `;
-parser = new GridTemplateParser(str1);
+parser = new GridTemplateParser(str1, { base: 1 });
 
 // console.log('str2');
 // const str2 = ``;
@@ -148,3 +181,7 @@ parser = new GridTemplateParser(str1);
 // const str6 = `a b c
 // d e f`;
 // parser = new GridTemplateParser(str6);
+
+// console.log('str7');
+// const str7 = `a a a b a`;
+// parser = new GridTemplateParser(str7);
