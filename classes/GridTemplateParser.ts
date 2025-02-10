@@ -71,23 +71,17 @@ class GridTemplateParser {
 		// variables
 		const keysCoordinates: Record<string, keyCoordinates> = {};
 		const ignoredIndexes: Record<`${string},${string}`, true> = {};
-
 		// helper methods
-		const markIndexes = (i: number, j: number): void => {
-			ignoredIndexes[`${i},${j}`] = true;
+		const isIndexValid = (key: string, i: number, j: number): boolean => {
+			return templateMatrix[i]?.[j] === key;
 		};
-		const isIndexValid = (key: string, i: number, j: number): boolean =>
-			templateMatrix[i]?.[j] === key;
 		const setKeyCoordinates = (key: string, i: number, j: number): boolean => {
-			// variables
 			const initialI = i;
 			const initialJ = j;
-
-			// helper methods
 			const iterateI = () => {
 				while (true) {
 					if (isIndexValid(key, i, j)) {
-						markIndexes(i, j);
+						ignoredIndexes[`${i},${j}`] = true;
 						i++;
 					} else {
 						i--;
@@ -95,9 +89,9 @@ class GridTemplateParser {
 					}
 				}
 			};
+
 			iterateI();
 			const maxI = i;
-
 			while (true) {
 				i = initialI;
 				j++;
@@ -105,7 +99,6 @@ class GridTemplateParser {
 					j--;
 					break;
 				}
-
 				iterateI();
 				if (i !== maxI) {
 					this.print(`Template key "${key}" is not a rectangle`);
@@ -121,15 +114,15 @@ class GridTemplateParser {
 			};
 			return true;
 		};
-
 		// main
 		for (let i = 0; i < templateMatrix.length; i++) {
 			for (let j = 0; j < templateMatrix[i].length; j++) {
 				if (
 					ignoredIndexes[`${i},${j}`] ||
 					templateMatrix[i][j] === GridTemplateParser.emptyKey
-				)
+				) {
 					continue;
+				}
 				const key = templateMatrix[i][j];
 				if (keysCoordinates[key]) {
 					this.print(`Template key "${key}" has duplicates`);
@@ -140,7 +133,6 @@ class GridTemplateParser {
 				if (!isValid) return {};
 			}
 		}
-
 		return keysCoordinates;
 	};
 
