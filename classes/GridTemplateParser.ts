@@ -1,11 +1,11 @@
-interface keyCoordinates {
+export interface keyCoordinates {
 	x: number;
 	y: number;
 	width: number;
 	height: number;
 }
 
-class GridTemplateParser {
+export default class GridTemplateParser {
 	private static readonly space = ' ';
 	private static readonly newLine = '\n';
 	private static readonly emptyKey = '.';
@@ -15,6 +15,20 @@ class GridTemplateParser {
 	/* "keysCoordinates" -> x & y - starting positions */
 	private readonly base;
 
+	/**
+	 * Creates a coordinate map from a template string
+	 * @param template	Multi-line string where each line is a row of space-separated cells
+	 *                	Non "." characters are keys; their positions become coordinates offset by `base`
+	 *                	Example:
+	 *                	"
+	 *                	a a . \n
+	 *                 	a a . \n
+	 *                 	b b c
+	 *                 	"
+	 * @param base 			Number added to the column (x) and row (y) indices of each cell
+	 *             			Default: 0 (e.g., a cell at column 2, row 3 becomes (2 + base, 3 + base))
+	 * @param debug			When true, logs validation errors (e.g., inconsistent row lengths)
+	 */
 	constructor(template: string, { base = 0, debug = false } = {}) {
 		this.debug = debug;
 		this.base = base;
