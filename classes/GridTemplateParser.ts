@@ -11,26 +11,29 @@ export default class GridTemplateParser {
 	private static readonly emptyKey = '.';
 	private readonly templateMatrix: string[][];
 	private readonly keysCoordinates: Record<string, keyCoordinates> = {};
-	private readonly debug: boolean;
+	private readonly isDebugMode: boolean;
 	/* "keysCoordinates" -> x & y - starting positions */
 	private readonly base;
 
 	/**
 	 * Creates a coordinate map from a template string
-	 * @param template	Multi-line string where each line is a row of space-separated cells
-	 *                	Non "." characters are keys; their positions become coordinates offset by `base`
-	 *                	Example:
-	 *                	"
-	 *                	a a . \n
-	 *                 	a a . \n
-	 *                 	b b c
-	 *                 	"
-	 * @param base 			Number added to the column (x) and row (y) indices of each cell
-	 *             			Default: 0 (e.g., a cell at column 2, row 3 becomes (2 + base, 3 + base))
-	 * @param debug			When true, logs validation errors (e.g., inconsistent row lengths)
+	 * @param template		Multi-line string where each line is a row of space-separated cells
+	 *                		Non "." characters are keys; their positions become coordinates offset by `base`
+	 *                		Example:
+	 *                		"
+	 *                		a a . \n
+	 *                 		a a . \n
+	 *                 		b b c
+	 *                 		"
+	 * @param base 				Number added to the column (x) and row (y) indices of each cell
+	 *             				Default: 0 (e.g., a cell at column 2, row 3 becomes (2 + base, 3 + base))
+	 * @param isDebugMode	When true, logs validation errors (e.g., inconsistent row lengths)
 	 */
-	constructor(template: string, { base = 0, debug = false } = {}) {
-		this.debug = debug;
+	constructor(
+		template: string,
+		{ base = 0, isDebug: isDebugMode = false } = {}
+	) {
+		this.isDebugMode = isDebugMode;
 		this.base = base;
 		this.templateMatrix = this.initTemplateMatrix(template);
 		this.keysCoordinates = this.initKeysCoordinates(this.templateMatrix);
@@ -115,7 +118,7 @@ export default class GridTemplateParser {
 				}
 				iterateI();
 				if (i !== maxI) {
-					this.print(`Template key "${key}" is not a rectangle`);
+					this.debug(`Template key "${key}" is not a rectangle`);
 					return false;
 				}
 			}
@@ -139,7 +142,7 @@ export default class GridTemplateParser {
 				}
 				const key = templateMatrix[i][j];
 				if (keysCoordinates[key]) {
-					this.print(`Template key "${key}" has duplicates`);
+					this.debug(`Template key "${key}" has duplicates`);
 					return {};
 				}
 
@@ -154,7 +157,7 @@ export default class GridTemplateParser {
 		for (let i = 0; i < this.templateMatrix.length - 1; i++) {
 			if (this.templateMatrix[i].length === this.templateMatrix[i + 1].length)
 				continue;
-			this.print(
+			this.debug(
 				`Template is not a rectangle (use "${GridTemplateParser.emptyKey}" key to indicate empty space)`
 			);
 			return false;
@@ -162,8 +165,8 @@ export default class GridTemplateParser {
 		return true;
 	};
 
-	private print = (message: string): void => {
-		if (this.debug) console.warn(message);
+	private debug = (message: string): void => {
+		if (this.isDebugMode) console.warn(message);
 	};
 }
 
