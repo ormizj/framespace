@@ -4,11 +4,13 @@ type Props = {
 	x: number;
 } & (
 	| {
+			/** @see GridTemplateParser.constructor */
 			template: string;
 			width?: number;
 			height?: number;
 	  }
 	| {
+			/** @see GridTemplateParser.constructor */
 			template?: undefined;
 			width: number;
 			height: number;
