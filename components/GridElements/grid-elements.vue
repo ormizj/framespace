@@ -5,6 +5,9 @@ import {
 	ANIMATION_REPEAT_COUNT,
 } from '~/constants/style';
 import type { VNode } from 'vue';
+import GridComponent from '~/components/GridElements/grid-component.vue';
+import type { ComponentProps } from 'vue-component-type-helpers';
+import GridTemplateParser from '~/classes/GridTemplateParser';
 
 const modelGridCells = defineModel<GridCell[]>({ required: true });
 const modelEdit = defineModel('edit', { default: false });
@@ -28,8 +31,15 @@ const props = withDefaults(
 	}
 );
 
-// Slot Initialize
-const addSlotToModelGridCells = (slot: VNode) => {
+const debugLog = (message: string) => {
+	console.warn(message);
+};
+
+/* slot Initialize */
+const addSlotToModelGridCells = (
+	slot: VNode,
+	coordinates: ComponentProps<typeof GridComponent>
+) => {
 	modelGridCells.value.push(
 		new GridCell({
 			component: {
@@ -39,24 +49,63 @@ const addSlotToModelGridCells = (slot: VNode) => {
 					default: () => slot.children,
 				},
 			},
-			yGrid: slot.props?.y ?? 1,
-			xGrid: slot.props?.x ?? 1,
-			width: slot.props?.width ?? 1,
-			height: slot.props?.height ?? 1,
+			yGrid: coordinates.y,
+			xGrid: coordinates.x,
+			width: coordinates.width,
+			height: coordinates.height,
 		})
 	);
 };
-useSlots()
-	.default?.()
-	.forEach((slot) => {
-		if (props.useNestedChildren && Array.isArray(slot.children)) {
-			slot.children.forEach((child) => {
-				addSlotToModelGridCells(child as VNode);
-			});
-		} else {
-			addSlotToModelGridCells(slot);
+const isGridComponent = (slot: VNode): slot is VNode<typeof GridComponent> => {
+	return (slot.type as typeof GridComponent).__hmrId === GridComponent.__hmrId;
+};
+const handleSlots = (slots?: VNode[]) => {
+	if (!slots) return;
+	slots.forEach((gridComponent: VNode) => {
+		if (!isGridComponent(gridComponent)) {
+			debugLog('Slot children must be of type GridComponent');
+			return;
 		}
+
+		const coordinates = gridComponent.props as ComponentProps<
+			typeof GridComponent
+		>;
+
+		// if using template
+		const gridTemplateParser =
+			coordinates.template &&
+			new GridTemplateParser(coordinates.template, {
+				baseX: coordinates.x,
+				baseY: coordinates.y,
+			});
+
+		const children = gridComponent.children as { default: () => VNode[] };
+		children?.default().forEach((slot: VNode) => {
+			if (isGridComponent(slot)) {
+				debugLog(
+					'Nested GridComponents are not supported. GridComponent cannot contain another GridComponent'
+				);
+				return;
+			}
+
+			if (gridTemplateParser) {
+				const key = String(slot.key);
+				const parsedCoordinates = gridTemplateParser.getCoordinates(key);
+				if (!parsedCoordinates) {
+					debugLog(
+						`GridComponent child's key: "${key}" doesn't exist in the GridComponent template: "${coordinates.template}"`
+					);
+					return;
+				}
+
+				addSlotToModelGridCells(slot, parsedCoordinates);
+			} else {
+				addSlotToModelGridCells(slot, coordinates);
+			}
+		});
 	});
+};
+handleSlots(useSlots().default?.());
 
 const gridElements = ref<HTMLDivElement | null>(null);
 const gridElementsY = ref<HTMLDivElement[] | null>(null);
@@ -71,7 +120,7 @@ watch(modelEdit, () => {
 	clearGridElementsAnimation();
 });
 
-// GridCell Helper Functions
+/* GridCell helper functions */
 const getGridCellFromElement = (element: HTMLGridElement | HTMLCellElement) =>
 	modelGridCells.value.find(
 		(gridCell) =>
@@ -103,7 +152,7 @@ const clearAllGridCellAnimations = () => {
 	});
 };
 
-// GridCell Enforcements
+/* GridCell enforcements */
 /**
  * @param gridCellId
  * @param gridCellCoordinates
@@ -167,7 +216,7 @@ const addOverlapping = (gridCell: GridCell, otherGridCells: GridCell[]) => {
 	});
 };
 
-// GridCell Validations
+/* GridCell validations */
 const isTargetZoneOccupied = (
 	gridCellId: string,
 	gridCellCoordinates: GridCellCoordinates
@@ -197,7 +246,7 @@ const isGridCellSizeValid = (gridCellHeight: number, gridCellWidth: number) => {
 	return gridCellHeight > 0 && gridCellWidth > 0;
 };
 
-// GridCell Drag
+/* GridCell drag */
 let dragged: GridCell | undefined;
 const isDragging = ref<boolean>(false);
 const stopResizeMouseUp = ref(false);
@@ -224,7 +273,7 @@ const handleDragDrop = (e: DragEvent) => {
 		width: dragged!.width,
 	});
 
-	// Enforcements
+	// enforcements
 	const overlappedElements = enforceNoOverlap(dragged!.id, newCoordinates);
 	const wasEnforced =
 		(!props.allowOverlap && overlappedElements) ||
@@ -300,7 +349,7 @@ const addFutureGridCellDrag = (target: HTMLGridElement) => {
 	futureGridCell.value = futureGridCellElement;
 };
 
-// GridCell Resize
+/* GridCell resize */
 let resized = ref<GridCell | undefined>(undefined);
 const isMouseDown = ref<boolean>(false);
 const gridCellResizeObs = new ResizeObserver((obs) => {
@@ -334,7 +383,7 @@ const handleMouseUp = (e: MouseEvent) => {
 		width: newWidth,
 	});
 
-	// Enforcements
+	// enforcements
 	const overlappedElements = enforceNoOverlap(resized.value.id, newCoordinates);
 	const wasEnforced =
 		(!props.allowOverlap && overlappedElements) ||
@@ -402,7 +451,7 @@ const addFutureGridCellResize = (
 	futureGridCell.value = futureGridCellElement;
 };
 
-// GridElements Observer
+/* GridElements observer */
 watch(
 	() => gridCellElements.value,
 	() => {
@@ -423,7 +472,7 @@ onMounted(() => {
 	gridXResizeObs.observe(gridX);
 });
 
-// GridElements Helper Functions
+/* GridElements helper functions */
 let gridElementsAnimationTimeout: ReturnType<typeof setTimeout>;
 const addGridElementsAnimation = () => {
 	const className = 'error-animation-inset';
@@ -463,7 +512,7 @@ const calcGridCellHeightPx = (gridCellHeight: number) =>
 const calcGridCellWidthPx = (gridCellWidth: number) =>
 	gridCellWidth * cellWidthPx.value;
 
-// Additional Events
+/* additional events */
 const handleScroll = (e: WheelEvent) => {
 	if (!props.scrollAmount || e.deltaY === 0) return;
 	e.preventDefault();
@@ -488,7 +537,7 @@ const handleScroll = (e: WheelEvent) => {
 	}
 };
 
-// Additional Initializations
+/* additional initializations */
 modelGridCells.value.forEach((gridCell) => {
 	if (isTargetZoneOccupied(gridCell.id, gridCell.gridCellCoordinates)) {
 		gridCell.initialClasses.add('overlap');
