@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ANIMATION_SHORT_DURATION, TAB_HEIGHT } from '~/constants/style';
-import GridElements from '~/components/grid-elements.vue';
+import GridElements from '~/components/GridElements/grid-elements.vue';
 
 const frameSpaceStore = useFrameSpaceStore();
 const {

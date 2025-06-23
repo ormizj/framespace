@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type GridCell from '~/classes/GridCell';
-import GridElements from '~/components/grid-elements.vue';
+import GridElements from '~/components/GridElements/grid-elements.vue';
 import gridAttributes from '../composables/settingsGrid/gridAttributes';
 import addIframe from '~/composables/settingsGrid/addIframe';
 import removeIframe from '~/composables/settingsGrid/removeIframe';
@@ -59,7 +59,23 @@ watch(
 				:always-interactive="true"
 				:allow-overlap="true"
 				:scroll-amount="1"
-			/>
+				:use-nested-children="true"
+			>
+				<!-- GridComponent EXAMPLE
+				<GridComponent :x="1" :y="1" :width="1" :height="1">
+					<div>Example A</div>
+				</GridComponent>
+				<GridComponent
+					:y="2"
+					:x="2"
+					:template="`one one one
+											. two two`"
+				>
+					<div key="one">Example B: "one"</div>
+					<div key="two">Example B: "two"</div>
+				</GridComponent>
+				-->
+			</GridElements>
 		</ClientOnly>
 	</div>
 </template>
